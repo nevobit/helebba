@@ -1,0 +1,3 @@
+{
+  "extends": "@hlb/tooling/tsconfig/base.json"
+}
