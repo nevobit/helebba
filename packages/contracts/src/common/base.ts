@@ -12,6 +12,8 @@ export type ISODateTimeString = Brand<string, 'ISODateTimeString'>;
 export type ContactId = Brand<string, 'ContactId'>;
 export type ProductId = Brand<string, 'ProductId'>;
 export type CategoryId = Brand<string, 'CategoryId'>;
+export type GroupId = Brand<string, 'GroupId'>;
+export type CompanyId = Brand<string, 'CompanyId'>;
 
 export interface BaseEntity<TId = EntityId> {
   readonly id: TId;
