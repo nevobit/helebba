@@ -1,0 +1,35 @@
+{
+  "name": "@hlb/constant-definitions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "development": "./src/index.ts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "mongoose": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@hlb/tooling": "workspace:*",
+    "@hlb/core-modules": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

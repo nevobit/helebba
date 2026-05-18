@@ -7,8 +7,9 @@ export type Brand<T, TBrand extends string> = T & { readonly [brand]: TBrand };
 export type EntityId = Brand<string, 'EntityId'>;
 export type TenantId = Brand<string, 'TenantId'>;
 export type UserId = Brand<string, 'UserId'>;
-export type ContactId = Brand<string, 'ContactId'>;
+export type WorkspaceId = Brand<string, 'WorkspaceId'>;
 export type ISODateTimeString = Brand<string, 'ISODateTimeString'>;
+export type ContactId = Brand<string, 'ContactId'>;
 export type ProductId = Brand<string, 'ProductId'>;
 export type CategoryId = Brand<string, 'CategoryId'>;
 
