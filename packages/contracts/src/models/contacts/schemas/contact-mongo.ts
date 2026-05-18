@@ -1,5 +1,6 @@
 import {Schema} from 'mongoose';
 import { Contact } from './contact';
+import { opts } from '../../../common';
 
 export const ContactSchemaMongo = new Schema<Contact>(
     {
@@ -20,5 +21,5 @@ export const ContactSchemaMongo = new Schema<Contact>(
         companyId: {type: String},
     },
 
-    { timestamps: true, versionKey: false }
+    { ...opts }
 );
