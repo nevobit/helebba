@@ -5,7 +5,7 @@ import { MonoContext } from '@hlb/core-modules';
 export const getModel = <T>(collectionName: Collection, schema: Schema): Model<T> => {
   const existing = model[collectionName] as Model<T> | undefined;
   return existing ?? model<T>(collectionName, schema, collectionName);
-};
+};   
 
 export const getMongooseConnection = (): mongoose.Connection => {
   const dataSources = MonoContext.getState().dataSources as {
