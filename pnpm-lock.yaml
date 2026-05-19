@@ -96,7 +96,21 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
-  packages/business-logic: {}
+  packages/business-logic:
+    dependencies:
+      '@hlb/constant-definitions':
+        specifier: workspace:*
+        version: link:../constant-definitions
+      '@hlb/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.13.1
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
 
   packages/cli: {}
 

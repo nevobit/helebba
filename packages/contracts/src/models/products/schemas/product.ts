@@ -1,9 +1,11 @@
-import {
+import type {
   PersistedSoftDeletableEntity,
   UserId,
   CategoryId,
   ContactId,
   ProductId,
+  CompanyId,
+  TenantId,
 } from '../../../common';
 
 export enum ProductStockState {
