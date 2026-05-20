@@ -1,11 +1,10 @@
 export type Cursor = string & { readonly __brand: 'Cursor' };
 
 export type OffsetPageInfo = {
-  readonly kind: 'offset';
   readonly page: number;
   readonly pageSize: number;
   readonly totalItems: number;
-  readonly totalPages: number;
+  readonly pages: number;
   readonly hasNextPage: boolean;
   readonly hasPreviousPage: boolean;
   readonly nextPage: number | null;
@@ -13,7 +12,6 @@ export type OffsetPageInfo = {
 };
 
 export type CursorPageInfo = {
-  readonly kind: 'cursor';
   readonly hasNextPage: boolean;
   readonly hasPreviousPage: boolean;
   readonly startCursor: Cursor | null;
@@ -29,6 +27,7 @@ export interface Edge<T> {
 
 export interface OffsetPaginatedResult<T> {
   readonly kind: 'offset';
+  readonly count: number;
   readonly items: readonly T[];
   readonly pageInfo: OffsetPageInfo;
 }

@@ -45,3 +45,10 @@ export type PersistedSoftDeletableEntity<TId = EntityId, TUserId = UserId> = Per
   TUserId
 > &
   SoftDeletableEntity<TUserId>;
+
+export interface Params {
+  tenantId?: TenantId;
+  page?: number;
+  limit?: number;
+  search?: string;
+}
