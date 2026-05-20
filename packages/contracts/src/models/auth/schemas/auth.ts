@@ -9,7 +9,6 @@ import { SessionId } from '../../rbac';
 
 export interface Session extends PersistedEntity<SessionId, UserId> {
   readonly tenantId: TenantId;
-  readonly workspaceId?: WorkspaceId;
   readonly userId: UserId;
   readonly refreshTokenHash: string;
   readonly userAgent?: string;
