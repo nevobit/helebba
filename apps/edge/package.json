@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server/index.ts"
+    "dev": "NODE_OPTIONS='--conditions=development' tsx watch src/server/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,11 +16,12 @@
     "@fastify/swagger-ui": "catalog:",
     "@hlb/business-logic": "workspace:*",
     "@hlb/constant-definitions": "workspace:*",
+    "@hlb/contracts": "workspace:*",
     "@hlb/core-modules": "workspace:*",
     "@hlb/data-sources": "workspace:*",
-    "@hlb/contracts": "workspace:*",
     "dotenv": "^17.4.2",
-    "fastify": "catalog:"
+    "fastify": "catalog:",
+    "prom-client": "^15.1.3"
   },
   "devDependencies": {
     "@types/node": "catalog:",

@@ -1,15 +1,17 @@
 import Fastify, { type FastifyInstance } from 'fastify';
 import type { BuildAppOpts } from './types';
-import { genRequestIdFromHeaders } from '../adapters';
-import { corsPlugin } from '../adapters/http/cors';
-import { multipartPlugin } from '../adapters/http/multipart';
-import { swaggerPlugin } from '../adapters/http/swagger';
-import { verifyGatePlugin } from '../adapters/security/verify-gate';
-import { notFoundPlugin } from '../adapters/errors/not-found';
-import { tenancyPlugin } from '../adapters/tenancy';
-import { errorHandlerPlugin } from '../adapters/errors/error-handler';
+import {
+  genRequestIdFromHeaders,
+  corsPlugin,
+  multipartPlugin,
+  swaggerPlugin,
+  verifyGatePlugin,
+  notFoundPlugin,
+  tenancyPlugin,
+  errorHandlerPlugin,
+  apiVersionHeadersHook,
+} from '../adapters';
 import { registerRoutes } from '../routes';
-import { apiVersionHeadersHook } from '../adapters/versioning/api-version-headers';
 
 export const buildApp = (opts: BuildAppOpts): FastifyInstance => {
   const environment = opts.environment ?? 'development';
