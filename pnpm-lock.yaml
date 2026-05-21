@@ -110,6 +110,9 @@ importers:
       '@hlb/data-sources':
         specifier: workspace:*
         version: link:../../packages/data-sources
+      '@hlb/security':
+        specifier: workspace:*
+        version: link:../../packages/security
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2

@@ -18,6 +18,7 @@ export const getAllProducts = async (params: Params): Promise<PaginatedResult<Pr
   const total = await model.countDocuments({ tenantId });
 
   const pages = Math.ceil(total / limit);
+
   const hasPreviousPage = page > 1;
   const previousPage = hasPreviousPage ? page - 1 : null;
   const hasNextPage = page < pages;

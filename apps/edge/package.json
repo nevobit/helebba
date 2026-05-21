@@ -19,6 +19,7 @@
     "@hlb/core-modules": "workspace:*",
     "@hlb/data-sources": "workspace:*",
     "@hlb/contracts": "workspace:*",
+    "@hlb/security": "workspace:*",
     "dotenv": "^17.4.2",
     "fastify": "catalog:"
   },
