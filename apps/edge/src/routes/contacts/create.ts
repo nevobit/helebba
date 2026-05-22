@@ -12,6 +12,6 @@ export const createContactRoute = makeFastifyRoute(
         const body = req.body as Partial<Contact>;
         const { userId } = req.auth as { userId: string };
         const contact = await createContact({...body, tenantId: req.tenant?.tenantId, userId});
-        reply.status(201).send(contact)
+        reply.status(201).send(contact);
     } 
-)
+);

@@ -3,6 +3,7 @@ import type {
   GroupId,
   PersistedSoftDeletableEntity,
   ProductId,
+  TenantId,
   UserId,
 } from '../../../common';
 
@@ -22,4 +23,5 @@ export interface Contact extends PersistedSoftDeletableEntity<ProductId, UserId>
   clientRecord: string;
   isPerson: boolean;
   companyId: CompanyId;
+  tenantId: TenantId
 }
