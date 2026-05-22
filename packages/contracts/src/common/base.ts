@@ -14,6 +14,7 @@ export type ProductId = Brand<string, 'ProductId'>;
 export type CategoryId = Brand<string, 'CategoryId'>;
 export type GroupId = Brand<string, 'GroupId'>;
 export type CompanyId = Brand<string, 'CompanyId'>;
+export type WarehouseId = Brand<string, 'WarehouseId'>;
 
 export interface BaseEntity<TId = EntityId> {
   readonly id: TId;

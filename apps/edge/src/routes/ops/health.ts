@@ -1,7 +1,5 @@
 import type { RouteOptions } from 'fastify';
-import { checkReadiness } from '../../adapters/utils/check-readiness';
 import { getServiceMeta } from '../../adapters';
-import { MonoContext, type Logger } from '@hlb/core-modules';
 import { deriveHealthStatus, evaluateReadiness } from '../../adapters/ops/readiness';
 import { getHealthIndicators } from '../../adapters/ops/health-indicators';
 

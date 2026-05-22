@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "NODE_OPTIONS='--conditions=development' tsup --config tsup.dev.config.ts --watch"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +23,8 @@
     "mongoose": "catalog:"
   },
   "devDependencies": {
-    "typescript": "catalog:",
-    "@types/node": "catalog:"
+    "@types/node": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   }
 }

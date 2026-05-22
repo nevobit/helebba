@@ -13,7 +13,10 @@
     }
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "NODE_OPTIONS='--conditions=development' tsup --config tsup.dev.config.ts --watch",
+    "build": "tsup",
+    "check-types": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
   },
   "keywords": [],
   "author": "",
@@ -24,7 +27,9 @@
     "@hlb/constant-definitions": "workspace:*"
   },
   "devDependencies": {
+    "@hlb/tooling": "workspace:*",
     "@types/node": "catalog:",
+    "tsup": "catalog:",
     "typescript": "catalog:"
   }
 }

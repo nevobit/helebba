@@ -1,5 +1,5 @@
 import { makeFastifyRoute, RouteMethod } from '@hlb/constant-definitions';
-import { verifyAccessToken } from '../../../../../packages/security/src/auth';
+import { verifyAccessToken } from '@hlb/security';
 import { Product } from '@hlb/contracts';
 import { createProduct } from '@hlb/business-logic';
 

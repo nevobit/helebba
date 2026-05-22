@@ -1,4 +1,4 @@
-import { type Product, ProductSchemaMongo } from '@hlb/contracts';
+import { ProductSchemaMongo, type Product } from '@hlb/contracts';
 import { getModel, Collection } from '@hlb/constant-definitions';
 
 export const createProduct = async (data: Product): Promise<Product> => {

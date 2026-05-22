@@ -6,6 +6,7 @@ import type {
   ProductId,
   CompanyId,
   TenantId,
+  WarehouseId,
 } from '../../../common';
 
 export enum ProductStockState {
@@ -38,7 +39,7 @@ export interface ProductVariant {
   variantId?: string;
 }
 
-interface CustomField {
+export interface CustomField {
   field: string;
   value: string;
 }
@@ -83,6 +84,6 @@ export interface Product extends PersistedSoftDeletableEntity<ProductId, UserId>
   warehouseId: WarehouseId;
   companyId: CompanyId;
   tenantId: TenantId;
-  notes: Note[];
+  // notes: Note[];
   variants: ProductVariant[];
 }

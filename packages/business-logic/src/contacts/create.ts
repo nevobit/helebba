@@ -7,8 +7,8 @@ export const createContact = async(data: Contact): Promise<Contact> => {
 
     const contact = new model(data);
 
-    const createContact = await contact.save();
+    const createdContact = await contact.save();
 
-    return createContact;
+    return createdContact;
 }
 

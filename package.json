@@ -17,6 +17,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:edge": "turbo run dev --parallel --concurrency=32 --filter=edge --filter='./packages/*' --filter='!@hlb/tooling'",
+    "dev:packages": "turbo run dev --parallel --concurrency=32 --filter='./packages/*' --filter='!@hlb/tooling'",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",

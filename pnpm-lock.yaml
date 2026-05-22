@@ -110,9 +110,15 @@ importers:
       '@hlb/data-sources':
         specifier: workspace:*
         version: link:../../packages/data-sources
+      '@hlb/security':
+        specifier: workspace:*
+        version: link:../../packages/security
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
+      envalid:
+        specifier: ^8.1.1
+        version: 8.1.1
       fastify:
         specifier: 'catalog:'
         version: 5.7.0
@@ -173,9 +179,15 @@ importers:
         specifier: workspace:*
         version: link:../contracts
     devDependencies:
+      '@hlb/tooling':
+        specifier: workspace:*
+        version: link:../tooling
       '@types/node':
         specifier: 'catalog:'
         version: 22.13.1
+      tsup:
+        specifier: 'catalog:'
+        version: 8.5.1(jiti@2.6.1)(postcss@8.4.31)(tsx@4.19.2)(typescript@6.0.3)(yaml@2.9.0)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -216,6 +228,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.13.1
+      tsup:
+        specifier: 'catalog:'
+        version: 8.5.1(jiti@2.6.1)(postcss@8.4.31)(tsx@4.19.2)(typescript@6.0.3)(yaml@2.9.0)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -1994,6 +2009,10 @@ packages:
   env-paths@2.2.1:
     resolution: {integrity: sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==}
     engines: {node: '>=6'}
+
+  envalid@8.1.1:
+    resolution: {integrity: sha512-vOUfHxAFFvkBjbVQbBfgnCO9d3GcNfMMTtVfgqSU2rQGMFEVqWy9GBuoSfHnwGu7EqR0/GeukQcL3KjFBaga9w==}
+    engines: {node: '>=18'}
 
   environment@1.1.0:
     resolution: {integrity: sha512-xUtoPkMggbz0MPyPiIWr1Kp4aeWJjDZ6SMvURhimjdZgsRuDplF5/s9hcgGhyXMhs+6vpnuoiZ2kFiu3FMnS8Q==}
@@ -5217,6 +5236,10 @@ snapshots:
       strip-ansi: 6.0.1
 
   env-paths@2.2.1: {}
+
+  envalid@8.1.1:
+    dependencies:
+      tslib: 2.8.1
 
   environment@1.1.0: {}
 
