@@ -2,7 +2,7 @@ import { Schema } from 'mongoose';
 import { type Contact } from './contact';
 import { opts } from '../../../common';
 
-export const ContactSchemaMongo = new Schema<Contact>(
+export const  ContactSchemaMongo = new Schema<Contact>(
   {
     customId: { type: String },
     name: { type: String, required: true },
