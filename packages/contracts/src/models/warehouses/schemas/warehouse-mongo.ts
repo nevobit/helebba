@@ -4,20 +4,13 @@ import { opts } from "../../../common";
 
 export const WarehouseSchemaMongo = new Schema<Warehouse>(
       {
-        customId: { type: String },
+        userId: {type: String},
         name: { type: String, required: true },
-        code: { type: String },
-        varnumber: { type: String },
-        tradeName: { type: String },
         email: { type: String },
         mobile: { type: String },
         phone: { type: String },
-        type: { type: String },
-        iban: { type: String },
-        swift: { type: String },
-        groupId: { type: String },
-        clientRecord: { type: String },
-        isPerson: { type: Boolean },
+        addres: { type: String },
+        isDefault: { type: Boolean },
         companyId: { type: String },
       },
     
