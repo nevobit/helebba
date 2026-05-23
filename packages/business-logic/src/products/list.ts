@@ -1,17 +1,16 @@
 import { Collection, getModel } from '@hlb/constant-definitions';
-import { PaginatedResult, Params, Product, ProductSchemaMongo } from '@hlb/contracts';
+import {
+  type PaginatedResult,
+  type Params,
+  type Product,
+  ProductSchemaMongo,
+} from '@hlb/contracts';
 
-/*
-page: Pagina que quiero mostrar
-limit: Cantidad de items por pagina
-search: Texto para filtrar los productos por nombre
-tenantId: Id del tenant al que pertenecen los productos
-*/
 export const getAllProducts = async (params: Params): Promise<PaginatedResult<Product>> => {
   const { page = 1, limit = 3, search = '', tenantId } = params;
   const model = getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo);
 
-  const skip = (page - 1) * limit; // 0, 10, 20, 30, ...
+  const skip = (page - 1) * limit;
 
   const products = await model.find({ tenantId }).skip(skip).limit(limit);
 
