@@ -1,5 +1,16 @@
 import { withPrefix } from "@hlb/constant-definitions";
 import { RouteOptions } from "fastify";
-import { createContactRoutes } from "./create";
+import { createContactRoute } from "./create";
+import { updateContactRoute } from "./update";
+import { deleteContactRoute } from "./delete";
+import { softDeleteContactRoute } from "./soft-delete";
+import { getContactByIdRoute } from "./get-by-id";
 
-export const contactRoutes: RouteOptions[] = withPrefix('/contacts', [createContactRoute]);
+
+export const contactRoutes: RouteOptions[] = withPrefix('/contacts', [
+    createContactRoute,
+    updateContactRoute,
+    deleteContactRoute,
+    softDeleteContactRoute,
+    getContactByIdRoute
+]);
