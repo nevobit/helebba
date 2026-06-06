@@ -1,0 +1,19 @@
+@layer overrides {
+  :root {
+    --ds-brand-primary: var(--ds-color-primary-600);
+    --ds-brand-primary-contrast: #ffffff;
+
+    --ds-fg-default: var(--ds-color-neutral-900);
+    --ds-fg-muted: var(--ds-color-neutral-700);
+    --ds-fg-inverse: var(--ds-color-neutral-0);
+
+    --ds-bg-canvas: var(--ds-color-neutral-0);
+    --ds-bg-subtle: var(--ds-color-neutral-50);
+    --ds-bg-elevated: var(--ds-color-neutral-0);
+    --ds-bg-inverse: var(--ds-color-neutral-900);
+
+    --ds-border-default: var(--ds-color-neutral-200);
+    --ds-border-strong: var(--ds-color-neutral-300);
+    --ds-outline-focus: var(--ds-color-primary-600);
+  }
+}

@@ -7,14 +7,14 @@ import {
 } from '@hlb/contracts';
 
 export const getAllProducts = async (params: Params): Promise<PaginatedResult<Product>> => {
-  const { page = 1, limit = 3, search = '', tenantId } = params;
+  const { page = 1, limit = 3, search = '', organizationId } = params;
   const model = getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo);
 
   const skip = (page - 1) * limit;
 
-  const products = await model.find({ tenantId }).skip(skip).limit(limit);
+  const products = await model.find({ organizationId }).skip(skip).limit(limit);
 
-  const total = await model.countDocuments({ tenantId });
+  const total = await model.countDocuments({ organizationId });
 
   const pages = Math.ceil(total / limit);
 

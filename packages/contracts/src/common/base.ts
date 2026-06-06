@@ -5,9 +5,9 @@ declare const brand: unique symbol;
 export type Brand<T, TBrand extends string> = T & { readonly [brand]: TBrand };
 
 export type EntityId = Brand<string, 'EntityId'>;
-export type TenantId = Brand<string, 'TenantId'>;
+export type OrganizationId = Brand<string, 'OrganizationId'>;
 export type UserId = Brand<string, 'UserId'>;
-export type WorkspaceId = Brand<string, 'WorkspaceId'>;
+export type BranchId = Brand<string, 'BranchId'>;
 export type ISODateTimeString = Brand<string, 'ISODateTimeString'>;
 export type ContactId = Brand<string, 'ContactId'>;
 export type ProductId = Brand<string, 'ProductId'>;
@@ -23,8 +23,8 @@ export interface BaseEntity<TId = EntityId> {
   readonly lifecycleStatus: LifecycleStatus;
 }
 
-export interface TenantScoped {
-  readonly tenantId: TenantId;
+export interface OrganizationScoped {
+  readonly organizationId: OrganizationId;
 }
 
 export interface AuditableEntity<TUserId = UserId> {
@@ -38,7 +38,7 @@ export interface SoftDeletableEntity<TUserId = UserId> {
 }
 
 export type PersistedEntity<TId = EntityId, TUserId = UserId> = BaseEntity<TId> &
-  TenantScoped &
+  OrganizationScoped &
   AuditableEntity<TUserId>;
 
 export type PersistedSoftDeletableEntity<TId = EntityId, TUserId = UserId> = PersistedEntity<
@@ -48,7 +48,7 @@ export type PersistedSoftDeletableEntity<TId = EntityId, TUserId = UserId> = Per
   SoftDeletableEntity<TUserId>;
 
 export interface Params {
-  tenantId?: TenantId;
+  organizationId?: OrganizationId;
   page?: number;
   limit?: number;
   search?: string;

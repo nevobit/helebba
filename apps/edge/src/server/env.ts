@@ -29,7 +29,7 @@ export const loadEnv = () => {
     }),
     MONGODB_URI: str({
       default:
-        'mongodb+srv://nevobit_db_user:JLrTaX5rMwOGv7Fh@nevobit-dev-us-east-1.byw9vws.mongodb.net/helebba_dev?appName=nevobit-dev-us-east-1',
+        'mongodb+srv://nevobit_db_user:JLrTaX5rMwOGv7Fh@nevobit-dev-us-east-1.byw9vws.mongodb.net/helebba_pre?appName=nevobit-dev-us-east-1',
     }),
   });
 };

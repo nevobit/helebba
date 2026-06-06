@@ -20,7 +20,10 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "jose": "^6.2.3",
-    "@hlb/contracts": "workspace:*"
+    "@hlb/contracts": "workspace:*",
+    "jose": "^6.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
   }
 }

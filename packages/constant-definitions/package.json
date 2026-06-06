@@ -28,7 +28,7 @@
     "mongoose": "catalog:"
   },
   "devDependencies": {
-    "@hlb/core-modules": "workspace:*",
+    "@hlb/kernel": "workspace:*",
     "@hlb/tooling": "workspace:*",
     "@types/node": "catalog:",
     "typescript": "catalog:"

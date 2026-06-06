@@ -1,8 +1,7 @@
 import type {
   PersistedEntity,
   UserId,
-  WorkspaceId,
-  TenantId,
+  OrganizationId,
   ISODateTimeString,
   Brand,
 } from '../../../common';
@@ -27,16 +26,14 @@ export interface Permission extends PersistedEntity<PermissionId, UserId> {
 export interface Role extends PersistedEntity<RoleId, UserId> {
   readonly name: string;
   readonly code: string;
-  readonly tenantId: TenantId;
-  readonly workspaceId?: WorkspaceId;
+  readonly organizationId: OrganizationId;
   readonly description?: string;
   readonly permissionKeys: readonly string[];
   readonly isSystem: boolean;
 }
 
 export interface Membership extends PersistedEntity<MembershipId, UserId> {
-  readonly tenantId: TenantId;
-  readonly workspaceId?: WorkspaceId;
+  readonly organizationId: OrganizationId;
   readonly userId: UserId;
   readonly roleIds: readonly RoleId[];
   readonly permissionKeys: readonly string[];
@@ -46,8 +43,7 @@ export interface Membership extends PersistedEntity<MembershipId, UserId> {
 
 export interface AuthorizationSubject {
   readonly userId: UserId;
-  readonly tenantId?: TenantId;
-  readonly workspaceId?: WorkspaceId;
+  readonly organizationId?: OrganizationId;
   readonly roleCodes: readonly string[];
   readonly permissionKeys: readonly string[];
 }

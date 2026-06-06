@@ -1,0 +1,120 @@
+@layer base {
+  html {
+    line-height: var(--ds-line-height-normal);
+  }
+
+  body {
+    font-family: var(--ds-font-sans);
+    font-size: var(--ds-font-size-16);
+    color: var(--ds-fg-default);
+    background: var(--ds-bg-canvas);
+    min-height: 100vh;
+    text-rendering: optimizeLegibility;
+  }
+
+  a {
+    color: var(--ds-accent);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--ds-font-sans);
+    color: var(--ds-fg-default);
+    margin: 0;
+  }
+
+  h1 {
+    font-size: var(--ds-font-size-36);
+    line-height: var(--ds-line-height-tight);
+    font-weight: var(--ds-font-weight-bold);
+  }
+
+  h2 {
+    font-size: var(--ds-font-size-30);
+    line-height: var(--ds-line-height-tight);
+    font-weight: var(--ds-font-weight-bold);
+  }
+
+  h3 {
+    font-size: var(--ds-font-size-24);
+    line-height: var(--ds-line-height-tight);
+    font-weight: var(--ds-font-weight-semibold);
+  }
+
+  h4 {
+    font-size: var(--ds-font-size-20);
+    font-weight: var(--ds-font-weight-semibold);
+  }
+
+  h5 {
+    font-size: var(--ds-font-size-18);
+    font-weight: var(--ds-font-weight-medium);
+  }
+
+  h6 {
+    font-size: var(--ds-font-size-16);
+    font-weight: var(--ds-font-weight-medium);
+  }
+
+  p {
+    margin: 0;
+  }
+
+  small {
+    font-size: var(--ds-font-size-12);
+    color: var(--ds-fg-muted);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th,
+  td {
+    padding: var(--ds-space-2) var(--ds-space-3);
+    border-bottom: 1px solid var(--ds-border-default);
+    text-align: left;
+  }
+
+  thead th {
+    font-weight: var(--ds-font-weight-medium);
+  }
+
+  input,
+  textarea,
+  select {
+    background: var(--ds-input-bg);
+    color: var(--ds-input-fg);
+    border: 1px solid var(--ds-input-border);
+    border-radius: var(--ds-radius-6);
+    padding-block: var(--ds-pad-2);
+    padding-inline: var(--ds-pad-3);
+  }
+
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  button:focus-visible {
+    outline: none;
+    box-shadow: var(--ds-focus-ring-field);
+    border-color: var(--ds-input-border-focus);
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--ds-accent) 22%, transparent);
+  }
+}

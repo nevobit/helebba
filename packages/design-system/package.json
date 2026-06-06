@@ -1,13 +1,63 @@
 {
-  "name": "design-system",
+  "name": "@hlb/design-system",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "files": [
+    "build/",
+    "!build/ts/**/*.tsbuildinfo",
+    "!build/ts/**/tests/",
+    "!build/ts/**/playground/",
+    "locales/"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
+  "main": "build/cjs/index.js",
+  "module": "build/esm/index.js",
+  "react-native": "native/index.ts",
+  "browser": "web/index.ts",
+  "esnext": "build/esnext/index.esnext",
+  "types": "build/ts/src/index.d.ts",
+  "exports": {
+    "./css/web.css": "./src/web/styles/index.css",
+    ".": "./src/index.ts"
   },
-  "keywords": [],
+  "scripts": {
+    "build:types": "tsc -b",
+    "build:js": "rollup -c",
+    "build:validate": "node scripts/build-validate.js",
+    "storybook": "storybook dev -p 6006",
+    "storybook-native": "start-storybook -p 7007",
+    "build-storybook": "storybook build",
+    "start-native": "react-native start"
+  },
+  "keywords": [
+    "react",
+    "components",
+    "component library"
+  ],
   "author": "",
   "license": "ISC",
-  "type": "module"
+  "peerDependencies": {
+    "react": ">=19.2.6",
+    "react-dom": ">=19.2.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.7",
+    "@babel/preset-react": "^7.29.7",
+    "@babel/runtime": "^7.29.7",
+    "@hlb/tooling": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/react": "^19.2.16",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  },
+  "dependencies": {
+    "lucide-react": "catalog:",
+    "normalize.css": "^8.0.1",
+    "vite-plugin-replace": "^0.1.1"
+  }
 }

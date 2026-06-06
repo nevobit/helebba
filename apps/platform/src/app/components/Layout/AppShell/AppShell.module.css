@@ -1,0 +1,8 @@
+.shell {
+    min-height: 100dvh;
+    background: var(--ds-background);
+    color: var(--ds-text);
+
+    display: grid;
+    grid-template-rows: 4rem 1fr;
+}

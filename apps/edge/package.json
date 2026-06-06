@@ -17,7 +17,7 @@
     "@hlb/business-logic": "workspace:*",
     "@hlb/constant-definitions": "workspace:*",
     "@hlb/contracts": "workspace:*",
-    "@hlb/core-modules": "workspace:*",
+    "@hlb/kernel": "workspace:*",
     "@hlb/data-sources": "workspace:*",
     "@hlb/security": "workspace:*",
     "dotenv": "^17.4.2",

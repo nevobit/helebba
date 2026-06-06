@@ -1,4 +1,4 @@
-import { Logger, MonoContext } from '@hlb/core-modules';
+import { Logger, MonoContext } from '@hlb/kernel';
 import mongoose from 'mongoose';
 import { configureMongoose } from './id';
 

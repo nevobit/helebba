@@ -1,4 +1,4 @@
-import { Logger, MonoContext } from '@hlb/core-modules';
+import { Logger, MonoContext } from '../../../../kernel/src';
 
 const LOGGER_KEY = `logger`;
 

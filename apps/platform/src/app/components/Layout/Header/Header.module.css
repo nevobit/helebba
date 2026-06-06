@@ -1,0 +1,29 @@
+.header {
+    background: var(--color-primary);
+    width: 100%;
+    height: 100%;
+    color: var(--color-white);
+    font-weight: 300;
+
+    display: flex;
+    align-items: center;
+    padding: 0 var(--ds-space-6);
+}
+
+.logo {
+    width: 18px;
+    height: 18px;
+}
+
+.header nav ul {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-8);
+}
+
+.header nav ul li {
+    list-style: none;
+    font-size: var(--ds-font-size-14);
+    line-height: var(--ds-line-height-normal);
+    font-weight: var(--ds-font-weight-light);
+}

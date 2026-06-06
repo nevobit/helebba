@@ -1,0 +1,22 @@
+@layer overrides {
+  [data-theme='dark'] {
+    --ds-brand-primary: var(--ds-color-primary-400);
+    --ds-brand-primary-contrast: #0b1220;
+
+    --ds-fg-default: var(--ds-color-neutral-100);
+    --ds-fg-muted: var(--ds-color-neutral-300);
+    --ds-fg-inverse: var(--ds-color-neutral-1000);
+
+    --ds-bg-canvas: var(--ds-color-neutral-1000);
+    --ds-bg-subtle: var(--ds-color-neutral-900);
+    --ds-bg-elevated: #141922;
+    --ds-bg-inverse: var(--ds-color-neutral-100);
+
+    --ds-border-default: #2a3240;
+    --ds-border-strong: #3a4456;
+    --ds-outline-focus: var(--ds-color-primary-400);
+
+    --ds-tooltip-bg: #0b1220;
+    --ds-tooltip-fg: #f5f7fb;
+  }
+}

@@ -1,0 +1,35 @@
+@layer base {
+  html {
+    font-size: 62.5%;
+  }
+
+  :root {
+    color-scheme: light;
+
+    --ds-density-scale: 1;
+
+    background-color: var(--ds-bg-canvas);
+    color: var(--ds-fg-default);
+
+    accent-color: var(--ds-accent);
+  }
+
+  :root,
+  :root[data-tenant] {
+    direction: ltr;
+  }
+  :root:dir(rtl) {
+    direction: rtl;
+  }
+
+  [data-density='compact'] {
+    --ds-density-scale: 0.85;
+  }
+  [data-density='comfortable'] {
+    --ds-density-scale: 1.15;
+  }
+
+  [data-theme='dark'] {
+    color-scheme: dark;
+  }
+}

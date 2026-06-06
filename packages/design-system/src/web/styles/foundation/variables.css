@@ -1,0 +1,39 @@
+@layer foundation {
+  :root {
+    /* Input */
+    --ds-input-bg: var(--color-surface);
+    --ds-input-fg: var(--color-text);
+    --ds-input-placeholder-fg: var(--color-text-soft);
+    --ds-input-border: var(--color-border);
+    --ds-input-border-hover: var(--color-border-strong);
+    --ds-input-border-focus: var(--color-focus);
+
+    /* Card */
+    --ds-card-bg: var(--color-surface);
+    --ds-card-border: var(--color-border);
+    --ds-card-shadow: var(--ds-elevation-card);
+
+    /* Tooltip */
+    --ds-tooltip-bg: var(--color-primary);
+    --ds-tooltip-fg: var(--color-white);
+
+    /* Popover */
+    --ds-popover-bg: var(--color-surface);
+    --ds-popover-border: var(--color-border);
+    --ds-popover-shadow: var(--ds-elevation-popover);
+
+    /* Modal */
+    --ds-modal-bg: var(--color-surface);
+    --ds-modal-border: var(--color-border);
+    --ds-modal-shadow: var(--ds-elevation-modal);
+    --ds-modal-backdrop: var(--color-backdrop);
+
+    /* Field */
+    --ds-field-label-fg: var(--color-text);
+    --ds-field-description-fg: var(--color-text-muted);
+    --ds-field-error-fg: var(--color-danger);
+
+    /* Focus */
+    --ds-focus-ring: var(--ds-focus-ring-action);
+  }
+}

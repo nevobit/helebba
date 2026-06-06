@@ -4,6 +4,7 @@
   "description": "",
   "main": "./dist/index.mjs",
   "types": "./dist/index.ts",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./src/index.ts",

@@ -1,5 +1,5 @@
 import os from 'node:os';
-import { MonoContext } from '@hlb/core-modules';
+import { MonoContext } from '@hlb/kernel';
 import type { ServiceMeta } from '@hlb/contracts';
 
 export const getServiceMeta = (): ServiceMeta => {

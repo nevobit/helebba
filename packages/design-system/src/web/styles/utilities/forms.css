@@ -1,0 +1,42 @@
+@layer utilities {
+  input[type='search']::-webkit-search-decoration,
+  input[type='search']::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  label {
+    font-weight: var(--ds-font-weight-medium);
+  }
+
+  input[disabled],
+  select[disabled],
+  textarea[disabled],
+  button[disabled] {
+    opacity: var(--ds-opacity-disabled);
+    cursor: not-allowed;
+  }
+
+  .u-field {
+    display: grid;
+    gap: var(--ds-space-2);
+  }
+  .u-field__hint {
+    color: var(--ds-fg-muted);
+    font-size: var(--ds-font-size-12);
+  }
+  .u-field__error {
+    color: var(--ds-danger);
+    font-size: var(--ds-font-size-12);
+  }
+
+  .u-field input:focus-visible,
+  .u-field select:focus-visible,
+  .u-field textarea:focus-visible {
+    box-shadow: var(--ds-focus-ring-field);
+    border-color: var(--ds-input-border-focus);
+  }
+}

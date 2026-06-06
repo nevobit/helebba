@@ -1,0 +1,45 @@
+@layer utilities {
+  .u-sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  .u-focus-ring:focus-visible {
+    outline: none;
+    box-shadow: var(--ds-focus-ring);
+    border-color: var(--ds-outline-focus);
+  }
+
+  .kbd {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-1);
+    padding: 0 0.4em;
+  }
+
+  .is-danger {
+    --surface: color-mix(in oklch, var(--danger) 8%, white);
+  }
+  .is-warning {
+    --surface: color-mix(in oklch, var(--warning) 8%, white);
+  }
+  .is-success {
+    --surface: color-mix(in oklch, var(--success) 8%, white);
+  }
+
+  @media (prefers-contrast: more) {
+    .u-contrast-outline:focus-visible {
+      outline: 0.2rem solid var(--ds-outline-focus);
+      outline-offset: 0.2rem;
+    }
+  }
+}

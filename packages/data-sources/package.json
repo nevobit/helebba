@@ -2,6 +2,7 @@
   "name": "@hlb/data-sources",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "./dist/index.mjs",
   "types": "./dist/index.ts",
   "exports": {
@@ -18,11 +19,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "uuid": "catalog:",
     "@hlb/contracts": "workspace:*",
-    "@hlb/core-modules": "workspace:*",
+    "@hlb/kernel": "workspace:*",
     "mongoose": "catalog:"
   }
 }

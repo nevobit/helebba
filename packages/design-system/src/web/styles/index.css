@@ -1,0 +1,29 @@
+@layer foundation, base, components, utilities, overrides;
+
+@import './foundation/all.css' layer(foundation);
+
+@import './base/reset.css' layer(base);
+@import './base/root.css' layer(base);
+@import './base/base.css' layer(base);
+
+@import './utilities/layout.css' layer(utilities);
+@import './utilities/a11y.css' layer(utilities);
+@import './utilities/animation.css' layer(utilities);
+@import './utilities/forms.css' layer(utilities);
+
+@import './themes/light.css' layer(overrides);
+@import './themes/dark.css' layer(overrides);
+
+:where(:focus-visible) {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

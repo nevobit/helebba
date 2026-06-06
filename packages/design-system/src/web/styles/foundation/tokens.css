@@ -1,0 +1,254 @@
+@layer foundation {
+  :root {
+    /* Primitive colors */
+    --ds-neutral-0: #ffffff;
+    --ds-neutral-50: #f8fafc;
+    --ds-neutral-100: #f1f5f9;
+    --ds-neutral-200: #e2e8f0;
+    --ds-neutral-300: #cbd5e1;
+    --ds-neutral-400: #94a3b8;
+    --ds-neutral-500: #64748b;
+    --ds-neutral-600: #475569;
+    --ds-neutral-700: #334155;
+    --ds-neutral-800: #1e293b;
+    --ds-neutral-900: #0f172a;
+
+    --ds-blue-500: #2563eb;
+    --ds-blue-600: #1d4ed8;
+
+    --ds-green-500: #22c55e;
+    --ds-amber-500: #f59e0b;
+    --ds-red-500: #ef4444;
+
+    /* Semantic colors */
+    --ds-color-primary: var(--ds-blue-500);
+    --ds-color-primary-hover: var(--ds-blue-600);
+
+    --ds-color-success: var(--ds-green-500);
+    --ds-color-warning: var(--ds-amber-500);
+    --ds-color-danger: var(--ds-red-500);
+    --ds-color-info: var(--ds-color-primary);
+
+    /* Foreground */
+    --ds-fg-default: var(--ds-neutral-900);
+    --ds-fg-muted: var(--ds-neutral-500);
+    --ds-fg-subtle: var(--ds-neutral-400);
+    --ds-fg-inverse: var(--ds-neutral-0);
+
+    /* Background */
+    --ds-bg-canvas: var(--ds-neutral-50);
+    --ds-bg-subtle: var(--ds-neutral-100);
+    --ds-bg-elevated: var(--ds-neutral-0);
+    --ds-bg-inverse: var(--ds-neutral-900);
+
+    /* Border */
+    --ds-border-default: var(--ds-neutral-200);
+    --ds-border-strong: var(--ds-neutral-300);
+    --ds-border-inverse: var(--ds-neutral-700);
+
+    /* Actions */
+    --ds-action-primary: var(--ds-color-primary);
+    --ds-action-primary-hover: var(--ds-color-primary-hover);
+    --ds-action-primary-active: color-mix(in srgb, var(--ds-action-primary) 82%, black);
+    --ds-action-primary-subtle: color-mix(in srgb, var(--ds-action-primary) 10%, transparent);
+    --ds-action-primary-subtle-hover: color-mix(in srgb, var(--ds-action-primary) 16%, transparent);
+    --ds-action-primary-contrast: var(--ds-neutral-0);
+
+    --ds-action-success: var(--ds-color-success);
+    --ds-action-success-hover: color-mix(in srgb, var(--ds-action-success) 90%, black);
+    --ds-action-success-active: color-mix(in srgb, var(--ds-action-success) 82%, black);
+    --ds-action-success-subtle: color-mix(in srgb, var(--ds-action-success) 10%, transparent);
+    --ds-action-success-subtle-hover: color-mix(in srgb, var(--ds-action-success) 16%, transparent);
+    --ds-action-success-contrast: var(--ds-neutral-0);
+
+    --ds-action-warning: var(--ds-color-warning);
+    --ds-action-warning-hover: color-mix(in srgb, var(--ds-action-warning) 90%, black);
+    --ds-action-warning-active: color-mix(in srgb, var(--ds-action-warning) 82%, black);
+    --ds-action-warning-subtle: color-mix(in srgb, var(--ds-action-warning) 10%, transparent);
+    --ds-action-warning-subtle-hover: color-mix(in srgb, var(--ds-action-warning) 16%, transparent);
+    --ds-action-warning-contrast: var(--ds-neutral-0);
+
+    --ds-action-danger: var(--ds-color-danger);
+    --ds-action-danger-hover: color-mix(in srgb, var(--ds-action-danger) 90%, black);
+    --ds-action-danger-active: color-mix(in srgb, var(--ds-action-danger) 82%, black);
+    --ds-action-danger-subtle: color-mix(in srgb, var(--ds-action-danger) 10%, transparent);
+    --ds-action-danger-subtle-hover: color-mix(in srgb, var(--ds-action-danger) 16%, transparent);
+    --ds-action-danger-contrast: var(--ds-neutral-0);
+
+    /* Public aliases */
+    --color-primary: var(--ds-neutral-900);
+    --color-primary-hover: var(--ds-neutral-800);
+
+    --color-accent: var(--ds-action-primary);
+    --color-accent-hover: var(--ds-action-primary-hover);
+
+    --color-success: var(--ds-action-success);
+    --color-success-hover: var(--ds-action-success-hover);
+
+    --color-warning: var(--ds-action-warning);
+    --color-warning-hover: var(--ds-action-warning-hover);
+
+    --color-danger: var(--ds-action-danger);
+    --color-danger-hover: var(--ds-action-danger-hover);
+
+    --color-background: var(--ds-bg-canvas);
+    --color-surface: var(--ds-bg-elevated);
+    --color-surface-muted: var(--ds-bg-subtle);
+
+    --color-border: var(--ds-border-default);
+    --color-border-strong: var(--ds-border-strong);
+
+    --color-text: var(--ds-fg-default);
+    --color-text-muted: var(--ds-fg-muted);
+    --color-text-soft: var(--ds-fg-subtle);
+
+    --color-white: var(--ds-neutral-0);
+    --color-black: var(--ds-neutral-900);
+    --color-focus: var(--ds-color-primary);
+    --color-overlay: rgb(15 23 42 / 0.5);
+    --color-backdrop: rgb(15 23 42 / 0.75);
+
+    /* Backward compatibility */
+    --ds-accent: var(--ds-action-primary);
+    --ds-accent-hover: var(--ds-action-primary-hover);
+    --ds-accent-contrast: var(--ds-action-primary-contrast);
+
+    --ds-success: var(--ds-action-success);
+    --ds-success-hover: var(--ds-action-success-hover);
+
+    --ds-warning: var(--ds-action-warning);
+    --ds-warning-hover: var(--ds-action-warning-hover);
+
+    --ds-danger: var(--ds-action-danger);
+    --ds-danger-hover: var(--ds-action-danger-hover);
+
+    --ds-color-fg-default: var(--ds-fg-default);
+    --ds-color-fg-muted: var(--ds-fg-muted);
+    --ds-color-fg-subtle: var(--ds-fg-subtle);
+    --ds-color-fg-inverse: var(--ds-fg-inverse);
+
+    --ds-color-bg-canvas: var(--ds-bg-canvas);
+    --ds-color-bg-subtle: var(--ds-bg-subtle);
+    --ds-color-bg-elevated: var(--ds-bg-elevated);
+    --ds-color-bg-inverse: var(--ds-bg-inverse);
+
+    --ds-color-border-default: var(--ds-border-default);
+    --ds-color-border-strong: var(--ds-border-strong);
+    --ds-color-border-inverse: var(--ds-border-inverse);
+
+    /* Typography */
+    --ds-font-sans:
+      Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+      'Segoe UI', Arial, 'Noto Sans', sans-serif;
+
+    --ds-font-mono:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+      monospace;
+
+    --ds-font-size-10: 1rem;
+    --ds-font-size-12: clamp(1.1rem, 1rem + 0.2vw, 1.2rem);
+    --ds-font-size-14: clamp(1.3rem, 1.1rem + 0.25vw, 1.4rem);
+    --ds-font-size-16: clamp(1.5rem, 1.2rem + 0.4vw, 1.6rem);
+    --ds-font-size-18: clamp(1.7rem, 1.4rem + 0.5vw, 1.8rem);
+    --ds-font-size-20: clamp(1.9rem, 1.6rem + 0.6vw, 2rem);
+    --ds-font-size-24: clamp(2.2rem, 1.8rem + 0.9vw, 2.4rem);
+    --ds-font-size-30: clamp(2.6rem, 2rem + 1.4vw, 3rem);
+    --ds-font-size-36: clamp(3rem, 2.4rem + 2vw, 3.6rem);
+
+    --ds-line-height-tight: 1.2;
+    --ds-line-height-normal: 1.5;
+    --ds-line-height-relaxed: 1.7;
+
+    --ds-font-weight-light: 300;
+    --ds-font-weight-regular: 400;
+    --ds-font-weight-medium: 500;
+    --ds-font-weight-semibold: 600;
+    --ds-font-weight-bold: 700;
+
+    /* Spacing */
+    --ds-density-scale: 1;
+
+    --ds-space-0: 0rem;
+    --ds-space-1: 0.4rem;
+    --ds-space-2: 0.8rem;
+    --ds-space-3: 1.2rem;
+    --ds-space-4: 1.6rem;
+    --ds-space-5: 2rem;
+    --ds-space-6: 2.4rem;
+    --ds-space-8: 3.2rem;
+    --ds-space-10: 4rem;
+    --ds-space-12: 4.8rem;
+    --ds-space-16: 6.4rem;
+
+    --ds-pad-2: calc(var(--ds-space-2) * var(--ds-density-scale));
+    --ds-pad-3: calc(var(--ds-space-3) * var(--ds-density-scale));
+    --ds-pad-4: calc(var(--ds-space-4) * var(--ds-density-scale));
+
+    /* Radius */
+    --ds-radius-0: 0;
+    --ds-radius-2: 0.2rem;
+    --ds-radius-4: 0.4rem;
+    --ds-radius-6: 0.6rem;
+    --ds-radius-8: 0.8rem;
+    --ds-radius-12: 1.2rem;
+    --ds-radius-full: 999.9rem;
+
+    /* Elevation */
+    --ds-shadow-1:
+      0 0.1rem 0.2rem rgb(15 23 42 / 0.06),
+      0 0.1rem 0.1rem rgb(15 23 42 / 0.04);
+
+    --ds-shadow-2:
+      0 0.2rem 0.6rem rgb(15 23 42 / 0.08),
+      0 0.2rem 0.2rem rgb(15 23 42 / 0.06);
+
+    --ds-shadow-3: 0 0.6rem 1.6rem rgb(15 23 42 / 0.12);
+
+    --ds-elevation-0: none;
+    --ds-elevation-1: var(--ds-shadow-1);
+    --ds-elevation-2: var(--ds-shadow-2);
+    --ds-elevation-3: var(--ds-shadow-3);
+
+    --ds-elevation-surface: var(--ds-elevation-0);
+    --ds-elevation-card: var(--ds-elevation-1);
+    --ds-elevation-popover: var(--ds-elevation-2);
+    --ds-elevation-modal: var(--ds-elevation-3);
+
+    /* Z-index */
+    --ds-z-base: 0;
+    --ds-z-sticky: 100;
+    --ds-z-dropdown: 1000;
+    --ds-z-modal: 10000;
+    --ds-z-toast: 11000;
+
+    /* Motion */
+    --ds-motion-duration-1: 120ms;
+    --ds-motion-duration-2: 180ms;
+    --ds-motion-duration-3: 240ms;
+    --ds-motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+    /* Focus */
+    --ds-outline-focus: var(--ds-color-primary);
+
+    --ds-focus-ring-action:
+      0 0 0 0.3rem color-mix(in srgb, var(--ds-outline-focus) 30%, transparent);
+
+    --ds-focus-ring-field:
+      0 0 0 0.3rem color-mix(in srgb, var(--ds-outline-focus) 30%, transparent);
+
+    --ds-focus-ring: var(--ds-focus-ring-action);
+
+    /* State */
+    --ds-state-hover-bg: var(--ds-action-primary-subtle);
+    --ds-state-active-bg: var(--ds-action-primary-subtle-hover);
+    --ds-state-disabled-opacity: 0.5;
+
+    --ds-opacity-muted: 0.7;
+    --ds-opacity-disabled: 0.5;
+
+    /* Border */
+    --ds-border-width-1: 0.1rem;
+    --ds-border-width-2: 0.2rem;
+    --ds-border-style: solid;
+  }
+}

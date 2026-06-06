@@ -24,6 +24,7 @@
   "type": "module",
   "dependencies": {
     "@hlb/contracts": "workspace:*",
+    "@hlb/security": "workspace:*",
     "@hlb/constant-definitions": "workspace:*"
   },
   "devDependencies": {

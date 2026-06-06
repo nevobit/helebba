@@ -1,0 +1,62 @@
+@layer foundation {
+  :root {
+    --ds-heading-letter-spacing: -0.01em;
+  }
+
+  .ds-text {
+    margin: 0;
+    color: var(--ds-color-fg-default);
+    font-family: var(--ds-font-sans);
+    line-height: var(--ds-line-height-normal);
+    font-size: var(--ds-font-size-16);
+  }
+
+  .ds-text--muted {
+    color: var(--ds-color-fg-muted);
+  }
+  .ds-text--small {
+    font-size: var(--ds-font-size-14);
+  }
+  .ds-text--code {
+    font-family: var(--ds-font-mono);
+    font-size: var(--ds-font-size-14);
+    background: var(--ds-color-neutral-100);
+    padding: 0 0.4rem;
+    border-radius: var(--ds-radius-4);
+  }
+
+  .ds-heading {
+    margin: 0;
+    font-family: var(--ds-font-sans);
+    color: var(--ds-color-fg-default);
+    letter-spacing: var(--ds-heading-letter-spacing);
+  }
+
+  .ds-heading--h1 {
+    font-size: var(--ds-font-size-36);
+    line-height: var(--ds-line-height-tight);
+    font-weight: var(--ds-font-weight-bold);
+  }
+  .ds-heading--h2 {
+    font-size: var(--ds-font-size-30);
+    line-height: var(--ds-line-height-tight);
+    font-weight: var(--ds-font-weight-bold);
+  }
+  .ds-heading--h3 {
+    font-size: var(--ds-font-size-24);
+    line-height: var(--ds-line-height-tight);
+    font-weight: var(--ds-font-weight-semibold);
+  }
+  .ds-heading--h4 {
+    font-size: var(--ds-font-size-20);
+    font-weight: var(--ds-font-weight-semibold);
+  }
+  .ds-heading--h5 {
+    font-size: var(--ds-font-size-18);
+    font-weight: var(--ds-font-weight-medium);
+  }
+  .ds-heading--h6 {
+    font-size: var(--ds-font-size-16);
+    font-weight: var(--ds-font-weight-medium);
+  }
+}

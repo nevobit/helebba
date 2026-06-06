@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { ConsoleTransport, Logger, LoggerTransportName, MonoContext } from '@hlb/core-modules';
+import { ConsoleTransport, Logger, LoggerTransportName, MonoContext } from '@hlb/kernel';
 import { buildApp } from './app';
 import os from 'os';
 import { version, name } from '../../package.json';

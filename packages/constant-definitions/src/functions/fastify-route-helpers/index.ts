@@ -21,10 +21,10 @@ type GlobalAccessClaims = {
 };
 
 type WorkspaceAccessClaims = {
-  kind: 'workspace';
+  kind: 'organization';
   typ: string;
   userId: string;
-  tenantId?: string;
+  organizationId?: string;
   membershipId?: string;
   roleId?: string;
   sessionId?: string;
@@ -46,29 +46,29 @@ type AuthMode = 'required' | 'optional' | 'none';
 type TenantMode = 'required' | 'optional' | 'none';
 
 export type RoutePolicies = {
-  tenant?: TenantMode;
+  organization?: TenantMode;
   auth?: AuthMode;
 };
 
 type MakeRouteOptions = Partial<Omit<RouteOptions, 'method' | 'url' | 'handler'>> & {
   auth?: AuthMode;
-  tenant?: TenantMode;
+  organization?: TenantMode;
 };
 
 type AuthFunction = (req: NormalizedRequest) => Promise<VerifyTokenResult>;
 
 declare module 'fastify' {
   interface FastifyRequest {
-    tenant?: {
-      tenantId: string;
+    organization?: {
+      organizationId: string;
       slug: string;
       mode: 'host' | 'path' | 'header';
     };
-    auth?: { userId: string; tenantId?: string; roleId?: string; claims: JwtClaims };
+    auth?: { userId: string; organizationId?: string; roleId?: string; claims: JwtClaims };
   }
 
   interface FastifyInstance {
-    requireTenant: () => (req: FastifyRequest) => Promise<void>;
+    requireOrganization: () => (req: FastifyRequest) => Promise<void>;
   }
 }
 
@@ -101,7 +101,7 @@ export const makeFastifyRoute = (
   handler: (req: FastifyRequest, reply: FastifyReply) => Promise<void>,
   extraOptions?: MakeRouteOptions,
 ): RouteOptions => {
-  const tenantPolicy: TenantMode = policies?.tenant ?? 'none';
+  const organizationPolicy: TenantMode = policies?.organization ?? 'none';
   const authPolicy: AuthMode = policies?.auth ?? (authFunction ? 'required' : 'none');
 
   const { auth = authFunction ? 'required' : 'none', ...fastifyOpts } = extraOptions ?? {};
@@ -110,8 +110,8 @@ export const makeFastifyRoute = (
     request: FastifyRequest,
     reply: FastifyReply,
   ) => {
-    if (tenantPolicy === 'required' && !request.tenant) {
-      return problem(reply, 400, 'Tenant is required', 'tenant_required');
+    if (organizationPolicy === 'required' && !request.organization) {
+      return problem(reply, 400, 'Organization is required', 'organization_required');
     }
 
     const normalizedReq = normalizeFastifyRequest(request);
@@ -125,17 +125,17 @@ export const makeFastifyRoute = (
       } else {
         const claims = result.claims;
 
-        if (claims.kind === 'workspace') {
+        if (claims.kind === 'organization') {
           request.auth = {
             userId: claims.userId,
-            tenantId: claims.tenantId,
+            organizationId: claims.organizationId,
             roleId: claims.roleId,
             claims,
           };
         } else {
           request.auth = {
             userId: claims.userId,
-            tenantId: undefined,
+            organizationId: undefined,
             roleId: undefined,
             claims,
           };

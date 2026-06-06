@@ -2,7 +2,7 @@ import fp from 'fastify-plugin';
 import type { FastifyPluginAsync } from 'fastify';
 import type { BuildAppOpts } from '../../server/types';
 import { getPathname } from '../observability';
-import { asError, getStatusCode } from '@hlb/core-modules';
+import { asError, getStatusCode } from '@hlb/kernel';
 
 const plugin: FastifyPluginAsync<BuildAppOpts> = async (app, opts) => {
   const environment = opts.environment ?? 'development';
