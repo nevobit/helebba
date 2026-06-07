@@ -12,7 +12,7 @@ type LoginInput = {
   userId: UserId;
   organizationId: OrganizationId;
 };
-export const switchOrganization = async (input: LoginInput) => {
+export const loginOrganization = async (input: LoginInput) => {
   console.log('Switching organization with input:', input);
   const model = getModel<Organization>(Collection.ORGANIZATIONS, OrganizationSchemaMongo);
   const organization = await model.findOne({

@@ -1,25 +1,14 @@
-import type {
-  CompanyId,
-  GroupId,
-  PersistedSoftDeletableEntity,
-  ProductId,
-  UserId,
-} from '../../../../common';
+import type { OrganizationId, PersistedSoftDeletableEntity, UserId } from '../../../../common';
 
-export interface Organization extends PersistedSoftDeletableEntity<ProductId, UserId> {
-  customId: string;
+export interface Organization extends PersistedSoftDeletableEntity<OrganizationId, UserId> {
   name: string;
-  code: string;
-  varnumber: string;
-  tradeName: string;
-  email: string;
-  mobile: string;
-  phone: string;
+  legalName: string;
   type: string;
-  iban: string;
-  swift: string;
-  groupId: GroupId;
-  clientRecord: string;
-  isPerson: boolean;
-  companyId: CompanyId;
+  country: string;
+  size: string;
+  structure: string;
+  website: string;
+  isPrincipal: boolean;
+  slug: string;
+  ownerId: UserId;
 }

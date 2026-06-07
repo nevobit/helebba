@@ -6,7 +6,7 @@ import path from 'path';
 
 declare module 'fastify' {
   interface FastifyRequest {
-    tenantContext: ReturnType<typeof resolveTenantContext> | null;
+    orgnanization: ReturnType<typeof resolveTenantContext> | null;
   }
 
   interface FastifyInstance {
@@ -15,16 +15,16 @@ declare module 'fastify' {
 }
 
 export const plugin: FastifyPluginAsync<BuildAppOpts> = async (app, opts) => {
-  const baseDomain = opts.baseDomain ?? process.env.BASE_DOMAIN ?? 'keystone.app';
+  const baseDomain = opts.baseDomain ?? process.env.BASE_DOMAIN ?? 'app.helebba.com';
   const pathPrefix = opts.pathPrefix ?? '/w';
   const apiPrefix = opts.apiPrefix ?? '/api/v1';
   const tenantHeaderName = opts.tenantHeaderName ?? 'x-tenant';
   const reservedSubdomains = opts.reservedSubdomains ?? ['www', 'api', 'admin', 'docs'];
 
-  app.decorateRequest('tenantContext', null);
+  app.decorateRequest('orgnanization', null);
 
   app.addHook('onRequest', async (req) => {
-    const tenantContext = resolveTenantContext({
+    const orgnanization = resolveTenantContext({
       baseDomain,
       pathPrefix,
       apiPrefix,
@@ -35,13 +35,13 @@ export const plugin: FastifyPluginAsync<BuildAppOpts> = async (app, opts) => {
       reservedSubdomains,
     });
 
-    req.tenantContext = tenantContext;
+    req.orgnanization = orgnanization;
 
     if ((opts.environment ?? 'dev') !== 'prod') {
       opts.logger?.debug('Tenant resolved', {
         requestId: req.id,
-        source: tenantContext.source,
-        tenantSlug: tenantContext.tenantSlug,
+        source: orgnanization.source,
+        tenantSlug: orgnanization.tenantSlug,
         method: req.method,
         path: req.url,
         url: req.url,
@@ -51,7 +51,7 @@ export const plugin: FastifyPluginAsync<BuildAppOpts> = async (app, opts) => {
   });
 
   app.decorate('requireTenant', async (req: FastifyRequest) => {
-    assertTenantContext(req.tenantContext!, 'Tenant is required for this route');
+    assertTenantContext(req.orgnanization!, 'Tenant is required for this route');
   });
 };
 

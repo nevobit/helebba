@@ -32,15 +32,6 @@ export interface Role extends PersistedEntity<RoleId, UserId> {
   readonly isSystem: boolean;
 }
 
-export interface Membership extends PersistedEntity<MembershipId, UserId> {
-  readonly organizationId: OrganizationId;
-  readonly userId: UserId;
-  readonly roleIds: readonly RoleId[];
-  readonly permissionKeys: readonly string[];
-  readonly title?: string;
-  readonly joinedAt: ISODateTimeString;
-}
-
 export interface AuthorizationSubject {
   readonly userId: UserId;
   readonly organizationId?: OrganizationId;

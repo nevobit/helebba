@@ -110,10 +110,6 @@ export const makeFastifyRoute = (
     request: FastifyRequest,
     reply: FastifyReply,
   ) => {
-    if (organizationPolicy === 'required' && !request.organization) {
-      return problem(reply, 400, 'Organization is required', 'organization_required');
-    }
-
     const normalizedReq = normalizeFastifyRequest(request);
     if (authPolicy !== 'none' && authFunction) {
       const result = await authFunction(normalizedReq);
@@ -126,6 +122,14 @@ export const makeFastifyRoute = (
         const claims = result.claims;
 
         if (claims.kind === 'organization') {
+          if (claims.organizationId) {
+            request.organization = {
+              organizationId: claims.organizationId,
+              slug: claims.organizationId,
+              mode: 'header',
+            };
+          }
+
           request.auth = {
             userId: claims.userId,
             organizationId: claims.organizationId,
@@ -144,6 +148,11 @@ export const makeFastifyRoute = (
     } else if (authPolicy === 'required' && !authFunction) {
       return problem(reply, 500, 'Auth is required but authFunction is null', 'auth_config_error');
     }
+
+    if (organizationPolicy === 'required' && !request.organization) {
+      return problem(reply, 400, 'Organization is required', 'organization_required');
+    }
+
     return handler(request, reply);
   };
 
