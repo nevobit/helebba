@@ -21,6 +21,7 @@ import { useTreasuryAccounts } from '@/modules/treasury/accounts/hooks';
 import { useCreatePayment, useDeletePayment } from '../hooks';
 import type { CreatePaymentPayload, PaymentRow } from '../types';
 import styles from '../screens/PaymentsList/PaymentsList.module.css';
+import type { ISODateTimeString } from '@hlb/contracts';
 
 type HeaderProps = {
   onCreatePayment: () => void;
@@ -152,7 +153,9 @@ export const PaymentsTable = ({
         width: 150,
         align: 'right',
         render: (value, row) => (
-          <span className={row.direction === 'outflow' ? styles.moneyNegative : styles.moneyPositive}>
+          <span
+            className={row.direction === 'outflow' ? styles.moneyNegative : styles.moneyPositive}
+          >
             {row.direction === 'outflow' ? '-' : '+'}
             {formatCurrency(Number(value ?? 0))}
           </span>
@@ -177,7 +180,9 @@ export const PaymentsTable = ({
         header: 'Estado',
         width: 130,
         render: (value, row) => (
-          <span className={`${styles.statusBadge} ${styles[`status${row.statusTone[0].toUpperCase()}${row.statusTone.slice(1)}`]}`}>
+          <span
+            className={`${styles.statusBadge} ${styles[`status${row.statusTone[0].toUpperCase()}${row.statusTone.slice(1)}`]}`}
+          >
             {String(value)}
           </span>
         ),
@@ -187,7 +192,9 @@ export const PaymentsTable = ({
         header: 'Conciliado',
         width: 130,
         render: (value, row) => (
-          <span className={`${styles.statusBadge} ${styles[`status${row.reconciliationTone[0].toUpperCase()}${row.reconciliationTone.slice(1)}`]}`}>
+          <span
+            className={`${styles.statusBadge} ${styles[`status${row.reconciliationTone[0].toUpperCase()}${row.reconciliationTone.slice(1)}`]}`}
+          >
             {String(value)}
           </span>
         ),
@@ -201,7 +208,11 @@ export const PaymentsTable = ({
         render: (_value, row) => (
           <Menus defaultPlacement="bottom-end">
             <Menus.Menu>
-              <Menus.Toggle id={`payment-actions-${row.id}`} aria-label={`Opciones de ${row.description}`} verticalIcon />
+              <Menus.Toggle
+                id={`payment-actions-${row.id}`}
+                aria-label={`Opciones de ${row.description}`}
+                verticalIcon
+              />
               <Menus.List id={`payment-actions-${row.id}`} placement="bottom-end">
                 <Menus.Item id={`view-${row.id}`} onClick={() => onOpenPayment(row)}>
                   Ver
@@ -311,18 +322,31 @@ export const Pagination = ({
         </strong>
         <label className={styles.pageSize}>
           <span>Filas por página</span>
-          <select value={pageSize} onChange={(event) => onPageSizeChange(Number(event.target.value))}>
+          <select
+            value={pageSize}
+            onChange={(event) => onPageSizeChange(Number(event.target.value))}
+          >
             <option value={50}>50</option>
             <option value={100}>100</option>
           </select>
         </label>
       </div>
       <div className={styles.paginationRight}>
-        <button type="button" disabled={page <= 1} onClick={() => onPageChange(page - 1)} aria-label="Página anterior">
+        <button
+          type="button"
+          disabled={page <= 1}
+          onClick={() => onPageChange(page - 1)}
+          aria-label="Página anterior"
+        >
           <ChevronLeft size={16} />
         </button>
         <strong>{page}</strong>
-        <button type="button" disabled={page >= pages} onClick={() => onPageChange(page + 1)} aria-label="Página siguiente">
+        <button
+          type="button"
+          disabled={page >= pages}
+          onClick={() => onPageChange(page + 1)}
+          aria-label="Página siguiente"
+        >
           <ChevronRight size={16} />
         </button>
       </div>
@@ -393,9 +417,9 @@ export const PaymentFormModal = ({ initialValues, onClose }: PaymentFormModalPro
       ? feeValue
       : feeType === 'custom'
         ? feeValue
-      : feeType === 'percentage'
-        ? grossAmount * (feeValue / 100)
-        : 0;
+        : feeType === 'percentage'
+          ? grossAmount * (feeValue / 100)
+          : 0;
   const netAmount =
     formState.direction === 'outflow'
       ? grossAmount + feeAmount
@@ -431,21 +455,24 @@ export const PaymentFormModal = ({ initialValues, onClose }: PaymentFormModalPro
         bankAccountId: formState.bankAccountId,
         paymentMethodId: selectedPaymentMethod ? String(selectedPaymentMethod.id) : undefined,
         financialFeePaymentMethodId:
-          selectedPaymentMethod?.financialFeeType && selectedPaymentMethod.financialFeeType !== 'none'
+          selectedPaymentMethod?.financialFeeType &&
+          selectedPaymentMethod.financialFeeType !== 'none'
             ? String(selectedPaymentMethod.id)
             : undefined,
         feeName:
-          selectedPaymentMethod?.financialFeeType && selectedPaymentMethod.financialFeeType !== 'none'
+          selectedPaymentMethod?.financialFeeType &&
+          selectedPaymentMethod.financialFeeType !== 'none'
             ? selectedPaymentMethod.name
             : undefined,
         feeType: selectedPaymentMethod?.financialFeeType ?? 'none',
         feeValue:
-          selectedPaymentMethod?.financialFeeType && selectedPaymentMethod.financialFeeType !== 'none'
+          selectedPaymentMethod?.financialFeeType &&
+          selectedPaymentMethod.financialFeeType !== 'none'
             ? Number(selectedPaymentMethod.financialFeeValue ?? 0)
             : 0,
         contactId: formState.contactId,
         contactName: contact?.name ?? formState.contactName,
-        date: new Date(formState.date).toISOString(),
+        date: new Date(formState.date).toISOString() as ISODateTimeString,
         description: formState.description || 'Pago',
         direction: formState.direction,
         documentId: formState.documentId || undefined,
@@ -461,7 +488,12 @@ export const PaymentFormModal = ({ initialValues, onClose }: PaymentFormModalPro
       <section className={styles.modal} role="dialog" aria-modal="true" aria-label="Nuevo pago">
         <header className={styles.modalHeader}>
           <h2>Nuevo</h2>
-          <button className={styles.closeButton} type="button" onClick={onClose} aria-label="Cerrar">
+          <button
+            className={styles.closeButton}
+            type="button"
+            onClick={onClose}
+            aria-label="Cerrar"
+          >
             <X size={20} />
           </button>
         </header>
@@ -553,11 +585,23 @@ export const PaymentFormModal = ({ initialValues, onClose }: PaymentFormModalPro
           </label>
 
           <footer className={styles.modalFooter}>
-            <Button type="button" theme="optional" variant="outline" size="medium" icon={<Search size={16} />}>
+            <Button
+              type="button"
+              theme="optional"
+              variant="outline"
+              size="medium"
+              icon={<Search size={16} />}
+            >
               Relacionar con un pago existente
             </Button>
             <div className={styles.modalFooterRight}>
-              <Button type="button" theme="optional" variant="outline" size="medium" onClick={onClose}>
+              <Button
+                type="button"
+                theme="optional"
+                variant="outline"
+                size="medium"
+                onClick={onClose}
+              >
                 Cancelar
               </Button>
               <Button type="submit" size="medium" loading={isCreatingPayment}>
@@ -599,7 +643,9 @@ export const PaymentDetailsModal = ({ onClose, row }: PaymentDetailsModalProps) 
           <span>Cuenta</span>
           <strong>{row.account}</strong>
         </div>
-        <strong className={row.direction === 'outflow' ? styles.detailTotalNegative : styles.detailTotal}>
+        <strong
+          className={row.direction === 'outflow' ? styles.detailTotalNegative : styles.detailTotal}
+        >
           {row.direction === 'outflow' ? '-' : '+'}
           {formatCurrency(row.total)}
         </strong>
@@ -639,7 +685,13 @@ export const PaymentDetailsModal = ({ onClose, row }: PaymentDetailsModalProps) 
       </div>
 
       <footer className={styles.modalFooter}>
-        <Button type="button" theme="optional" variant="outline" size="medium" icon={<Trash2 size={16} />}>
+        <Button
+          type="button"
+          theme="optional"
+          variant="outline"
+          size="medium"
+          icon={<Trash2 size={16} />}
+        >
           Eliminar
         </Button>
         <div className={styles.modalFooterRight}>
