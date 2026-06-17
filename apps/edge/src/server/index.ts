@@ -7,7 +7,8 @@ import type { Environment } from './types';
 import { loadEnv } from './env';
 import { buildApiPrefix } from '../adapters/versioning/api-versioning';
 import { initDataSources } from '@hlb/data-sources';
-import { setLogger } from '@hlb/constant-definitions';
+import { setLogger, setMailer } from '@hlb/constant-definitions';
+import { createMailer } from '@hlb/integrations';
 
 type BuildServer = ReturnType<typeof buildApp>;
 
@@ -48,11 +49,24 @@ MonoContext.setState({ name, version, secret: null });
 const main = async (): Promise<void> => {
   const env = loadEnv();
   const logger = createLogger(env.ENVIRONMENT);
+
   setLogger(logger);
+  setMailer(
+    createMailer({
+      provider: 'resend',
+      from: env.EMAIL_FROM,
+      replyTo: env.EMAIL_REPLY_TO,
+      RESEND_API_KEY: env.RESEND_API_KEY,
+    }),
+  );
 
   await initDataSources({
     mongoose: {
       mongoUri: env.MONGODB_URI,
+    },
+    redisdb: {
+      redisReadUrl: env.REDIS_URL,
+      redisWriteUrl: env.REDIS_URL,
     },
   });
 

@@ -7,14 +7,25 @@ import {
 } from '@hlb/contracts';
 
 export const getAllProducts = async (params: Params): Promise<PaginatedResult<Product>> => {
-  const { page = 1, limit = 3, search = '', organizationId } = params;
+  const { page = 1, limit = 100, search = '', organizationId } = params;
   const model = getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo);
 
   const skip = (page - 1) * limit;
+  const normalizedSearch = search.trim();
+  const searchFilter = normalizedSearch
+    ? {
+        $or: [
+          { name: { $regex: normalizedSearch, $options: 'i' } },
+          { description: { $regex: normalizedSearch, $options: 'i' } },
+          { sku: { $regex: normalizedSearch, $options: 'i' } },
+        ],
+      }
+    : {};
+  const filter = { organizationId, ...searchFilter };
 
-  const products = await model.find({ organizationId }).skip(skip).limit(limit);
+  const products = await model.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
 
-  const total = await model.countDocuments({ organizationId });
+  const total = await model.countDocuments(filter);
 
   const pages = Math.ceil(total / limit);
 

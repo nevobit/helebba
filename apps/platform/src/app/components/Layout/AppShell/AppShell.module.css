@@ -4,5 +4,13 @@
     color: var(--ds-text);
 
     display: grid;
-    grid-template-rows: 4rem 1fr;
+    grid-template-rows: 4.5rem minmax(0, 1fr);
+}
+
+.shell[data-has-topbar='true'] {
+    grid-template-rows: 3.7rem 4.5rem minmax(0, 1fr);
+}
+
+.content {
+    min-height: 0;
 }

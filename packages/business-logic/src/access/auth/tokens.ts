@@ -1,4 +1,15 @@
+import { createHash } from 'node:crypto';
+import { Collection, getModel } from '@hlb/constant-definitions';
+import {
+  type AccessSession,
+  LifecycleStatus,
+  SessionSchemaMongo,
+  type OrganizationId,
+  type UserId,
+  type ISODateTimeString,
+} from '@hlb/contracts';
 import { issueJwt } from '@hlb/security';
+import { createSession } from '../sessions';
 
 type TokenKind = 'global' | 'organization';
 
@@ -23,7 +34,7 @@ export async function issueTokens(input: IssueTokensInput) {
       userId,
       sessionId,
       organizationId: kind === 'organization' ? organizationId : undefined,
-      // membershipId: kind === "organization" ? membershipId : undefined,
+      membershipId: kind === 'organization' ? membershipId : undefined,
       roleId: kind === 'organization' ? roleId : undefined,
       jti: crypto.randomUUID(),
     },
@@ -52,5 +63,16 @@ export async function issueTokens(input: IssueTokensInput) {
     notBefore: '0s',
     keyid: 'refresh-hs256-v1',
   });
+
+  const refreshTokenHash = createHash('sha256').update(refreshToken).digest('hex');
+
+  await createSession({
+    userId: userId as UserId,
+    organizationId: organizationId as OrganizationId,
+    kind,
+    refreshTokenHash,
+    sessionId,
+  });
+
   return { accessToken, refreshToken };
 }

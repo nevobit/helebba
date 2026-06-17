@@ -1,6 +1,7 @@
 .wrap {
   /* border-radius: 14px; */
-  overflow: clip;
+  min-width: 100%;
+  overflow: visible;
   /* background: var(--ds-color-bg-elevated); */
   /* border: 1px solid var(--ds-color-border-default); */
   /* box-shadow: 0 10px 24px rgba(2, 6, 23, 0.06); */
@@ -13,7 +14,8 @@
   border-spacing: 0;
   overflow: hidden;
   font-size: 1.4rem;
-  margin-top: 0; /* en la imagen no hay gap arriba */
+  margin-top: 0;
+  /* en la imagen no hay gap arriba */
   background: var(--ds-color-bg-elevated);
 }
 
@@ -31,13 +33,8 @@
   border-bottom: 1px solid color-mix(in srgb, var(--ds-color-border-default) 75%, transparent);
   text-align: left;
   vertical-align: middle;
+  background: var(--ds-color-bg-canvas);
   white-space: nowrap;
-}
-
-/* separadores verticales sutiles (en la imagen se ven columnas bien delimitadas) */
-.th:not(:last-child),
-.td:not(:last-child) {
-  border-right: 1px solid color-mix(in srgb, var(--ds-color-border-default) 55%, transparent);
 }
 
 /* header typography */
@@ -45,7 +42,7 @@
   font-size: 1.3rem;
   font-weight: 500;
   color: color-mix(in srgb, var(--ds-color-fg-default) 78%, var(--ds-color-fg-muted));
-  background: var(--ds-color-bg-elevated);
+  background: var(--ds-color-bg-canvas);
   border-right: none !important;
 }
 
@@ -56,7 +53,8 @@
   gap: 6px;
   background: transparent;
   border: none;
-  padding: 0; /* sin padding para que quede centrado */
+  padding: 0;
+  /* sin padding para que quede centrado */
   cursor: pointer;
   font: inherit;
   color: inherit;
@@ -82,31 +80,37 @@
   background: color-mix(in srgb, var(--ds-accent) 6%, var(--ds-color-bg-elevated));
 }
 
+.clickableRow {
+  cursor: pointer;
+}
+
 /* ====== FILA ACTIVA / SELECCIONADA (azul como screenshot) ======
    Aplica esta clase a la <tr> cuando esté seleccionada.
    Si no puedes, al menos tendrás row:focus-within abajo.
 */
 .rowSelected {
-  background: color-mix(in srgb, var(--ds-accent) 10%, var(--ds-color-bg-elevated)) !important;
-  position: relative;
+  background: transparent !important;
 }
 
-.rowSelected::before,
-.rowSelected::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: color-mix(in srgb, var(--ds-accent) 85%, #3b82f6);
+.rowSelected .td {
+  background: var(--ds-color-bg-canvas) !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--ds-accent) 80%, #3b82f6),
+    inset 0 -1px 0 color-mix(in srgb, var(--ds-accent) 80%, #3b82f6);
 }
 
-.rowSelected::before {
-  top: -1px;
+.rowSelected .td:first-child {
+  box-shadow:
+    inset 1px 0 0 color-mix(in srgb, var(--ds-accent) 80%, #3b82f6),
+    inset 0 1px 0 color-mix(in srgb, var(--ds-accent) 80%, #3b82f6),
+    inset 0 -1px 0 color-mix(in srgb, var(--ds-accent) 80%, #3b82f6);
 }
 
-.rowSelected::after {
-  bottom: -1px;
+.rowSelected .td:last-child {
+  box-shadow:
+    inset -1px 0 0 color-mix(in srgb, var(--ds-accent) 80%, #3b82f6),
+    inset 0 1px 0 color-mix(in srgb, var(--ds-accent) 80%, #3b82f6),
+    inset 0 -1px 0 color-mix(in srgb, var(--ds-accent) 80%, #3b82f6);
 }
 
 /* fallback: si la fila tiene foco (por ejemplo click en un botón/checkbox dentro) */
@@ -145,21 +149,18 @@
   padding-right: 8px;
 }
 
-/* estado vacío */
 .state {
   padding: 18px;
   text-align: center;
   color: var(--ds-color-fg-muted);
 }
 
-/* footer/paginación */
 .footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 12px;
   gap: 12px;
-  border-top: 1px solid var(--ds-color-border-default);
   background: var(--ds-color-bg-elevated);
 }
 

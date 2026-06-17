@@ -1,0 +1,547 @@
+.page {
+  min-width: 0;
+  background: #ffffff;
+  color: #111827;
+  padding: 2.4rem 3.2rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  margin-bottom: 2.4rem;
+}
+
+.titleGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  margin: 0;
+  color: #111827;
+  font-size: 2.4rem;
+  font-weight: 600;
+  line-height: 1.18;
+}
+
+.headerActions,
+.toolbarLeft,
+.toolbarRight,
+.accountCell,
+.detailTitle,
+.detailActions,
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.headerActions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.iconButton {
+  width: 3.6rem;
+  min-width: 3.6rem;
+  padding-inline: 0;
+}
+
+.shortcut {
+  display: inline-grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  margin-left: 0.4rem;
+  border-radius: 0.3rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: currentColor;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.overview {
+  display: grid;
+  grid-template-columns: minmax(24rem, 32rem) 1fr;
+  gap: 2.4rem;
+  margin-bottom: 2.4rem;
+}
+
+.balancePanel,
+.chartPanel,
+.rulesPanel,
+.panel,
+.detailPanel,
+.summaryPanel {
+  border: 0.1rem solid #d9dee8;
+  border-radius: 0.8rem;
+  background: #ffffff;
+}
+
+.balancePanel,
+.rulesPanel,
+.summaryPanel {
+  padding: 2.4rem;
+}
+
+.balanceLabel,
+.muted,
+.tableWrap th,
+.detailLabel {
+  color: #667085;
+}
+
+.balanceValue {
+  margin: 2.4rem 0;
+  color: #111827;
+  font-size: 3.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.currencyBreakdown {
+  display: grid;
+  gap: 1.4rem;
+  background: #f6f7f9;
+  padding: 1.4rem;
+}
+
+.breakdownTitle {
+  color: #667085;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.breakdownRow,
+.movementRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+}
+
+.sideStack {
+  display: grid;
+  gap: 2.4rem;
+}
+
+.rulesPanel h2,
+.chartEmpty h2,
+.emptyState h2,
+.summaryPanel h2 {
+  margin: 0 0 0.8rem;
+  color: #111827;
+  font-size: 1.8rem;
+  font-weight: 650;
+}
+
+.chartPanel {
+  min-height: 27rem;
+  display: grid;
+  place-items: center;
+  padding: 2.4rem;
+}
+
+.chartEmpty {
+  max-width: 42rem;
+  text-align: center;
+}
+
+.chartIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 5.6rem;
+  height: 5.6rem;
+  margin-bottom: 1.4rem;
+  border-radius: 50%;
+  background: #eef4ff;
+  color: #2563eb;
+}
+
+.panel {
+  display: grid;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  min-height: 6rem;
+  padding: 1.2rem;
+  border-bottom: 0.1rem solid #d9dee8;
+}
+
+.selectLabel {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.selectLabel span {
+  position: absolute;
+  width: 0.1rem;
+  height: 0.1rem;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.selectLabel select,
+.selectField select {
+  min-height: 3.6rem;
+  border: 0.1rem solid #cfd6e2;
+  border-radius: 0.8rem;
+  background: #ffffff;
+  color: #111827;
+  font: inherit;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.selectLabel select {
+  min-width: 16rem;
+  padding: 0 3.2rem 0 1.2rem;
+}
+
+.searchField {
+  width: 22rem;
+}
+
+.tableWrap {
+  position: relative;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.tableWrap table {
+  min-width: 96rem;
+}
+
+.tableWrap th {
+  height: 4.4rem;
+  background: #f3f4f6;
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.tableWrap td {
+  height: 5.6rem;
+  color: #111827;
+  font-size: 1.3rem;
+}
+
+.logoMark {
+  display: inline-grid;
+  place-items: center;
+  width: 3.2rem;
+  min-width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 0.6rem;
+  background: #eef4ff;
+  color: #2563eb;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.accountName {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.accountName strong {
+  font-weight: 650;
+}
+
+.statusDot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: 0.6rem;
+  border-radius: 50%;
+  background: #d0d5dd;
+}
+
+.connected {
+  background: #12b76a;
+}
+
+.columnMenu {
+  position: absolute;
+  top: 1.4rem;
+  right: 1.2rem;
+  display: grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  color: #667085;
+  pointer-events: none;
+}
+
+.feedback,
+.emptyState {
+  display: grid;
+  place-items: center;
+  min-height: 28rem;
+  padding: 3.2rem;
+  text-align: center;
+}
+
+.modal {
+  overflow: hidden;
+}
+
+.modalHeader {
+  min-height: 7.2rem;
+}
+
+.modalTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin: 0;
+  color: #111827;
+  font-size: 2.4rem;
+  font-weight: 650;
+}
+
+.modalBody {
+  padding: 2.4rem;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.typeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+
+.typeCard,
+.bankOption {
+  appearance: none;
+  border: 0.1rem solid #d9dee8;
+  border-radius: 0.8rem;
+  background: #ffffff;
+  color: #111827;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.typeCard {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.6rem;
+  min-height: 13rem;
+  padding: 2rem;
+}
+
+.typeCard:hover,
+.bankOption:hover {
+  border-color: #2563eb;
+  background: #f8fbff;
+}
+
+.typeCard h3,
+.bankOption strong {
+  margin: 0.8rem 0 0.4rem;
+  font-size: 1.7rem;
+  font-weight: 650;
+}
+
+.typeCard p {
+  margin: 0;
+  color: #667085;
+  line-height: 1.45;
+}
+
+.bankList {
+  display: grid;
+  margin: -2.4rem;
+}
+
+.bankOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 0 0 0.1rem;
+  border-radius: 0;
+  padding: 1.8rem 2.4rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+
+.selectField {
+  display: grid;
+  gap: 0.6rem;
+  color: #344054;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.selectField select {
+  min-height: 4rem;
+  padding: 0 1.2rem;
+}
+
+.errorText {
+  margin-top: 1.2rem;
+  color: #b42318;
+  font-size: 1.3rem;
+  font-weight: 650;
+}
+
+.detailLayout {
+  display: grid;
+  grid-template-columns: 1fr minmax(26rem, 34rem);
+  gap: 2.4rem;
+}
+
+.detailPanel {
+  min-height: 58rem;
+  padding: 2.4rem;
+}
+
+.detailTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.6rem;
+  margin-bottom: 2rem;
+}
+
+.accountingCode {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3.6rem;
+  color: #667085;
+  font-size: 1.3rem;
+  white-space: nowrap;
+}
+
+.balance {
+  margin: 0.6rem 0 1rem;
+  color: #111827;
+  font-size: 3.2rem;
+  font-weight: 750;
+  line-height: 1;
+}
+
+.tabs {
+  align-items: stretch;
+  margin: 2rem 0;
+  gap: 0;
+}
+
+.tabs button {
+  border-radius: 0;
+}
+
+.tabs button:first-child {
+  border-radius: 0.6rem 0 0 0.6rem;
+}
+
+.tabs button:last-child {
+  border-radius: 0 0.6rem 0.6rem 0;
+}
+
+.tabs button[data-active] {
+  background: #eef4ff;
+  color: #2563eb;
+  border-color: #c7d7fe;
+}
+
+.summaryStack,
+.movementList {
+  display: grid;
+  gap: 1.6rem;
+}
+
+.summaryPanel h2 {
+  font-size: 1.7rem;
+}
+
+.movementRow {
+  border: 0.1rem solid #e4e7ec;
+  border-radius: 0.8rem;
+  padding: 1.2rem;
+}
+
+.movementMain {
+  min-width: 0;
+}
+
+.movementMain strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  overflow: hidden;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moneyPositive {
+  color: #067647;
+  font-weight: 700;
+}
+
+.moneyNegative {
+  color: #b42318;
+  font-weight: 700;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  border-radius: 999rem;
+  background: #eef4ff;
+  color: #2563eb;
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 0.2rem 0.8rem;
+}
+
+.statusSuccess {
+  background: #ecfdf3;
+  color: #067647;
+}
+
+@media (max-width: 980px) {
+  .overview,
+  .detailLayout,
+  .formGrid,
+  .typeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar,
+  .detailTop,
+  .header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .toolbarRight,
+  .toolbarLeft,
+  .detailActions {
+    flex-wrap: wrap;
+  }
+}

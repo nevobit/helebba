@@ -12,9 +12,18 @@ export type ISODateTimeString = Brand<string, 'ISODateTimeString'>;
 export type ContactId = Brand<string, 'ContactId'>;
 export type ProductId = Brand<string, 'ProductId'>;
 export type CategoryId = Brand<string, 'CategoryId'>;
+export type BrandId = Brand<string, 'BrandId'>;
+export type PaymentMethodId = Brand<string, 'PaymentMethodId'>;
+export type PaymentId = Brand<string, 'PaymentId'>;
+export type BankingAccountId = Brand<string, 'BankingAccountId'>;
+export type TreasuryMovementId = Brand<string, 'TreasuryMovementId'>;
 export type GroupId = Brand<string, 'GroupId'>;
 export type CompanyId = Brand<string, 'CompanyId'>;
 export type WarehouseId = Brand<string, 'WarehouseId'>;
+export type SubscriptionId = Brand<string, 'SubscriptionId'>;
+export type PriceListId = Brand<string, 'PriceListId'>;
+export type ServiceId = Brand<string, 'ServiceId'>;
+export type DocumentId = Brand<string, 'DocumentId'>;
 
 export interface BaseEntity<TId = EntityId> {
   readonly id: TId;
@@ -47,9 +56,15 @@ export type PersistedSoftDeletableEntity<TId = EntityId, TUserId = UserId> = Per
 > &
   SoftDeletableEntity<TUserId>;
 
-export interface Params {
-  organizationId?: OrganizationId;
+export type PaginationParams = {
   page?: number;
   limit?: number;
   search?: string;
-}
+};
+
+export type OrganizationParams = {
+  organizationId?: OrganizationId;
+};
+
+export type Params<TExtra extends Record<string, unknown> = Record<string, never>> =
+  PaginationParams & OrganizationParams & TExtra;

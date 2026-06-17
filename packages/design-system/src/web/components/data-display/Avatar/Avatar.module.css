@@ -1,0 +1,78 @@
+@layer components {
+  .root {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    color: var(--ds-fg-inverse);
+    background: #f39523;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .circle {
+    border-radius: 50%;
+  }
+
+  .rounded {
+    border-radius: var(--ds-radius-8);
+  }
+
+  .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .initials {
+    font-weight: var(--ds-font-weight-semibold);
+  }
+
+  .placeholder {
+    font-size: 1.6rem;
+  }
+
+  .xs {
+    width: 2.4rem;
+    height: 2.4rem;
+    font-size: 1rem;
+  }
+
+  .sm {
+    width: 3.2rem;
+    height: 3.2rem;
+    font-size: 1.2rem;
+  }
+
+  .md {
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.4rem;
+  }
+
+  .lg {
+    width: 4.8rem;
+    height: 4.8rem;
+    font-size: 1.6rem;
+  }
+
+  .xl {
+    width: 6.4rem;
+    height: 6.4rem;
+    font-size: 2rem;
+  }
+
+  .badge {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translate(25%, 25%);
+    background: var(--ds-bg-elevated);
+    border-radius: 9999px;
+    box-shadow: var(--ds-shadow-1);
+    min-width: 1rem;
+    min-height: 1rem;
+    display: inline-grid;
+    place-items: center;
+    padding: 0.2rem;
+  }
+}

@@ -1,0 +1,532 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    grid-template-rows: 7rem 1fr;
+    background: #cfd5df;
+    overflow: auto;
+}
+
+.main {
+    display: grid;
+    grid-template-columns: minmax(70rem, 1fr) 58rem;
+    min-width: 0;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.6rem;
+    border-bottom: .1rem solid #d9dee8;
+    background: #ffffff;
+    padding: 0 3.2rem;
+    width: 100%;
+}
+
+.title {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.2rem;
+    min-width: 0;
+    color: #111827;
+    font-size: 2rem;
+    font-weight: 750;
+}
+
+.closeButton {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    background: transparent;
+    color: #344054;
+    cursor: pointer;
+}
+
+.approved {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    border-radius: .4rem;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: .5rem .9rem;
+}
+
+.topActions {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+}
+
+.iconButton {
+    width: 3.6rem;
+    min-width: 3.6rem;
+    padding-inline: 0;
+}
+
+.previewArea {
+    display: grid;
+    place-items: start center;
+    overflow: auto;
+    padding: 1.2rem 3.2rem 5rem;
+    overflow: scroll;
+}
+
+.paper {
+    width: min(99rem, 100%);
+    min-height: 118rem;
+    border-top: .4rem solid #111827;
+    background: #ffffff;
+    color: #000000;
+    padding: 5rem 5.2rem;
+}
+
+.paper h2 {
+    margin: 0 0 2.8rem;
+    font-size: 3.8rem;
+    font-weight: 800;
+}
+
+.paperMeta {
+    display: grid;
+    grid-template-columns: 11rem 18rem;
+    gap: .8rem 2rem;
+    margin-bottom: 4.6rem;
+    font-size: 1.5rem;
+}
+
+.paperMeta strong {
+    font-weight: 800;
+}
+
+.paperParties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-bottom: 7rem;
+    font-size: 1.5rem;
+}
+
+.party {
+    display: grid;
+    align-content: start;
+    gap: .4rem;
+}
+
+.party strong {
+    font-weight: 800;
+}
+
+.invoiceTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1.3rem;
+}
+
+.invoiceTable th {
+    border-bottom: .2rem solid #111827;
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 1rem 0;
+    text-align: left;
+}
+
+.invoiceTable td {
+    padding: 1.4rem 0;
+    vertical-align: top;
+}
+
+.invoiceTable td:not(:first-child),
+.invoiceTable th:not(:first-child) {
+    text-align: right;
+}
+
+.totals {
+    display: grid;
+    justify-content: end;
+    gap: 1.2rem;
+    margin-top: 3rem;
+    margin-left: auto;
+    width: 44rem;
+}
+
+.totals div {
+    display: flex;
+    justify-content: space-between;
+    border-top: .2rem solid #111827;
+    padding-top: 1.2rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.conditions {
+    margin-top: 5rem;
+    font-size: 1.5rem;
+}
+
+.side {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-width: 0;
+    border-left: .1rem solid #d9dee8;
+    background: #ffffff;
+    overflow: scroll;
+}
+
+.tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .8rem;
+    border-bottom: .1rem solid #e4e7ec;
+    padding: 2rem;
+}
+
+.tabs button {
+    min-height: 3.6rem;
+    border: 0;
+    border-radius: .4rem;
+    background: #f3f4f6;
+    color: #111827;
+    font: inherit;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.tabs button:first-child {
+    background: #1f2937;
+    color: #ffffff;
+}
+
+.panel {
+    overflow: auto;
+    padding: 0 2rem 3rem;
+}
+
+.summaryHeader {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: .1rem solid #e4e7ec;
+    padding: 1.4rem 0 1.8rem;
+}
+
+.summaryHeader h3 {
+    margin: 0;
+    color: #111827;
+    font-size: 1.7rem;
+}
+
+.summaryHeader strong {
+    color: #111827;
+    font-size: 2rem;
+}
+
+.infoList,
+.section {
+    border-bottom: .1rem solid #e4e7ec;
+    padding: 2rem 0;
+}
+
+.infoRow {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    color: #111827;
+    font-size: 1.4rem;
+    padding: .6rem 0;
+}
+
+.infoRow span {
+    color: #344054;
+}
+
+.infoRow strong,
+.infoRow a {
+    color: #1d4ed8;
+    font-weight: 650;
+    text-align: right;
+    text-decoration: none;
+}
+
+.paymentBox {
+    display: grid;
+    gap: .9rem;
+    border-radius: .4rem;
+    background: #1f2937;
+    color: #ffffff;
+    padding: 1.8rem;
+}
+
+.paymentBox strong {
+    font-size: 1.5rem;
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.sectionHeader h3 {
+    margin: 0;
+    color: #111827;
+    font-size: 1.5rem;
+}
+
+.sectionHeader button {
+    border: 0;
+    background: transparent;
+    color: #2563eb;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.4rem;
+}
+
+.accountingTable {
+    width: 100%;
+    border-collapse: collapse;
+    border: .1rem solid #e4e7ec;
+    border-radius: .8rem;
+    /* overflow: hidden; */
+    font-size: 1.4rem;
+}
+
+.accountingTable th,
+.accountingTable td {
+    border-bottom: .1rem solid #e4e7ec;
+    padding: 1.2rem;
+    text-align: right;
+}
+
+.accountingTable th:first-child,
+.accountingTable td:first-child {
+    text-align: left;
+}
+
+.modalBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: grid;
+    place-items: center;
+    background: rgba(17, 24, 39, .48);
+    padding: 2.4rem;
+}
+
+.sendModal {
+    display: grid;
+    grid-template-rows: auto 1fr auto auto auto;
+    width: min(88rem, 100%);
+    max-height: min(82rem, calc(100vh - 4.8rem));
+    overflow: hidden;
+    border-radius: .8rem;
+    background: #ffffff;
+    box-shadow: 0 2.4rem 6rem rgba(15, 23, 42, .22);
+}
+
+.sendModalHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.6rem;
+    border-bottom: .1rem solid #e4e7ec;
+    padding: 2rem 2.4rem 1.6rem;
+}
+
+.sendModalHeader h2 {
+    margin: 0;
+    color: #111827;
+    font-size: 2.3rem;
+    font-weight: 800;
+}
+
+.sendModalHeader p {
+    margin: .5rem 0 0;
+    color: #344054;
+    font-size: 1.4rem;
+}
+
+.sendModalClose {
+    display: grid;
+    place-items: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    border: 0;
+    border-radius: .4rem;
+    background: transparent;
+    color: #667085;
+    cursor: pointer;
+}
+
+.sendModalClose:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.sendComposer {
+    overflow: auto;
+    padding: 0 2.4rem;
+}
+
+.sendLine {
+    display: grid;
+    grid-template-columns: 6.4rem 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    min-height: 4.4rem;
+    border-bottom: .1rem solid #e4e7ec;
+    color: #111827;
+    font-size: 1.4rem;
+}
+
+.sendLine span {
+    font-weight: 650;
+}
+
+.sendLine input {
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    color: #111827;
+    font: inherit;
+}
+
+.sendLine input::placeholder,
+.sendMessage::placeholder {
+    color: #98a2b3;
+}
+
+.copyToggle {
+    border: 0;
+    background: transparent;
+    color: #2563eb;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.3rem;
+    font-weight: 650;
+}
+
+.sendMessage {
+    width: 100%;
+    min-height: 30rem;
+    resize: vertical;
+    border: 0;
+    outline: 0;
+    color: #344054;
+    font: inherit;
+    font-size: 1.4rem;
+    line-height: 1.6;
+    padding: 1.6rem 0;
+}
+
+.sendOptions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 0 2.4rem 1.8rem;
+    border-radius: .6rem;
+    background: #f6f8fb;
+    padding: 1.6rem 2rem;
+}
+
+.sendOptions > div {
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    color: #111827;
+    font-size: 1.4rem;
+}
+
+.sendOptions strong {
+    font-weight: 750;
+}
+
+.documentPill {
+    width: fit-content;
+    border-radius: .4rem;
+    background: #ffffff;
+    color: #2563eb;
+    font-weight: 650;
+    padding: .7rem 1rem;
+}
+
+.sendOptions select {
+    min-height: 3.6rem;
+    border: .1rem solid #d0d5dd;
+    border-radius: .4rem;
+    background: #ffffff;
+    color: #111827;
+    font: inherit;
+    padding: 0 1rem;
+}
+
+.sendError {
+    margin: 0 2.4rem 1.4rem;
+    border-radius: .4rem;
+    background: #fef2f2;
+    color: #b42318;
+    font-size: 1.4rem;
+    padding: 1rem 1.2rem;
+}
+
+.sendModalFooter {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.2rem;
+    border-top: .1rem solid #e4e7ec;
+    padding: 1.6rem 2.4rem 2rem;
+}
+
+.sendModalFooter > button {
+    border: 0;
+    background: transparent;
+    color: #2563eb;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.sendModalFooter > button:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+@media (max-width: 1200px) {
+    .overlay {
+        grid-template-columns: 1fr;
+        /* overflow: auto; */
+    }
+
+    .side {
+        border-left: 0;
+    }
+}
+
+@media (max-width: 760px) {
+    .sendModal {
+        max-height: calc(100vh - 2rem);
+    }
+
+    .sendLine {
+        grid-template-columns: 1fr;
+        gap: .7rem;
+        padding: 1rem 0;
+    }
+
+    .copyToggle {
+        justify-self: start;
+    }
+
+    .sendOptions {
+        grid-template-columns: 1fr;
+    }
+}

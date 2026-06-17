@@ -1,18 +1,31 @@
-import type { GroupId, PersistedSoftDeletableEntity, ProductId } from '../../../../common';
+import type {
+  GroupId,
+  ISODateTimeString,
+  PersistedSoftDeletableEntity,
+  ProductId,
+} from '../../../../common';
 
-export interface User extends PersistedSoftDeletableEntity<ProductId> {
-  customId: string;
-  name: string;
-  code: string;
-  varnumber: string;
-  tradeName: string;
+interface GoogleProvider {
+  sub: string;
   email: string;
-  mobile: string;
+}
+export interface Provider {
+  email: string;
+  google: GoogleProvider;
+  apple: string;
+  facebook: string;
+}
+export interface User extends PersistedSoftDeletableEntity<ProductId> {
+  name: string;
   phone: string;
-  type: string;
-  iban: string;
-  swift: string;
-  groupId: GroupId;
-  clientRecord: string;
-  isPerson: boolean;
+  newsletter: boolean;
+  photo: string;
+  provider: Provider;
+  username: string;
+  lastLogin: ISODateTimeString;
+  loginAttempts: number;
+  twoFactorAuth: boolean;
+  locked: boolean;
+  identification: string;
+  email: string;
 }

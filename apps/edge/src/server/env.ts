@@ -18,6 +18,11 @@ export const loadEnv = () => {
 
     BASE_DOMAIN: str({ default: 'keystone.app' }),
 
+    RESEND_API_KEY: str(),
+    EMAIL_FROM: str({ default: 'Helebba <no-reply@lytos.app>' }),
+    EMAIL_REPLY_TO: str({ default: '' }),
+    EMAIL_ASSETS_BASE_URL: str({ default: 'http://localhost:5174' }),
+
     API_KEY_PEPPER: str(),
     API_HMAC_SECRET: str(),
     DEV_API_KEYS: str({ default: '' }),
@@ -29,7 +34,7 @@ export const loadEnv = () => {
     }),
     MONGODB_URI: str({
       default:
-        'mongodb+srv://nevobit_db_user:JLrTaX5rMwOGv7Fh@nevobit-dev-us-east-1.byw9vws.mongodb.net/helebba_pre?appName=nevobit-dev-us-east-1',
+        'mongodb+srv://nevobit_db_user:JLrTaX5rMwOGv7Fh@nevobit-dev-us-east-1.byw9vws.mongodb.net/helebba_test?appName=nevobit-dev-us-east-1',
     }),
   });
 };

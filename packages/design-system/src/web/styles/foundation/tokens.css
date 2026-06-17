@@ -36,9 +36,9 @@
     --ds-fg-inverse: var(--ds-neutral-0);
 
     /* Background */
-    --ds-bg-canvas: var(--ds-neutral-50);
+    --ds-bg-canvas: var(--ds-neutral-0);
     --ds-bg-subtle: var(--ds-neutral-100);
-    --ds-bg-elevated: var(--ds-neutral-0);
+    --ds-bg-elevated: var(--ds-neutral-50);
     --ds-bg-inverse: var(--ds-neutral-900);
 
     /* Border */
@@ -190,6 +190,7 @@
     --ds-radius-4: 0.4rem;
     --ds-radius-6: 0.6rem;
     --ds-radius-8: 0.8rem;
+    --ds-radius-10: 1rem;
     --ds-radius-12: 1.2rem;
     --ds-radius-full: 999.9rem;
 

@@ -1,0 +1,286 @@
+.form {
+    display: grid;
+    min-height: 0;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: minmax(0, 68.3rem) minmax(24rem, 30.6rem);
+    align-items: start;
+    gap: 1.6rem;
+    min-height: 0;
+    max-height: calc(100dvh - 17.8rem);
+    overflow-y: auto;
+    background: #f3f4f6;
+    padding: 2.4rem 13.7rem;
+}
+
+.mainColumn,
+.sideColumn {
+    display: grid;
+    gap: 1.6rem;
+}
+
+.card {
+    display: grid;
+    gap: 1.6rem;
+    border: .1rem solid #d9dee8;
+    border-radius: .8rem;
+    background: #ffffff;
+    padding: 1.8rem 2rem;
+}
+
+.card h3 {
+    margin: 0;
+    color: #050505;
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.card p {
+    margin: 0;
+    color: #667085;
+    font-size: 1.4rem;
+    line-height: 1.45;
+}
+
+.card strong {
+    color: #2563eb;
+}
+
+.textareaField,
+.selectField {
+    display: grid;
+    gap: .6rem;
+}
+
+.textareaField span,
+.selectField span,
+.amountInput span {
+    color: #667085;
+    font-size: 1.2rem;
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.textareaField textarea {
+    min-height: 7.6rem;
+    resize: vertical;
+    border: .1rem solid #cfd6e2;
+    border-radius: .4rem;
+    background: #ffffff;
+    color: #1f2937;
+    font: inherit;
+    font-size: 1.4rem;
+    padding: 1rem 1.2rem;
+}
+
+.selectField select,
+.priceTable input,
+.amountInput input {
+    min-width: 0;
+    min-height: 3.6rem;
+    border: .1rem solid #cfd6e2;
+    border-radius: .4rem;
+    background: #ffffff;
+    color: #1f2937;
+    font: inherit;
+    font-size: 1.4rem;
+    padding: 0 1rem;
+}
+
+.selectField select {
+    width: 100%;
+}
+
+.linkButton {
+    justify-self: start;
+    border: 0;
+    background: transparent;
+    color: #2563eb;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.4rem;
+    padding: 0;
+}
+
+.priceTable {
+    display: grid;
+    overflow: hidden;
+    border: .1rem solid #d9dee8;
+    border-radius: .4rem;
+}
+
+.tableHeader,
+.tableRow {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr 1.1fr .8fr;
+    align-items: center;
+    gap: 1.2rem;
+    min-height: 4.4rem;
+    border-bottom: .1rem solid #e5e7eb;
+    padding: 0 1.6rem;
+}
+
+.tableHeader {
+    background: #f3f4f6;
+    color: #667085;
+    font-size: 1.4rem;
+}
+
+.tableRow {
+    color: #1f2937;
+    font-size: 1.4rem;
+}
+
+.priceTable > .linkButton {
+    padding: 1.6rem;
+}
+
+.amountInput {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+}
+
+.amountInput span {
+    grid-column: 1 / -1;
+    margin-bottom: .6rem;
+}
+
+.amountInput input {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+}
+
+.amountInput b {
+    display: inline-flex;
+    align-items: center;
+    min-height: 3.6rem;
+    border: .1rem solid #cfd6e2;
+    border-left: 0;
+    border-radius: 0 .4rem .4rem 0;
+    background: #f3f4f6;
+    color: #1f2937;
+    font-size: 1.4rem;
+    font-weight: 500;
+    padding: 0 1rem;
+}
+
+.taxPill {
+    display: inline-flex;
+    align-items: center;
+    width: max-content;
+    max-width: 100%;
+    min-height: 3rem;
+    border: .1rem solid #cfd6e2;
+    border-radius: .2rem;
+    background: #f3f4f6;
+    color: #1f2937;
+    font-size: 1.4rem;
+    padding: 0 .8rem;
+}
+
+.twoColumns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2.4rem;
+}
+
+.checkboxField {
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+    color: #1f2937;
+    font-size: 1.4rem;
+}
+
+.checkboxField input {
+    width: 1.6rem;
+    height: 1.6rem;
+    accent-color: #3f7df6;
+}
+
+.variantToolbar {
+    display: grid;
+    grid-template-columns: max-content max-content minmax(0, 1fr);
+    gap: 1.6rem;
+    align-items: center;
+}
+
+.variantTable {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    overflow: hidden;
+    border: .1rem solid #d9dee8;
+    border-radius: .4rem;
+}
+
+.variantTable span,
+.variantTable strong {
+    min-height: 4.4rem;
+    border-bottom: .1rem solid #e5e7eb;
+    background: #f3f4f6;
+    color: #667085;
+    font-size: 1.4rem;
+    font-weight: 500;
+    padding: 1.2rem;
+}
+
+.variantTable strong {
+    border-bottom: 0;
+    background: #ffffff;
+    color: #1f2937;
+    text-align: center;
+}
+
+.uploadBox {
+    display: grid;
+    min-height: 15rem;
+    place-items: center;
+    border: .1rem dashed #cfd6e2;
+    border-radius: .4rem;
+    background: #ffffff;
+    color: #1f2937;
+    cursor: pointer;
+    font: inherit;
+    padding: 1.6rem;
+    text-align: center;
+}
+
+.uploadBox span {
+    font-size: 1.4rem;
+}
+
+.uploadBox small {
+    color: #667085;
+    font-size: 1.2rem;
+    line-height: 1.35;
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: .8rem;
+    border-top: .1rem solid #d9dee8;
+    background: #ffffff;
+    padding: 2rem 2.4rem;
+}
+
+@media (max-width: 1100px) {
+    .content {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 720px) {
+    .tableHeader,
+    .tableRow,
+    .twoColumns,
+    .variantToolbar,
+    .variantTable {
+        grid-template-columns: 1fr;
+    }
+}

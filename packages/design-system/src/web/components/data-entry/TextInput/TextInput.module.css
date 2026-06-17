@@ -7,13 +7,12 @@
     width: 100%;
 
     color: var(--color-text);
-    background: var(--ds-input-bg);
-    border: var(--ds-border-width-1) var(--ds-border-style) var(--ds-input-border);
+    background: var(--color-background);
+    border: 1px var(--ds-border-style) var(--ds-input-border);
     border-radius: var(--ds-radius-8);
 
     transition:
         border-color var(--ds-motion-duration-1) var(--ds-motion-ease-standard),
-        box-shadow var(--ds-motion-duration-1) var(--ds-motion-ease-standard),
         background-color var(--ds-motion-duration-1) var(--ds-motion-ease-standard);
 }
 
@@ -31,27 +30,22 @@
 
 .field[data-status='error'] {
     border-color: var(--color-danger);
-    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--color-danger) 25%, transparent);
 }
 
 .field[data-status='success'] {
     border-color: var(--color-success);
-    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--color-success) 20%, transparent);
 }
 
 .field:focus-within {
     border-color: var(--ds-input-border-focus);
-    box-shadow: var(--ds-focus-ring-field);
 }
 
 .field[data-status='error']:focus-within {
     border-color: var(--color-danger);
-    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--color-danger) 25%, transparent);
 }
 
 .field[data-status='success']:focus-within {
     border-color: var(--color-success);
-    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--color-success) 20%, transparent);
 }
 
 .control {
@@ -69,6 +63,7 @@
     font: inherit;
     font-size: var(--ds-font-size-14);
     line-height: var(--ds-line-height-normal);
+
 }
 
 .control::placeholder {
@@ -117,7 +112,6 @@
 
 .action:focus-visible {
     outline: none;
-    box-shadow: inset var(--ds-focus-ring-action);
 }
 
 .action:disabled {

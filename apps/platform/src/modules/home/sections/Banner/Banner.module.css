@@ -1,0 +1,78 @@
+.container {
+    background: var(--color-primary);
+    height: 35dvh;
+}
+
+.content {
+    max-width: 99.2rem;
+    margin-inline: auto;
+    padding-block: 4rem 8rem;
+    padding-top: 10rem;
+}
+
+.gretting h2 {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+
+}
+
+.gretting p {
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: 400;
+}
+
+.finantial {
+    border: 1px solid rgba(255, 255, 255, .1);
+    height: 20rem;
+    border-radius: 1rem;
+    margin-top: 3rem;
+    background-color: var(--color-surface);
+    box-shadow: 0 4px 8px rgba(255, 255, 255, .1);
+
+}
+
+.finantialHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 3rem;
+    border-bottom: 1px solid rgba(0, 0, 0, .1);
+
+}
+
+.finantialHeader h4 {
+    font-size: 1.8rem;
+    font-weight: 500;
+}
+
+.finantialHeader select {
+    border: none;
+    font-size: 1.4rem;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.info {
+    padding: 2rem 3rem;
+}
+
+.info .label {
+    font-weight: 300;
+    font-size: 1.4rem;
+}
+
+.info h3 {
+    font-size: 2.8rem;
+}
+
+.info .tip {
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+    display: inline-flex;
+}

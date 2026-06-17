@@ -14,7 +14,7 @@ import {
 import { registerRoutes } from '../routes';
 
 export const buildApp = (opts: BuildAppOpts): FastifyInstance => {
-  const environment = opts.environment ?? 'development';
+  const environment = opts.environment ?? 'dev';
   const trustProxy = opts.trustProxy ?? environment === 'prod';
 
   const app = Fastify({

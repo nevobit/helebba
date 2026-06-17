@@ -1,12 +1,15 @@
 import { Schema } from 'mongoose';
 import { type Membership } from './membership';
-import { opts } from '../../../../common';
+import { baseFields, opts } from '../../../../common';
 
 export const MembershipSchemaMongo = new Schema<Membership>(
   {
+    ...baseFields,
+    organizationId: { type: String, required: true, ref: 'accounts' },
     userId: { type: String, required: true },
     invitedEmail: { type: String, required: true },
     roleIds: { type: [String], required: true },
+    roleId: { type: String, required: true },
     permissionKeys: { type: [String], required: true },
     title: { type: String },
     joinedAt: { type: String, required: true },
@@ -29,6 +32,8 @@ export const MembershipSchemaMongo = new Schema<Membership>(
     },
     invitedBy: { type: String },
     invitedAt: { type: Date },
+    isDefault: { type: Boolean },
+    lastSelectedAt: { type: String },
   },
   { ...opts },
 );

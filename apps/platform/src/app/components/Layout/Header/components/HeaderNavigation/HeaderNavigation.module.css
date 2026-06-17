@@ -1,0 +1,9 @@
+.nav {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.logo {
+    margin-right: var(--ds-space-4);
+}

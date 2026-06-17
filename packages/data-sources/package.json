@@ -20,9 +20,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "uuid": "catalog:",
     "@hlb/contracts": "workspace:*",
     "@hlb/kernel": "workspace:*",
-    "mongoose": "catalog:"
+    "ioredis": "catalog:",
+    "mongoose": "catalog:",
+    "url": "^0.11.4",
+    "uuid": "catalog:"
   }
 }

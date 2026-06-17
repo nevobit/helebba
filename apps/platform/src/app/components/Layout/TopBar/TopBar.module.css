@@ -1,0 +1,87 @@
+.banner {
+    width: 100%;
+    padding: 0 26px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #1f3d69 0%, #145cff 100%);
+    color: #ffffff;
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 12px;
+    box-sizing: border-box;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.days {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.progress {
+    width: 126px;
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    overflow: hidden;
+}
+
+.progressBar {
+    width: 86%;
+    height: 100%;
+    border-radius: inherit;
+    background: #ff4f7b;
+}
+
+.divider {
+    width: 1px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.message {
+    opacity: 0.95;
+    white-space: nowrap;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.link {
+    color: #ffffff;
+    font-weight: 400;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.discountButton,
+.plansButton {
+    height: 25px;
+    border: 0;
+    border-radius: 4px;
+    padding: 0 14px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.discountButton {
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.plansButton {
+    background: #ffffff;
+    color: #111827;
+    font-weight: 500;
+}

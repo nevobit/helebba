@@ -1,0 +1,164 @@
+.form {
+    display: grid;
+    gap: 1.8rem;
+    padding: 0 2rem 2.2rem;
+}
+
+.fieldGroup {
+    display: grid;
+    gap: .8rem;
+}
+
+.radioGroup {
+    display: flex;
+    align-items: center;
+    gap: 2.4rem;
+    min-width: 0;
+    margin: 0;
+    border: 0;
+    padding: 0;
+}
+
+.radioGroup legend {
+    position: absolute;
+    width: .1rem;
+    height: .1rem;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.radioGroup label,
+.checkboxField {
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+    color: #2f3440;
+    font-size: 1.4rem;
+    line-height: 1.4;
+}
+
+.radioGroup input,
+.checkboxField input {
+    width: 1.6rem;
+    height: 1.6rem;
+    margin: 0;
+    accent-color: #2563eb;
+}
+
+.optionsBlock {
+    display: grid;
+    gap: .8rem;
+}
+
+.optionsBlock p {
+    margin: -.2rem 0 0;
+    color: #6b7280;
+    font-size: 1.2rem;
+    line-height: 1.35;
+}
+
+.chipList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+}
+
+.chipList button,
+.suggestions button {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    min-height: 2.4rem;
+    border: 0;
+    border-radius: .3rem;
+    background: #f3f4f6;
+    color: #111827;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.2rem;
+    padding: .2rem .7rem;
+}
+
+.chipList span {
+    color: #6b7280;
+    font-size: 1.4rem;
+    line-height: 1;
+}
+
+.uploadBox {
+    display: grid;
+    min-height: 14.5rem;
+    place-items: center;
+    border: .2rem dashed #c9cdd3;
+    border-radius: .4rem;
+    background: #ffffff;
+    color: #565d69;
+    cursor: pointer;
+    font: inherit;
+    padding: 2.4rem;
+    text-align: center;
+}
+
+.uploadBox svg {
+    color: #5f6673;
+}
+
+.uploadBox span {
+    margin-top: 1rem;
+    font-size: 1.3rem;
+}
+
+.uploadBox strong {
+    color: #444b57;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.suggestions {
+    display: grid;
+    gap: .8rem;
+}
+
+.suggestions > span {
+    color: #667085;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.suggestions div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .8rem;
+}
+
+.suggestions i {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.2rem;
+    border-top: .1rem solid #e5e7eb;
+    margin-top: 1rem;
+    padding-top: 1.4rem;
+}
+
+@media (max-width: 640px) {
+    .form {
+        padding-inline: 1.6rem;
+    }
+
+    .radioGroup {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1.2rem;
+    }
+
+    .footer {
+        flex-direction: column-reverse;
+    }
+}

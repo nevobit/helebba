@@ -3,13 +3,26 @@ import {
   LifecycleStatus,
   type Membership,
   MembershipSchemaMongo,
+  type ISODateTimeString,
+  type MembershipId,
   type Organization,
+  type OrganizationId,
   OrganizationSchemaMongo,
   type UserId,
   type RoleId,
 } from '@hlb/contracts';
 
-export const listMyOrganizations = async (userId: UserId) => {
+export interface MyOrganizationListItem {
+  id: OrganizationId;
+  name: string;
+  slug: string;
+  roleId?: RoleId;
+  membershipId?: MembershipId;
+  isDefault: boolean;
+  lastSelectedAt: ISODateTimeString | null;
+}
+
+export const listMyOrganizations = async (userId: UserId): Promise<MyOrganizationListItem[]> => {
   const membershipModel = getModel<Membership>(Collection.MEMBERSHIPS, MembershipSchemaMongo);
   const organizationModel = getModel<Organization>(
     Collection.ORGANIZATIONS,
@@ -37,7 +50,7 @@ export const listMyOrganizations = async (userId: UserId) => {
       id: organization.id,
       name: organization.name,
       slug: organization.slug,
-      roleId: membership?.roleId as RoleId,
+      roleId: membership?.roleId,
       membershipId: membership?.id,
       isDefault: membership?.isDefault ?? false,
       lastSelectedAt: membership?.lastSelectedAt ?? null,

@@ -1,4 +1,4 @@
-import { getUserByEmail } from '../../users';
+import { findByEmail } from '../../users';
 import crypto from 'crypto';
 import { issueTokens } from './tokens';
 
@@ -7,7 +7,11 @@ export type LoginInput = {
   code: string;
 };
 export const login = async (input: LoginInput) => {
-  const user = await getUserByEmail(input.email);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(input.email)) {
+    throw new Error('Invalid email format');
+  }
+  const user = await findByEmail(input.email);
 
   if (!user) {
     throw new Error('User not found');
@@ -20,8 +24,6 @@ export const login = async (input: LoginInput) => {
     userId: user.id,
     sessionId,
   });
-
-  const refreshHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
 
   return {
     accessToken,

@@ -1,0 +1,167 @@
+.section {
+    padding: 96px 24px;
+    background: #ffffff;
+    color: #0f172a;
+}
+
+.container {
+    max-width: 1210px;
+    margin: 0 auto;
+}
+
+.eyebrow {
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: #2563eb;
+}
+
+.title {
+    margin: 0;
+    max-width: 720px;
+    font-size: clamp(2.2rem, 5vw, 4.2rem);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+    font-weight: 600;
+}
+
+.description {
+    max-width: 670px;
+    margin: 24px 0 56px;
+    font-size: 17px;
+    line-height: 1.75;
+    color: #64748b;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    border: 1px solid #dbe3ef;
+    border-radius: 28px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.04);
+}
+
+.card {
+    position: relative;
+    min-height: 220px;
+    padding: 34px 34px 30px;
+    grid-column: span 2;
+    border-right: 1px solid #dbe3ef;
+    border-bottom: 1px solid #dbe3ef;
+}
+
+.cardLarge {
+    grid-column: span 3;
+}
+
+.card:nth-child(2),
+.card:nth-child(5) {
+    border-right: none;
+}
+
+.card h3 {
+    margin: 30px 0 12px;
+    font-size: 20px;
+    line-height: 1.25;
+    letter-spacing: -0.03em;
+    font-weight: 600;
+    color: #111827;
+}
+
+.card p {
+    margin: 0;
+    max-width: 560px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #64748b;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.icon {
+    width: 34px;
+    height: 34px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 10px;
+    background: #eef4ff;
+    font-size: 15px;
+}
+
+.number {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 400;
+    color: #64748b;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.tags span {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 400;
+    color: #64748b;
+}
+
+.integrations {
+    grid-column: span 6;
+    min-height: 230px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.integrations h3 {
+    margin-top: 36px;
+    font-size: 24px;
+}
+
+.pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.pills span {
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: #eef2f7;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card,
+    .cardLarge,
+    .integrations {
+        grid-column: span 1;
+        border-right: none;
+    }
+
+    .card {
+        min-height: auto;
+    }
+
+    .title br {
+        display: none;
+    }
+}

@@ -137,6 +137,7 @@ export const verifyAccessToken = async (
 ): Promise<AccessTokenClaims> => {
   const secret = encodeSecret(options.secret);
 
+  console.log({ token: options.token });
   const result = await jwtVerify(options.token, secret, {
     issuer: options.issuer,
     audience: options.audience,
@@ -151,9 +152,6 @@ export const verifyJwt: AuthFunction = async (
   const authHeader = (req.headers as unknown as Record<string, string>)['authorization'];
   const token = typeof authHeader === 'string' ? authHeader.replace(/^Bearer\s+/i, '') : null;
 
-  console.log('Verifying JWT for request:', {
-    token,
-  });
   if (!token) {
     return {
       ok: false,
@@ -165,7 +163,6 @@ export const verifyJwt: AuthFunction = async (
 
   const { payload } = (await jwtVerify(token, secret)) as { payload: JwtClaims };
 
-  console.log('Verified JWT payload:', payload);
   if (!payload.userId) {
     return {
       ok: false,

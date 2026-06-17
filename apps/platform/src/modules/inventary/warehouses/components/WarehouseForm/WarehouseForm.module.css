@@ -1,0 +1,196 @@
+.form {
+    display: grid;
+}
+
+.columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 3rem;
+    padding: 0 2.6rem 2.8rem;
+}
+
+.section {
+    display: grid;
+    align-content: start;
+    gap: 1.2rem;
+}
+
+.section h3 {
+    margin: 0;
+    color: #111827;
+    font-size: 1.9rem;
+    font-weight: 500;
+}
+
+.fieldBox {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+    border: .1rem solid #e0e4ea;
+    border-radius: .4rem;
+}
+
+.fieldBox > *,
+.accountField,
+.selectPill,
+.colorPill {
+    display: grid;
+    gap: .4rem;
+    min-height: 5.3rem;
+    border-right: .1rem solid #e5e7eb;
+    border-bottom: .1rem solid #e5e7eb;
+    background: #ffffff;
+    padding: 1rem 1.2rem;
+}
+
+.fieldBox > *:nth-child(2n),
+.fieldBox .fullField {
+    border-right: 0;
+}
+
+.fieldBox > *:nth-last-child(-n + 2) {
+    border-bottom: 0;
+}
+
+.fieldBox .fullField {
+    grid-column: 1 / -1;
+}
+
+.fieldBox .fullField:first-child {
+    background: #f3f4f6;
+}
+
+.fieldBox .fieldCell > label,
+.fieldBox .fullField > label,
+.accountField span,
+.selectPill span,
+.colorPill span {
+    color: #1f2937;
+    font-size: 1.3rem;
+    font-weight: 750;
+}
+
+.fieldBox .fieldCell > div,
+.fieldBox .fullField > div,
+.fieldBox select,
+.accountField select,
+.selectPill select {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #1f2937;
+    font: inherit;
+    font-size: 1.4rem;
+    padding: 0;
+}
+
+.fieldBox .fieldCell > div,
+.fieldBox .fullField > div {
+    min-height: auto;
+}
+
+.fieldBox .fieldCell input,
+.fieldBox .fullField input {
+    padding-inline: 0;
+    padding-block: 0;
+}
+
+.inlineFields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.selectPill,
+.colorPill,
+.accountField {
+    border: .1rem solid #e0e4ea;
+    border-radius: .4rem;
+}
+
+.selectPill {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    text-align: center;
+}
+
+.selectPill span {
+    display: none;
+}
+
+.colorPill {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+}
+
+.colorPill span {
+    grid-column: 1 / -1;
+}
+
+.colorPill input {
+    width: 1.4rem;
+    height: 1.4rem;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+}
+
+.colorPill strong {
+    color: #4b5563;
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.checkboxField {
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+    margin-top: 2.6rem;
+    color: #1f2937;
+    font-size: 1.4rem;
+}
+
+.checkboxField input {
+    width: 1.6rem;
+    height: 1.6rem;
+    accent-color: #2563eb;
+}
+
+.accountField {
+    min-height: 6.8rem;
+}
+
+.error {
+    margin: 0;
+    color: #dc2626;
+    font-size: 1.2rem;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2.4rem;
+    min-height: 6.7rem;
+    border-top: .1rem solid #eceff3;
+    background: #f3f3f3;
+    padding: 1.4rem 2.6rem;
+}
+
+.footer span {
+    border-radius: .2rem;
+    background: #e5e5e5;
+    color: #6b7280;
+    font-size: 1.1rem;
+    font-weight: 750;
+    padding: .4rem 1rem;
+}
+
+@media (max-width: 860px) {
+    .columns {
+        grid-template-columns: 1fr;
+    }
+}

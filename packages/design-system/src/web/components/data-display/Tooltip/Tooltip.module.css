@@ -1,0 +1,24 @@
+@layer components {
+  .wrapper {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+    transform: translate3d(-15px, 30px, 0px);
+    margin-bottom: var(--ds-space-2);
+    background: var(--ds-bg-inverse);
+    color: var(--ds-fg-inverse);
+    padding: var(--ds-space-1) var(--ds-space-2);
+    border-radius: var(--ds-radius-4);
+    font-size: var(--ds-font-size-12);
+    z-index: var(--ds-z-tooltip);
+    max-width: 70rem;
+    width: 35rem;
+    cursor: pointer;
+  }
+}

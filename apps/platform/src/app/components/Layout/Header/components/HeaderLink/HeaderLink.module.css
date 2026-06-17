@@ -1,0 +1,146 @@
+.menu {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    padding: 0.8rem 1rem;
+    border: 0;
+    border-radius: 0.5rem;
+
+    background: transparent;
+    color: #ffffff;
+
+    font: inherit;
+    font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 1;
+
+    cursor: pointer;
+    transition:
+        background-color 160ms ease,
+        color 160ms ease;
+}
+
+.trigger:hover,
+.triggerActive {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.menuOptions {
+    position: absolute;
+    top: 100%;
+    padding-top: .8rem;
+
+    left: 0;
+
+    min-width: 15rem;
+    width: max-content;
+    max-width: 28rem;
+
+    margin: 0;
+    padding: 0.4rem;
+
+    list-style: none;
+
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.8rem;
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.12),
+        0 4px 10px rgba(15, 23, 42, 0.08);
+
+    color: #121927;
+    z-index: 50;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+
+    text-align: left;
+
+    overflow: hidden;
+}
+
+.menuOption {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.menuLink {
+    width: 100%;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+
+    padding: 0.9rem 1rem;
+    border-radius: 0.5rem;
+
+    color: #121927;
+    text-decoration: none;
+
+    font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: left;
+
+    cursor: pointer;
+    transition:
+        background-color 160ms ease,
+        color 160ms ease;
+}
+
+.menuLink:hover {
+    background-color: #f3f4f6;
+    color: #0f172a;
+}
+
+.menuLink:focus-visible,
+.trigger:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+    .menu {
+        width: 100%;
+        margin-top: 2rem;
+    }
+
+    .trigger {
+        width: 100%;
+        justify-content: space-between;
+
+        color: #121927;
+        font-size: 1.5rem;
+    }
+
+    .trigger:hover,
+    .triggerActive {
+        background-color: rgba(18, 25, 39, 0.08);
+        color: #121927;
+    }
+
+    .menuOptions {
+        position: static;
+
+        width: 100%;
+        max-width: none;
+        margin-top: 0.8rem;
+
+        box-shadow: none;
+    }
+
+    .menuLink {
+        font-size: 1.4rem;
+    }
+}

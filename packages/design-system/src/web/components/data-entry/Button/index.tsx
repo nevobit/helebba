@@ -7,7 +7,7 @@ export const BUTTON_VARIANTS = ['solid', 'outline', 'ghost', 'plain'] as const;
 
 export const BUTTON_TONES = ['neutral', 'success', 'critical'] as const;
 
-export const BUTTON_THEMES = ['default', 'monochrome'] as const;
+export const BUTTON_THEMES = ['default', 'monochrome', 'optional'] as const;
 
 export const BUTTON_SIZES = ['micro', 'slim', 'medium', 'large'] as const;
 

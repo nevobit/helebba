@@ -25,6 +25,7 @@
   "type": "module",
   "dependencies": {
     "fastify": "catalog:",
+    "ioredis": "catalog:",
     "mongoose": "catalog:"
   },
   "devDependencies": {

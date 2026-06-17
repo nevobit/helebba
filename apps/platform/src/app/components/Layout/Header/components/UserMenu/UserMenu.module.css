@@ -1,0 +1,89 @@
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-align: left;
+    border-radius: .5rem;
+    padding-block: .1rem;
+}
+
+.profileInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.profile .profileName {
+    font-size: 1.3rem;
+    color: #fff;
+    display: block;
+    height: max-content;
+    margin-bottom: -.2rem;
+}
+
+.profile .profileOrganizationName {
+    font-size: 1.1rem;
+    height: max-content;
+    color: #c7c7c7;
+    font-weight: 400;
+}
+
+
+
+.user_btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.userOptions button {
+    font-size: 1.3rem;
+    color: #111927;
+}
+
+.userOptions button span {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user_options {
+    width: 90rem;
+    background-color: #fff;
+}
+
+.user_options li {
+    border-radius: .5rem;
+}
+
+
+.user_options li button span {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+
+.user_options .btn {
+    display: flex;
+    width: 100%;
+}
+
+.user_options li a {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 1.3rem;
+    gap: .7rem;
+    color: #111927;
+}
+
+.user_options li:hover {
+    background-color: rgba(0, 0, 0, .05);
+}
+
+.user_btn {
+    cursor: pointer;
+    padding: 1rem;
+    border-radius: .5rem;
+}

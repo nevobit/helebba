@@ -2,6 +2,9 @@ import crypto from 'crypto';
 import { issueTokens } from './tokens';
 import { Collection, getModel } from '@hlb/constant-definitions';
 import {
+  LifecycleStatus,
+  type Membership,
+  MembershipSchemaMongo,
   type Organization,
   OrganizationSchemaMongo,
   type OrganizationId,
@@ -13,11 +16,24 @@ type LoginInput = {
   organizationId: OrganizationId;
 };
 export const loginOrganization = async (input: LoginInput) => {
-  console.log('Switching organization with input:', input);
-  const model = getModel<Organization>(Collection.ORGANIZATIONS, OrganizationSchemaMongo);
-  const organization = await model.findOne({
-    ownerId: input.userId,
+  const organizationModel = getModel<Organization>(
+    Collection.ORGANIZATIONS,
+    OrganizationSchemaMongo,
+  );
+  const membershipModel = getModel<Membership>(Collection.MEMBERSHIPS, MembershipSchemaMongo);
+  const membership = await membershipModel.findOne({
+    organizationId: input.organizationId,
+    userId: input.userId,
+    status: 'active',
+  });
+
+  if (!membership) {
+    throw new Error('Membership not found');
+  }
+
+  const organization = await organizationModel.findOne({
     _id: input.organizationId,
+    lifecycleStatus: LifecycleStatus.ACTIVE,
   });
 
   if (!organization) {
@@ -30,6 +46,8 @@ export const loginOrganization = async (input: LoginInput) => {
     kind: 'organization',
     userId: input.userId,
     organizationId: input.organizationId,
+    membershipId: membership.id,
+    roleId: membership.roleId,
     sessionId,
   });
 
@@ -37,5 +55,7 @@ export const loginOrganization = async (input: LoginInput) => {
     accessToken,
     refreshToken,
     organization,
+    membershipId: membership.id,
+    roleId: membership.roleId,
   };
 };

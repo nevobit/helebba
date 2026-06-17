@@ -7,10 +7,7 @@ const plugin: FastifyPluginAsync<BuildAppOpts> = async (app, opts) => {
   const environment = opts.environment ?? 'development';
 
   await app.register(fastifyCors, {
-    origin:
-      environment === 'development'
-        ? true
-        : [/\.dominio\.com$/, /^https:\/\/(www\.)?dominio\.com$/],
+    origin: environment === 'dev' ? true : [/\.dominio\.com$/, /^https:\/\/(www\.)?dominio\.com$/],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     ...(opts.corsOptions ?? {}),

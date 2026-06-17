@@ -1,0 +1,554 @@
+.page {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  background: #fff;
+  color: #1f2937;
+}
+
+.boardsPage {
+  background: #fff;
+}
+
+.shell {
+  width: min(1180px, calc(100vw - 48px));
+  margin: 0 auto;
+  padding: 0 0 40px;
+}
+
+.tabShell {
+  padding: 16px 0 0;
+}
+
+.summaryPage .tabShell {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  border-bottom: 1px solid #d7dde7;
+}
+
+.summaryPage .tabs {
+  border-bottom-color: rgba(255, 255, 255, 0.22);
+}
+
+.tabs button {
+  appearance: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #1f2937;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  padding: 0 0 17px;
+}
+
+.summaryPage .tabs button {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.tabs .activeTab {
+  border-color: #3867d6;
+}
+
+.summaryPage .tabs .activeTab {
+  border-color: #fff;
+  color: #fff;
+}
+
+.summaryContent {
+  width: 100%;
+}
+
+.boardBar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 24px 0 16px;
+}
+
+.boardPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  border: 0;
+  border-radius: 5px;
+  background: #1f2937;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: 0;
+  padding: 0 10px;
+}
+
+.addButton {
+  margin-left: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+.card {
+  min-width: 0;
+  border: 1px solid #dde3ec;
+  border-radius: 8px;
+  background: #fff;
+  padding: 18px 19px;
+}
+
+.card h2 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+.card p {
+  margin: 6px 0 0;
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+.metricCard {
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+}
+
+.metricCard strong {
+  display: block;
+  margin-top: auto;
+  color: #050505;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: right;
+  letter-spacing: 0;
+}
+
+.progressMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+  color: #98a2b3;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.progressMeta span:last-child {
+  color: #17a873;
+}
+
+.progressMeta .negative {
+  color: #ef4444;
+}
+
+.progressTrack {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #e5e7eb;
+}
+
+.progressTrack span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: #17a873;
+}
+
+.progressTrack .expenseTrack {
+  background: #ef4444;
+}
+
+.progressTrack .invoiceTrack {
+  background: #3f7dff;
+}
+
+.bankCard {
+  display: flex;
+  min-height: 140px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.bankCard strong {
+  color: #1d66c2;
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+.bankCard p {
+  max-width: 240px;
+  margin: 0;
+}
+
+.bankIllustration {
+  position: relative;
+  display: grid;
+  width: 54px;
+  height: 38px;
+  place-items: center;
+  color: #d7dce5;
+}
+
+.bankIllustration span {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #dc5f5f;
+}
+
+.bankIllustration span::before,
+.bankIllustration span::after {
+  position: absolute;
+  left: 5px;
+  width: 10px;
+  height: 1px;
+  background: #fff;
+  content: '';
+}
+
+.bankIllustration span::before {
+  top: 7px;
+}
+
+.bankIllustration span::after {
+  top: 11px;
+}
+
+.wideCard {
+  grid-column: span 2;
+  min-height: 264px;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chartBody {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 50px;
+}
+
+.chartValue strong {
+  display: block;
+  color: #050505;
+  font-size: 30px;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.chartValue span {
+  display: block;
+  margin-top: 6px;
+  color: #667085;
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
+.chartStats {
+  display: grid;
+  gap: 12px;
+  min-width: 176px;
+  margin: 0;
+}
+
+.chartStats div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+}
+
+.chartStats dt,
+.chartStats dd {
+  margin: 0;
+  color: #1f2937;
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+.bars {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(12px, 1fr));
+  align-items: end;
+  gap: 13px;
+  min-height: 76px;
+  margin: 28px 20px 0;
+}
+
+.bars span {
+  display: block;
+  min-height: 2px;
+  border-radius: 2px;
+  background: #3f7dff;
+}
+
+.months {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(12px, 1fr));
+  gap: 13px;
+  margin: 14px 20px 0;
+  color: #646b76;
+  font-size: 12px;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+.compactMetric {
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+}
+
+.compactMetric strong {
+  display: block;
+  margin-top: auto;
+  color: #050505;
+  font-size: 30px;
+  line-height: 1.15;
+  text-align: right;
+  letter-spacing: 0;
+}
+
+.statusTitle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.statusTitle span,
+.flowRow dt span {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.greenDot,
+.green {
+  background: #16bf7d;
+}
+
+.redDot,
+.red {
+  background: #ff5151;
+}
+
+.blue {
+  background: #4f82f1;
+}
+
+.bankFlowCard {
+  grid-row: span 2;
+}
+
+.bankFlowCard dl {
+  display: grid;
+  gap: 14px;
+  margin: 88px 0 0;
+}
+
+.flowRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.flowRow dt,
+.flowRow dd {
+  margin: 0;
+  color: #1f2937;
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+.flowRow dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.centerCard {
+  display: flex;
+  min-height: 140px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.centerCard svg {
+  color: #1f2937;
+}
+
+.centerCard strong {
+  color: #1d66c2;
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+.centerCard p {
+  max-width: 240px;
+  margin: 0;
+}
+
+.paymentCard {
+  min-height: 140px;
+}
+
+.paymentCard > strong {
+  display: block;
+  margin-top: 34px;
+  color: #050505;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.paymentCard ul {
+  display: grid;
+  gap: 10px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.paymentCard li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  color: #1f2937;
+  font-size: 13px;
+}
+
+.tasksCard {
+  grid-column: span 2;
+  min-height: 340px;
+}
+
+.taskEmpty {
+  display: grid;
+  min-height: 240px;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  color: #1f2937;
+  font-size: 13px;
+  text-align: center;
+}
+
+.taskEmpty span {
+  position: relative;
+  width: 34px;
+  height: 28px;
+  border-radius: 6px;
+  background: #e8eaee;
+}
+
+.taskEmpty span::before {
+  position: absolute;
+  right: -6px;
+  top: -10px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #c28a52;
+  content: '';
+}
+
+.taskEmpty span::after {
+  position: absolute;
+  left: 8px;
+  top: 7px;
+  width: 22px;
+  height: 16px;
+  border: 3px solid #fff;
+  border-radius: 4px;
+  content: '';
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bankFlowCard {
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .shell {
+    width: min(100% - 28px, 1180px);
+    padding-top: 18px;
+  }
+
+  .boardBar {
+    flex-wrap: wrap;
+  }
+
+  .addButton {
+    margin-left: 0;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wideCard,
+  .tasksCard {
+    grid-column: span 1;
+  }
+
+  .chartBody {
+    flex-direction: column;
+    margin-top: 36px;
+  }
+
+  .chartStats {
+    width: 100%;
+  }
+
+  .months,
+  .bars {
+    gap: 7px;
+    margin-right: 0;
+    margin-left: 0;
+  }
+}

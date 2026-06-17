@@ -1,0 +1,479 @@
+.editorPage {
+    min-width: 0;
+    min-height: 100%;
+    background: #ffffff;
+    color: #111827;
+    padding: 2.4rem 3rem;
+}
+
+.editorHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.6rem;
+    margin-bottom: 2.4rem;
+}
+
+.editorTitle {
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+    margin: 0;
+    color: #111827;
+    font-size: 2.4rem;
+    font-weight: 750;
+}
+
+.backButton {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    background: transparent;
+    color: #344054;
+    cursor: pointer;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: .8rem;
+    flex-wrap: wrap;
+}
+
+.iconButton {
+    width: 3.6rem;
+    min-width: 3.6rem;
+    padding-inline: 0;
+}
+
+.splitSaveButton {
+    display: inline-grid;
+    width: 3.6rem;
+    min-width: 3.6rem;
+    height: 3.6rem;
+    place-items: center;
+    border: 0;
+    border-left: .1rem solid rgba(255, 255, 255, .25);
+    border-radius: .4rem;
+    background: #1f5fd4;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.formPanel {
+    display: grid;
+    overflow: hidden;
+    border: .1rem solid #d9dee8;
+    border-radius: .8rem;
+    background: #ffffff;
+}
+
+.purchaseFormPanel {
+    grid-template-columns: minmax(28rem, 54rem) minmax(0, 1fr);
+    min-height: calc(100vh - 12rem);
+}
+
+.purchaseFormPanelCollapsed {
+    grid-template-columns: 8rem minmax(0, 1fr);
+}
+
+.purchaseFilePanel {
+    display: grid;
+    align-content: start;
+    gap: 2rem;
+    min-width: 0;
+    border-right: .1rem solid #d9dee8;
+    padding: 2.8rem 2.4rem;
+}
+
+.filePanelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.filePanelHeader h2 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 2rem;
+    font-weight: 650;
+}
+
+.filePanelMenuButton {
+    display: grid;
+    width: 3rem;
+    height: 3rem;
+    place-items: center;
+    border: 0;
+    border-radius: .4rem;
+    background: transparent;
+    color: #2563eb;
+    cursor: pointer;
+}
+
+.fileDropzone {
+    display: grid;
+    min-height: 62rem;
+    place-items: center;
+    align-content: center;
+    gap: 1.6rem;
+    border: .1rem dashed #cfd6e2;
+    border-radius: .6rem;
+    background: #fbfcfe;
+    color: #667085;
+    cursor: pointer;
+    text-align: center;
+    padding: 2.4rem;
+}
+
+.fileDropzone input {
+    position: absolute;
+    width: .1rem;
+    height: .1rem;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+
+.fileDropzone svg {
+    color: #667085;
+}
+
+.fileDropzone span {
+    max-width: 28rem;
+    color: #667085;
+    font-size: 1.4rem;
+    line-height: 1.4;
+}
+
+.minimizeFilePanelButton,
+.expandFilePanelButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
+    min-height: 3.6rem;
+    border: .1rem solid #cfd6e2;
+    border-radius: .4rem;
+    background: #ffffff;
+    color: #344054;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.3rem;
+}
+
+.expandFilePanelButton {
+    width: 3.6rem;
+    justify-self: center;
+}
+
+.purchaseEditorArea {
+    display: grid;
+    min-width: 0;
+    align-content: start;
+}
+
+.topFields {
+    display: grid;
+    grid-template-columns: 25rem 25rem 25rem 25rem;
+    gap: 2rem;
+    padding: 2.4rem 2rem 3rem;
+}
+
+.selectField {
+    display: grid;
+    gap: .7rem;
+    color: #667085;
+    font-size: 1.2rem;
+    font-weight: 650;
+}
+
+.selectField select {
+    width: 100%;
+    min-height: 3.6rem;
+    border: .1rem solid #cfd6e2;
+    border-radius: .4rem;
+    background: #ffffff;
+    color: #111827;
+    font: inherit;
+    font-size: 1.4rem;
+    font-weight: 500;
+    padding: 0 3.2rem 0 1rem;
+}
+
+.linesTable {
+    min-width: 138rem;
+    border-top: .1rem solid #e4e7ec;
+    border-bottom: .1rem solid #e4e7ec;
+}
+
+.linesHeader,
+.lineRow {
+    display: grid;
+    grid-template-columns: 3.6rem minmax(28rem, 1.8fr) minmax(26rem, 1.6fr) 10rem 12rem 19rem 12rem 3.6rem;
+    align-items: stretch;
+}
+
+.linesHeader {
+    min-height: 4.4rem;
+    background: #f3f4f6;
+    color: #667085;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.linesHeader span,
+.lineRow>span,
+.lineRow>button,
+.lineRow label {
+    border-right: .1rem solid #e4e7ec;
+}
+
+.linesHeader span {
+    display: flex;
+    align-items: center;
+    padding: 0 1.2rem;
+}
+
+.lineRow {
+    min-height: 4.4rem;
+    border-top: .1rem solid #e4e7ec;
+}
+
+.draggingLine {
+    opacity: .45;
+}
+
+.dropTargetLine {
+    box-shadow: inset 0 .2rem 0 #2563eb;
+}
+
+.dragCell,
+.deleteLine,
+.conceptSearch {
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: #667085;
+}
+
+.dragCell {
+    cursor: grab;
+}
+
+.dragCell:active {
+    cursor: grabbing;
+}
+
+.dragCell:focus-visible {
+    outline: .2rem solid #2563eb;
+    outline-offset: -.2rem;
+}
+
+.deleteLine,
+.conceptSearch {
+    cursor: pointer;
+}
+
+.cellInput,
+.cellTextarea {
+    width: 100%;
+    min-height: 4.3rem;
+    border: 0;
+    background: #ffffff;
+    color: #111827;
+    font: inherit;
+    font-size: 1.4rem;
+    padding: .8rem 1.2rem;
+}
+
+.cellTextarea {
+    resize: vertical;
+}
+
+.conceptCell {
+    display: grid;
+    grid-template-columns: 1fr 4rem;
+    border-right: .1rem solid #e4e7ec;
+}
+
+.taxField {
+    display: grid;
+    grid-template-columns: auto minmax(4.4rem, 1fr) auto;
+    align-items: center;
+    gap: .5rem;
+    min-width: 0;
+    padding: 0 1rem;
+    color: #475467;
+    font-size: 1.2rem;
+}
+
+.taxField input {
+    width: 100%;
+    min-width: 0;
+    height: 2.8rem;
+    border: .1rem solid #cfd6e2;
+    border-radius: .4rem;
+    background: #ffffff;
+    color: #111827;
+    font: inherit;
+    font-size: 1.3rem;
+    padding: 0 .6rem;
+}
+
+.totalCell {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 1.2rem;
+    color: #111827;
+    font-weight: 600;
+}
+
+.contentArea {
+    display: grid;
+    grid-template-columns: minmax(44rem, 1fr) minmax(34rem, 40rem);
+    gap: 4rem;
+    padding: 1.6rem 2.4rem 3rem;
+}
+
+.leftOptions {
+    display: grid;
+    align-content: start;
+    gap: 1.6rem;
+}
+
+.lineActions {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+}
+
+.checkboxOption {
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+    color: #111827;
+    font-size: 1.4rem;
+}
+
+.checkboxOption input {
+    width: 1.7rem;
+    height: 1.7rem;
+}
+
+.summary {
+    display: grid;
+    align-content: start;
+    gap: 1.6rem;
+}
+
+.summaryLink {
+    justify-self: start;
+    border: 0;
+    background: transparent;
+    color: #2563eb;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.totals {
+    display: grid;
+    gap: 1.6rem;
+}
+
+.totalRow {
+    display: flex;
+    justify-content: space-between;
+    border-top: .1rem solid #e4e7ec;
+    color: #111827;
+    font-size: 1.4rem;
+    padding-top: 1.4rem;
+}
+
+.totalRow strong {
+    font-weight: 800;
+}
+
+.bottomSections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: .1rem solid #e4e7ec;
+}
+
+.bottomCard {
+    display: grid;
+    gap: 2rem;
+    padding: 2.4rem;
+}
+
+.bottomCard+.bottomCard {
+    border-left: .1rem solid #e4e7ec;
+}
+
+.bottomCard h2 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 2rem;
+}
+
+.walletBanner {
+    display: grid;
+    gap: 1.2rem;
+    border: .1rem solid #d9dee8;
+    border-left: .8rem solid #2563eb;
+    border-radius: .6rem;
+    padding: 1.6rem;
+}
+
+.walletLogos {
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    flex-wrap: wrap;
+    color: #111827;
+    font-size: 2.4rem;
+    font-weight: 800;
+}
+
+.error {
+    border-radius: .6rem;
+    background: #fef2f2;
+    color: #b42318;
+    padding: 1.2rem 1.4rem;
+}
+
+.tableScroll {
+    min-width: 0;
+    overflow-x: auto;
+}
+
+@media (max-width: 1200px) {
+    .purchaseFormPanel,
+    .purchaseFormPanelCollapsed,
+    .topFields,
+    .contentArea,
+    .bottomSections {
+        grid-template-columns: 1fr;
+    }
+
+    .purchaseFilePanel {
+        border-right: 0;
+        border-bottom: .1rem solid #d9dee8;
+    }
+
+    .fileDropzone {
+        min-height: 28rem;
+    }
+
+    .bottomCard+.bottomCard {
+        border-left: 0;
+        border-top: .1rem solid #e4e7ec;
+    }
+}

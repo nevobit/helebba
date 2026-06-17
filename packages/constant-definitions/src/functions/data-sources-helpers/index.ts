@@ -1,2 +1,3 @@
 export * from './constants';
 export * from './mongoose';
+export * from './redis';

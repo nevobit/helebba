@@ -1,23 +1,21 @@
 import { Schema } from 'mongoose';
 import { type User } from './user';
-import { opts } from '../../../../common';
+import { baseFields, LifecycleStatus, opts } from '../../../../common';
 
 export const UserSchemaMongo = new Schema<User>(
   {
-    customId: { type: String },
+    ...baseFields,
     name: { type: String, required: true },
-    code: { type: String },
-    varnumber: { type: String },
-    tradeName: { type: String },
-    email: { type: String, unique: true, required: true },
-    mobile: { type: String },
     phone: { type: String },
-    type: { type: String },
-    iban: { type: String },
-    swift: { type: String },
-    groupId: { type: String },
-    clientRecord: { type: String },
-    isPerson: { type: Boolean },
+    newsletter: { type: Boolean },
+    photo: { type: String },
+    provider: {
+      google: { type: String },
+      apple: { type: String },
+      facebook: { type: String },
+    },
+    username: { type: String },
+    email: { type: String, required: true },
   },
 
   { ...opts },

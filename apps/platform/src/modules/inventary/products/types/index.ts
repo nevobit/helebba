@@ -1,0 +1,21 @@
+export type ProductRow = {
+  id: string;
+  initials: string;
+  createdAt: string;
+  name: string;
+  description: string;
+  sku: string;
+  supply: string;
+  warehouse: string;
+  channel: string;
+  stock: number;
+  purchasePrice: number;
+  cost: number;
+  salesValue: number;
+  subtotal: number;
+  salesTax: number;
+  payroll: number;
+  taxes: string;
+  total: number;
+  actions: string;
+};

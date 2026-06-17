@@ -1,2 +1,2 @@
 export * from './membership';
-export * from './organization-mongo';
+export * from './membership-mongo';

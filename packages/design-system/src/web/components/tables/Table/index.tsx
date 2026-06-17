@@ -37,6 +37,8 @@ export type DataTableProps<T extends object> = {
     defaultSelectedKeys?: React.Key[];
     onSelectionChange?: (keys: React.Key[]) => void;
     getRowKey?: (row: T, index: number) => React.Key;
+    activeRowKey?: React.Key | null;
+    onRowClick?: (row: T, index: number) => void;
 };
 
 export function Table<T extends object>({
@@ -59,7 +61,9 @@ export function Table<T extends object>({
     selectedKeys,
     defaultSelectedKeys = [],
     onSelectionChange,
-    getRowKey
+    getRowKey,
+    activeRowKey,
+    onRowClick
 }: DataTableProps<T>) {
     const [uSortKey, setUSortKey] = useState<keyof T | null>(defaultSort?.key ?? null);
     const [uSortDir, setUSortDir] = useState<SortDir>(defaultSort?.dir ?? null);
@@ -199,8 +203,29 @@ export function Table<T extends object>({
                         pg.slice.map((row, i) => {
                             const k = getKey(row, i + (pg.page - 1) * pageSize);
                             const isSel = selected.has(k);
+                            const isActive = activeRowKey === k;
+                            const rowIndex = i + (pg.page - 1) * pageSize;
                             return (
-                                <tr key={String(k)} className={cx(zebra && styles.zebra, styles.row)} role="row">
+                                <tr
+                                    key={String(k)}
+                                    className={cx(
+                                        zebra && styles.zebra,
+                                        styles.row,
+                                        isActive && styles.rowSelected,
+                                        onRowClick && styles.clickableRow,
+                                    )}
+                                    role="row"
+                                    tabIndex={onRowClick ? 0 : undefined}
+                                    aria-selected={isActive || undefined}
+                                    onClick={() => onRowClick?.(row, rowIndex)}
+                                    onKeyDown={(event) => {
+                                        if (!onRowClick) return;
+                                        if (event.key === "Enter" || event.key === " ") {
+                                            event.preventDefault();
+                                            onRowClick(row, rowIndex);
+                                        }
+                                    }}
+                                >
                                     {selectionMode !== "none" && (
                                         <td className={styles.td} style={{ width: 36 }}>
                                             <input
@@ -208,6 +233,7 @@ export function Table<T extends object>({
                                                 type="checkbox"
                                                 aria-label={`Select row ${i + 1}`}
                                                 checked={isSel}
+                                                onClick={(event) => event.stopPropagation()}
                                                 onChange={() => toggleRow(k)}
                                             />
                                         </td>

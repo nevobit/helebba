@@ -102,7 +102,11 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
                 disabled={disabled}
                 aria-label={revealed ? 'Hide password' : 'Show password'}
               >
-                {revealed ? <EyeOff size={18} /> : <Eye size={18} />}
+                {revealed ? (
+                  <EyeOff size={16} strokeWidth="1.5px" />
+                ) : (
+                  <Eye size={16} strokeWidth="1.5px" />
+                )}
               </button>
             )}
 
@@ -114,7 +118,7 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
                 disabled={disabled}
                 aria-label="Clear input"
               >
-                <X size={18} />
+                <X size={18} strokeWidth="1.5px" />
               </button>
             )}
 

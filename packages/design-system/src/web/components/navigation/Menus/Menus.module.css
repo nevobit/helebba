@@ -1,0 +1,100 @@
+@layer components {
+  .scope {
+    display: contents;
+  }
+
+  .menu {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: max-content;
+    gap: var(--ds-space-2);
+  }
+
+  .toggle {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 50rem;
+    padding: 0.6rem;
+    cursor: pointer;
+    color: var(--ds-fg-default);
+    transition:
+      background var(--ds-motion-duration-2),
+      border-color var(--ds-motion-duration-2);
+  }
+  .toggle:hover {
+    background: var(--ds-state-hover-bg);
+  }
+  .toggle:focus-visible {
+    outline: none;
+    box-shadow: var(--ds-focus-ring-action);
+  }
+  .icon {
+    display: block;
+  }
+
+  .list {
+    min-width: 20rem;
+    max-width: 28rem;
+    background: var(--ds-bg-elevated);
+    color: var(--ds-fg-default);
+    border: var(--ds-border-width-1) var(--ds-border-style) var(--ds-border-default);
+    border-radius: var(--ds-radius-8);
+    box-shadow: var(--ds-elevation-popover);
+    padding: 0.4rem;
+    overflow: auto;
+  }
+
+  .item {
+    -webkit-tap-highlight-color: transparent;
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--ds-space-2);
+    padding: 0.8rem 1.2rem;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    color: inherit;
+    border-radius: var(--ds-radius-6);
+    cursor: pointer;
+  }
+  .item:hover,
+  .item:focus-visible {
+    background: var(--ds-state-hover-bg);
+    outline: none;
+  }
+  .danger {
+    color: var(--ds-danger);
+  }
+  .inset {
+    padding-inline-start: 2.4rem;
+  }
+
+  .leading,
+  .trailing {
+    color: var(--ds-fg-muted);
+    display: inline-grid;
+    place-items: center;
+  }
+  .label {
+    min-width: 0;
+  }
+
+  .divider {
+    height: 1px;
+    margin: 0.4rem;
+    background: var(--ds-border-default);
+    list-style: none;
+  }
+
+  .labelRow {
+    list-style: none;
+  }
+  .sectionLabel {
+    font-size: var(--ds-font-size-12);
+    color: var(--ds-fg-muted);
+    padding: 0.6rem 1rem;
+  }
+}

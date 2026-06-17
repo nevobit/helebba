@@ -1,8 +1,8 @@
 import { Collection, getModel } from "@hlb/constant-definitions";
-import { Warehouse, WarehouseId, WarehouseSchemaMongo } from "@hlb/contracts";
+import { type Warehouse, type WarehouseId, WarehouseSchemaMongo } from "@hlb/contracts";
 
 export const updateWarehouse = async (warehouseId:WarehouseId, data: Partial<Warehouse>) => {
-    const model = getModel(Collection.WAREHOUSES, WarehouseSchemaMongo);
+    const model = getModel<Warehouse>(Collection.WAREHOUSES, WarehouseSchemaMongo);
 
     const dataToUpdate = {
         ...data,

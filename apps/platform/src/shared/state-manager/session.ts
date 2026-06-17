@@ -31,6 +31,8 @@ type SessionState = {
     workspaceToken: string;
     membershipId: string;
     organization: Partial<Organization>;
+    refreshToken?: string;
+    roleId?: string;
   }) => void;
 
   isAuthenticated: () => boolean;
@@ -56,11 +58,19 @@ export const useSession = create<SessionState>()(
         });
       },
 
-      setWorkspaceContext: ({ workspaceToken, membershipId, organization }) => {
+      setWorkspaceContext: ({
+        workspaceToken,
+        membershipId,
+        organization,
+        refreshToken,
+        roleId,
+      }) => {
         set({
           token: workspaceToken, // ahora token workspace
           activeMembershipId: membershipId,
           organization,
+          refreshToken: refreshToken ?? get().refreshToken,
+          roleId,
         });
       },
 
@@ -72,13 +82,18 @@ export const useSession = create<SessionState>()(
           organization: null,
           user: null,
           status: 'unauth',
+          accessExp: undefined,
           activeMembershipId: undefined,
+          roleId: undefined,
         }),
       changeAccount: () =>
         set({
+          token: get().globalToken,
           organization: null,
+          activeMembershipId: undefined,
+          roleId: undefined,
         }),
-      isAuthenticated: () => !!get().token,
+      isAuthenticated: () => !!get().token && get().status === 'auth',
     }),
     {
       name: 'helebba/session',
@@ -88,9 +103,12 @@ export const useSession = create<SessionState>()(
         token: s.token,
         globalToken: s.globalToken,
         refreshToken: s.refreshToken,
+        accessExp: s.accessExp,
         organization: s.organization,
         user: s.user,
         activeMembershipId: s.activeMembershipId,
+        roleId: s.roleId,
+        status: s.status,
       }),
       version: 1,
     },

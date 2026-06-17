@@ -1,0 +1,124 @@
+:root {
+  --modal-duration: 180ms;
+  --overlay-opacity: 0.75;
+}
+
+/* Overlay with state-based animation */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: color-mix(
+    in srgb,
+    var(--bg-overlay, rgba(3, 6, 23, 1)) calc(var(--overlay-opacity) * 100%),
+    transparent
+  );
+  backdrop-filter: blur(2px);
+  transition: opacity var(--modal-duration) ease;
+  opacity: 0;
+  z-index: 1;
+}
+.overlay[data-state='open'] {
+  opacity: 1;
+}
+.overlay[data-state='closed'] {
+  opacity: 0;
+}
+
+/* Dialog with state-based animation */
+.modal {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  top: 10vh;
+  background: var(--modal-bg, #fff);
+  color: var(--text-base, #0b0b0c);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  width: min(92vw, 960px);
+  max-height: 80vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  outline: none;
+  transition:
+    opacity var(--modal-duration) ease,
+    transform var(--modal-duration) ease;
+  opacity: 0;
+  z-index: 2;
+}
+.modal[data-state='open'] {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.modal[data-state='closed'] {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-8px);
+}
+
+/* Sections */
+.header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle, #e5e7eb);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.body {
+  padding: 16px 20px;
+  overflow: auto;
+}
+
+.footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-subtle, #e5e7eb);
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* Close button */
+.closeBtn {
+  border: 0;
+  background: transparent;
+  font-size: 1.125rem;
+  line-height: 1;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 6px;
+  border-radius: 8px;
+}
+.closeBtn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.confirmTitle {
+  font-weight: 600;
+  font-size: 1rem;
+}
+.confirmCopy {
+  font-size: 0.9375rem;
+  margin-top: 6px;
+}
+.confirmFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--border-strong, #d1d5db);
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btnPrimary {
+  border-color: transparent;
+  background: var(--brand, #2563eb);
+  color: #fff;
+}
+.btnCritical {
+  background: #dc2626;
+  color: #fff;
+}

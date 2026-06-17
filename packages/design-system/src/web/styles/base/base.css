@@ -8,7 +8,7 @@
     font-size: var(--ds-font-size-16);
     color: var(--ds-fg-default);
     background: var(--ds-bg-canvas);
-    min-height: 100vh;
+    min-height: 100dvh;
     text-rendering: optimizeLegibility;
   }
 
@@ -106,7 +106,6 @@
   select:focus-visible,
   button:focus-visible {
     outline: none;
-    box-shadow: var(--ds-focus-ring-field);
     border-color: var(--ds-input-border-focus);
   }
 

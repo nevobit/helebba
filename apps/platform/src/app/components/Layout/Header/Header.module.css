@@ -7,23 +7,39 @@
 
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 0 var(--ds-space-6);
 }
 
-.logo {
-    width: 18px;
-    height: 18px;
+.header a {
+    text-decoration: none;
 }
 
-.header nav ul {
+.logo {
+    width: 20px;
+    height: 20px;
+}
+
+.header nav {
     display: flex;
     align-items: center;
-    gap: var(--ds-space-8);
 }
+
 
 .header nav ul li {
     list-style: none;
     font-size: var(--ds-font-size-14);
     line-height: var(--ds-line-height-normal);
-    font-weight: var(--ds-font-weight-light);
+    font-weight: var(--ds-font-weight-regular);
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+}
+
+.options {
+    display: flex;
+    gap: 2rem;
 }

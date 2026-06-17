@@ -2,18 +2,22 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import '@hlb/design-system/css/web.css';
-import { buildAppShell } from '@hlb/design-system';
+import { buildAppShell, Menus, Modal } from '@hlb/design-system';
 
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { PersistedQueryProvider } from './providers';
 
 import Application from './Application';
-
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const AppShell = buildAppShell(
-  [[PersistedQueryProvider, {}]],
+  [
+    [PersistedQueryProvider, {}],
+    [Modal, {}],
+    [Menus, {}],
+    [GoogleOAuthProvider, { clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID }],
+  ],
   [[ReactQueryDevtools, { initialIsOpen: false }]],
 );
 

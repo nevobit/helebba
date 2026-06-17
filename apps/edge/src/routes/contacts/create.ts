@@ -15,6 +15,7 @@ export const createContactRoute = makeFastifyRoute(
       ...body,
       organizationId: req.organization?.organizationId! as OrganizationId,
       createdBy: userId,
+      updatedBy: userId,
     });
     reply.status(201).send(contact);
   },

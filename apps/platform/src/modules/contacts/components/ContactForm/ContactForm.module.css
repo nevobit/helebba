@@ -1,0 +1,455 @@
+.form {
+    display: grid;
+    gap: 2.2rem;
+}
+
+.topFields {
+    display: grid;
+    grid-template-columns: minmax(24rem, 1.6fr) minmax(16rem, .9fr) auto;
+    align-items: start;
+    gap: 3rem;
+}
+
+.kindField {
+    display: grid;
+    gap: .6rem;
+    min-width: 16rem;
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.kindField legend {
+    color: #1f2937;
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1.2;
+    padding: 0;
+}
+
+.kindControl {
+    display: inline-flex;
+    overflow: hidden;
+    width: max-content;
+    border: .1rem solid #d5dbe6;
+    border-radius: .4rem;
+    background: #ffffff;
+}
+
+.kindControl button {
+    appearance: none;
+    min-height: 3.6rem;
+    border: 0;
+    border-inline-end: .1rem solid #d5dbe6;
+    background: #ffffff;
+    color: #111827;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.2rem;
+    font-weight: 650;
+    padding: 0 1.4rem;
+}
+
+.kindControl button:last-child {
+    border-inline-end: 0;
+}
+
+.kindControl button[data-active] {
+    background: #3f7df6;
+    color: #ffffff;
+}
+
+.tabs {
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    border-bottom: .1rem solid #d7dce5;
+}
+
+.tabs button {
+    appearance: none;
+    min-height: 4.8rem;
+    border: 0;
+    border-bottom: .2rem solid transparent;
+    background: transparent;
+    color: #8b8b8b;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.4rem;
+    font-weight: 750;
+    padding: 0 2rem;
+}
+
+.tabs button:first-child {
+    padding-left: 2rem;
+}
+
+.tabs button[data-active] {
+    border-bottom-color: #2563eb;
+    color: #2563eb;
+}
+
+.fieldsGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 3rem;
+}
+
+.column {
+    display: grid;
+    gap: 1rem;
+}
+
+.twoColumns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.selectField {
+    display: grid;
+    gap: .6rem;
+    min-width: 0;
+    min-height: 5.4rem;
+    border: .1rem solid var(--ds-input-border);
+    border-radius: var(--ds-radius-8);
+    background: var(--color-background);
+    padding: .8rem 1.2rem .6rem;
+}
+
+.selectField span {
+    color: var(--ds-input-fg);
+    font-size: var(--ds-font-size-14);
+    font-weight: var(--ds-font-weight-medium);
+    line-height: 1.2;
+}
+
+.selectField select {
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #1f2937;
+    font: inherit;
+    font-size: 1.4rem;
+    line-height: 1.2;
+}
+
+.placeholder {
+    display: grid;
+    min-height: 24rem;
+    place-items: center;
+    color: #667085;
+    font-size: 1.4rem;
+}
+
+.banksEmpty {
+    display: grid;
+    min-height: 25.2rem;
+    align-content: center;
+    justify-items: center;
+    gap: 1.6rem;
+    padding: 1.8rem 0 2.4rem;
+    text-align: center;
+}
+
+.banksEmpty h3 {
+    margin: 0;
+    color: #2a2f3a;
+    font-size: 2.2rem;
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.bankIllustration {
+    position: relative;
+    width: 20.8rem;
+    height: 10.2rem;
+}
+
+.bankIllustration::before,
+.bankIllustration::after {
+    position: absolute;
+    content: '';
+    background: #eceff4;
+}
+
+.bankIllustration::before {
+    top: 1.8rem;
+    left: 5.2rem;
+    width: 2.8rem;
+    height: .8rem;
+    border-radius: .8rem;
+    box-shadow: 9.8rem 1.2rem 0 #eceff4;
+}
+
+.bankIllustration::after {
+    right: 1.6rem;
+    bottom: 4rem;
+    width: 2.6rem;
+    height: .4rem;
+    border-radius: .4rem;
+    box-shadow: 1.8rem .9rem 0 #eceff4;
+}
+
+.bankDevice {
+    position: absolute;
+    right: 6rem;
+    bottom: 1.2rem;
+    width: 6.8rem;
+    height: 5.8rem;
+    border: .6rem solid #eef0f4;
+    border-radius: .6rem;
+    background: #ffffff;
+    box-shadow: 0 1.1rem 0 -.5rem #eef0f4;
+}
+
+.bankDevice span {
+    position: absolute;
+    left: 1.7rem;
+    width: 3.2rem;
+    height: .6rem;
+    border-radius: .6rem;
+    background: #e5e8ee;
+}
+
+.bankDevice span:first-child {
+    top: 1.7rem;
+}
+
+.bankDevice span:last-child {
+    top: 2.9rem;
+    box-shadow: 0 1.2rem 0 #e5e8ee;
+}
+
+.bankBubble {
+    position: absolute;
+    display: grid;
+    width: 4.2rem;
+    height: 3.6rem;
+    place-items: center;
+    border-radius: .8rem;
+    color: #ffffff;
+}
+
+.bankBubble::after {
+    position: absolute;
+    right: .8rem;
+    bottom: -.7rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    content: '';
+    transform: rotate(45deg);
+    border-radius: .2rem;
+    background: inherit;
+}
+
+.bankBubbleGreen {
+    left: 2.8rem;
+    bottom: 2.4rem;
+    background: #2bd1ad;
+}
+
+.bankBubblePurple {
+    top: 1rem;
+    left: 8.3rem;
+    background: #9147ee;
+}
+
+.bankBubbleYellow {
+    top: 1.4rem;
+    right: 4.6rem;
+    background: #ffc247;
+}
+
+.bankBubbleRed {
+    right: 1.3rem;
+    bottom: 2.2rem;
+    background: #ef6b5e;
+}
+
+.banksList {
+    display: grid;
+    gap: 1.6rem;
+}
+
+.bankCard {
+    display: grid;
+    gap: 1.4rem;
+    border: .1rem solid #d7dce5;
+    border-radius: var(--ds-radius-8);
+    background: #ffffff;
+    margin: 0;
+    padding: 1.2rem;
+}
+
+.bankCard legend {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    width: calc(100% + 2.4rem);
+    min-height: 6.4rem;
+    margin: -1.2rem -1.2rem 1.2rem;
+    border-bottom: .1rem solid #d7dce5;
+    background: #f7f7f8;
+    color: #1f2937;
+    font-size: 0;
+    padding: 0 1.2rem;
+}
+
+.bankCard legend svg {
+    color: #1f2937;
+}
+
+.bankGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.bankActions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.8rem;
+    margin-top: 1.2rem;
+}
+
+.inlineCheckbox {
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+    color: #1f2937;
+    font-size: 1.4rem;
+    line-height: 1.35;
+}
+
+.inlineCheckbox input {
+    width: 1.8rem;
+    height: 1.8rem;
+    accent-color: #2563eb;
+}
+
+.deleteBankButton,
+.addBankLink {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+}
+
+.deleteBankButton {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    color: #ef4444;
+    font-size: 1.3rem;
+    padding: .4rem 0;
+}
+
+.addBankLink {
+    justify-self: start;
+    color: #2563eb;
+    font-size: 1.4rem;
+    padding: .4rem 0;
+}
+
+.deleteBankButton:disabled,
+.addBankLink:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+.checkList {
+    display: grid;
+    gap: .8rem;
+    margin-top: .4rem;
+}
+
+.checkList label {
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+    color: #1f2937;
+    font-size: 1.4rem;
+    line-height: 1.35;
+}
+
+.checkList input {
+    width: 1.6rem;
+    height: 1.6rem;
+    accent-color: #2563eb;
+}
+
+.links {
+    display: grid;
+    justify-items: start;
+    gap: 1.2rem;
+    margin-top: .4rem;
+}
+
+.links button {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #2563eb;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.4rem;
+    padding: 0;
+    text-align: start;
+}
+
+.accountingGrid {
+    display: grid;
+    gap: 2rem;
+}
+
+.accountingGrid section {
+    display: grid;
+    gap: 1.2rem;
+}
+
+.accountingGrid h3 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 1.4rem;
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.2rem;
+    margin: 1rem -2.6rem -2.6rem;
+    border-top: .1rem solid #eaecf0;
+    background: #f7f7f8;
+    padding: 1.6rem 2.6rem;
+}
+
+@media (max-width: 900px) {
+    .topFields,
+    .fieldsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .twoColumns {
+        grid-template-columns: 1fr;
+    }
+
+    .bankGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .bankActions {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: .8rem;
+    }
+
+    .tabs {
+        overflow-x: auto;
+    }
+}

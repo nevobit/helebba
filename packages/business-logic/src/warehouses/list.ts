@@ -1,37 +1,41 @@
-import { Collection, getModel } from "@hlb/constant-definitions";
-import { PaginatedResult, Params, Warehouse, WarehouseSchemaMongo } from "@hlb/contracts";
+import { Collection, getModel } from '@hlb/constant-definitions';
+import { type OffsetPaginatedResult, type Params, type Warehouse, WarehouseSchemaMongo } from '@hlb/contracts';
 
-export const getAllWarehouses = async (params: Params): Promise<PaginatedResult<Warehouse>> => {
-    const {page = 1, limit = 10, search ="", tenantId} = params;
+export const getAllWarehouses = async (params: Params): Promise<OffsetPaginatedResult<Warehouse>> => {
+  const { page = 1, limit = 100, search = '', organizationId } = params;
+  const model = getModel<Warehouse>(Collection.WAREHOUSES, WarehouseSchemaMongo);
+  const skip = (page - 1) * limit;
+  const normalizedSearch = search.trim();
+  const filter = {
+    organizationId,
+    ...(normalizedSearch
+      ? {
+          $or: [
+            { name: { $regex: normalizedSearch, $options: 'i' } },
+            { email: { $regex: normalizedSearch, $options: 'i' } },
+            { 'address.city': { $regex: normalizedSearch, $options: 'i' } },
+          ],
+        }
+      : {}),
+  };
 
-    const model = getModel<Warehouse>(Collection.WAREHOUSES, WarehouseSchemaMongo);
+  const warehouses = await model.find(filter).sort({ isDefault: -1, createdAt: -1 }).skip(skip).limit(limit);
+  const total = await model.countDocuments(filter);
+  const pages = Math.ceil(total / limit);
 
-    const skip = (page - 1) * limit;
-
-    const warehouse = await model.find({ tenantId }).skip(skip).limit(limit);
-
-    const total = await model.countDocuments({ tenantId });
-
-    const pages = Math.ceil(total / limit);
-
-    const hasPreviousPage = page > 1;
-    const previousPage = hasPreviousPage ? page - 1 : null;
-    const hasNextPage = page < pages;
-    const nextPage = hasNextPage ? page + 1 : null;
-
-       return {
+  return {
     kind: 'offset',
     count: total,
-    items: warehouse,
+    items: warehouses,
     pageInfo: {
       page,
       pages,
       pageSize: limit,
       totalItems: total,
-      hasPreviousPage,
-      hasNextPage,
-      previousPage,
-      nextPage,
+      hasPreviousPage: page > 1,
+      hasNextPage: page < pages,
+      previousPage: page > 1 ? page - 1 : null,
+      nextPage: page < pages ? page + 1 : null,
     },
   };
-}
+};

@@ -1,0 +1,30 @@
+.container {
+    --tw-gradient-from: #030225;
+    --tw-gradient-to: #3c0f68;
+    background-image: linear-gradient(to right, var(--tw-gradient-from), var(--tw-gradient-to, rgba(67, 56, 202, 0)));
+    padding-block: .8rem;
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+    color: #fff;
+    max-width: 1210px;
+    font-size: 1.3rem;
+    font-weight: 300;
+}
+
+.content>div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.content>div span {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}

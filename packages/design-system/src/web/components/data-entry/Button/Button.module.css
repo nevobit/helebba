@@ -212,7 +212,6 @@
     --_tone-bg-hover: var(--color-danger-hover);
 }
 
-.theme-default {}
 
 .theme-monochrome {
     --_tone-bg: var(--color-primary);
@@ -220,6 +219,14 @@
     --_tone-border: var(--color-primary);
     --_tone-bg-hover: var(--color-primary-hover);
 }
+
+.theme-optional {
+    --_tone-bg: var(--color-primary);
+    --_tone-fg: var(--color-white);
+    --_tone-border: rgba(0, 0, 0, 0.1);
+    --_tone-bg-hover: var(--color-primary-hover);
+}
+
 
 .label {
     display: inline-flex;

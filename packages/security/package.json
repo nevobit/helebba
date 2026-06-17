@@ -21,7 +21,9 @@
   "type": "module",
   "dependencies": {
     "@hlb/contracts": "workspace:*",
-    "jose": "^6.2.3"
+    "@hlb/tooling": "workspace:*",
+    "jose": "^6.2.3",
+    "otplib": "^13.4.1"
   },
   "devDependencies": {
     "@types/node": "catalog:"

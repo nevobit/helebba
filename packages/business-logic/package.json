@@ -25,7 +25,8 @@
   "dependencies": {
     "@hlb/contracts": "workspace:*",
     "@hlb/security": "workspace:*",
-    "@hlb/constant-definitions": "workspace:*"
+    "@hlb/constant-definitions": "workspace:*",
+    "@hlb/foundation": "workspace:*"
   },
   "devDependencies": {
     "@hlb/tooling": "workspace:*",

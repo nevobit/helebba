@@ -1,5 +1,5 @@
 import type { ISODateTimeString, PersistedEntity, UserId } from '../../../../common';
-import type { MembershipId, RoleId } from '../../../rbac';
+import type { MembershipId, RoleId } from '../../rbac';
 
 export interface Preferences {
   notifications: {
