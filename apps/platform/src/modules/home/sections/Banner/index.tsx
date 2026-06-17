@@ -2,7 +2,7 @@ import { useSession } from '@/shared';
 import styles from './Banner.module.css';
 import { formatCurrency } from '@hlb/foundation';
 import { useMemo } from 'react';
-import type { Document, Payment, PaymentMethod } from '@hlb/contracts';
+import type { Document, Payment, PaymentDirection, PaymentMethod } from '@hlb/contracts';
 import { useDocuments } from '@/modules/sales/documents/hooks';
 import { usePayments } from '@/modules/accounting/payments/hooks';
 import { usePaymentMethods } from '@/modules/settings/payment-methods/hooks';
@@ -27,7 +27,7 @@ const isInLastDays = (value: string | undefined, days: number) => {
   return date >= from;
 };
 
-const getPaymentDirection = (payment: { direction?: string; documentType?: string }) =>
+const getPaymentDirection = (payment: { direction?: PaymentDirection; documentType?: string }) =>
   payment.direction ??
   (payment.documentType === 'purchase' || payment.documentType === 'expenses'
     ? 'outflow'
