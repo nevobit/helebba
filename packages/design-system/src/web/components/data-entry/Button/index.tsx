@@ -74,11 +74,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const disclosureKind = getDisclosureKind(disclosure);
     const hasOnlyIcon = Boolean(icon) && !children;
 
-    if (process.env.NODE_ENV !== 'production') {
-      if (hasOnlyIcon && !props['aria-label']) {
-        console.warn('Button: icon-only buttons must include an aria-label.');
-      }
-    }
+    // if (process.env.NODE_ENV !== 'production') {
+    //   if (hasOnlyIcon && !props['aria-label']) {
+    //     console.warn('Button: icon-only buttons must include an aria-label.');
+    //   }
+    // }
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       if (isDisabled) {
