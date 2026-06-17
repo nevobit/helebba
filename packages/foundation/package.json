@@ -19,6 +19,7 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "@hlb/tooling": "workspace:*",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "tsup": "catalog:"
   }
 }
