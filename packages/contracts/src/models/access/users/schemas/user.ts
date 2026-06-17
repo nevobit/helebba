@@ -1,5 +1,4 @@
 import type {
-  GroupId,
   ISODateTimeString,
   PersistedSoftDeletableEntity,
   ProductId,
