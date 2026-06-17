@@ -1,6 +1,13 @@
-import { useEffect, useMemo, useState, type ChangeEvent, type DragEvent, type FormEvent } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type ChangeEvent,
+  type DragEvent,
+  type FormEvent,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Menus, TextInput } from '@hlb/design-system';
+import { Button, Menus, Select, TextInput } from '@hlb/design-system';
 import {
   ArrowLeft,
   BookOpen,
@@ -99,7 +106,10 @@ const nextDayOfMonth = (date: Date, dayOfMonth: number) => {
   return next;
 };
 
-const resolveDisbursementInputDate = (paymentMethod: PaymentMethod | undefined, issueDate: string) => {
+const resolveDisbursementInputDate = (
+  paymentMethod: PaymentMethod | undefined,
+  issueDate: string,
+) => {
   if (!paymentMethod) return '';
 
   const baseDate = new Date(issueDate || today);
@@ -107,7 +117,10 @@ const resolveDisbursementInputDate = (paymentMethod: PaymentMethod | undefined, 
 
   if (paymentMethod.disbursementRule === 'manual') return '';
 
-  if (paymentMethod.disbursementRule === 'immediate' || paymentMethod.settlementMode === 'instant') {
+  if (
+    paymentMethod.disbursementRule === 'immediate' ||
+    paymentMethod.settlementMode === 'instant'
+  ) {
     return toInputDate(baseDate);
   }
 
@@ -115,7 +128,9 @@ const resolveDisbursementInputDate = (paymentMethod: PaymentMethod | undefined, 
     return toInputDate(nextDayOfMonth(baseDate, paymentMethod.disbursementDayOfMonth ?? 1));
   }
 
-  return toInputDate(addDays(baseDate, paymentMethod.disbursementDays ?? paymentMethod.dueDays ?? 0));
+  return toInputDate(
+    addDays(baseDate, paymentMethod.disbursementDays ?? paymentMethod.dueDays ?? 0),
+  );
 };
 
 const splitList = (value: string) =>
@@ -179,7 +194,9 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
   const navigate = useNavigate();
   const isPurchase = config.kind === 'purchase';
   const isEditing = Boolean(documentId);
-  const [formState, setFormState] = useState<DocumentFormState>(() => getInitialFormState(config.kind));
+  const [formState, setFormState] = useState<DocumentFormState>(() =>
+    getInitialFormState(config.kind),
+  );
   const [lines, setLines] = useState<DocumentLineForm[]>([initialLine(), initialLine()]);
   const [initializedDocumentId, setInitializedDocumentId] = useState<string | null>(null);
   const [dragLineId, setDragLineId] = useState<string | null>(null);
@@ -195,18 +212,23 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
   const { isUpdatingDocument, updateDocumentAsync } = useUpdateDocument(config.kind);
   const isSavingDocument = isCreatingDocument || isUpdatingDocument;
   const selectedPaymentMethod = useMemo(
-    () => paymentMethods.find((paymentMethod) => String(paymentMethod.id) === formState.paymentMethodId),
+    () =>
+      paymentMethods.find(
+        (paymentMethod) => String(paymentMethod.id) === formState.paymentMethodId,
+      ),
     [formState.paymentMethodId, paymentMethods],
   );
   const shouldShowCurrentContactOption = Boolean(
     formState.contactId && !contacts.some((contact) => String(contact.id) === formState.contactId),
   );
-  const selectedFinancialFeeMethod = hasFinancialFee(selectedPaymentMethod) ? selectedPaymentMethod : undefined;
+  const selectedFinancialFeeMethod = hasFinancialFee(selectedPaymentMethod)
+    ? selectedPaymentMethod
+    : undefined;
   const isCustomFinancialFee = selectedFinancialFeeMethod?.financialFeeType === 'custom';
   const shouldShowDisbursementDate = Boolean(
     selectedPaymentMethod &&
-      selectedPaymentMethod.disbursementRule !== 'immediate' &&
-      selectedPaymentMethod.settlementMode !== 'instant',
+    selectedPaymentMethod.disbursementRule !== 'immediate' &&
+    selectedPaymentMethod.settlementMode !== 'instant',
   );
   const isManualDisbursementDate = selectedPaymentMethod?.disbursementRule === 'manual';
 
@@ -234,7 +256,9 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
     );
   }, [lines]);
 
-  const updateField = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const updateField = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = event.target;
     setFormState((current) => {
       if (name === 'date' && selectedPaymentMethod) {
@@ -254,7 +278,9 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
   };
 
   const updateLine = (id: string, field: keyof DocumentLineForm, value: string) => {
-    setLines((current) => current.map((line) => (line.id === id ? { ...line, [field]: value } : line)));
+    setLines((current) =>
+      current.map((line) => (line.id === id ? { ...line, [field]: value } : line)),
+    );
   };
 
   const handleContactChange = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -287,7 +313,9 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
   };
 
   const removeLine = (id: string) => {
-    setLines((current) => (current.length > 1 ? current.filter((line) => line.id !== id) : current));
+    setLines((current) =>
+      current.length > 1 ? current.filter((line) => line.id !== id) : current,
+    );
   };
 
   const reorderLines = (sourceId: string, targetId: string) => {
@@ -363,7 +391,9 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
       contactName: formState.contactName.trim(),
       docNumber: formState.docNumber.trim(),
       date: new Date(formState.date || today).toISOString() as ISODateTimeString,
-      dueDate: (formState.dueDate ? new Date(formState.dueDate).toISOString() : new Date(formState.date || today).toISOString()) as ISODateTimeString,
+      dueDate: (formState.dueDate
+        ? new Date(formState.dueDate).toISOString()
+        : new Date(formState.date || today).toISOString()) as ISODateTimeString,
       disbursementDate: formState.disbursementDate
         ? (new Date(formState.disbursementDate).toISOString() as ISODateTimeString)
         : undefined,
@@ -379,8 +409,8 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
           ? toNumber(formState.financialFeeCustomValue)
           : selectedFinancialFeeMethod?.financialFeeType === 'fixed' ||
               selectedFinancialFeeMethod?.financialFeeType === 'percentage'
-          ? Number(selectedFinancialFeeMethod.financialFeeValue ?? 0)
-          : undefined,
+            ? Number(selectedFinancialFeeMethod.financialFeeValue ?? 0)
+            : undefined,
       currency: 'COP',
       language: 'es-CO',
       tags: splitList(formState.tags),
@@ -437,25 +467,49 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
 
   return (
     <main className={styles.editorPage}>
-      <title>{isEditing ? `Editar ${config.singularTitle.toLowerCase()}` : config.newLabel} - Helebba</title>
+      <title>
+        {isEditing ? `Editar ${config.singularTitle.toLowerCase()}` : config.newLabel} - Helebba
+      </title>
 
       <header className={styles.editorHeader}>
         <h1 className={styles.editorTitle}>
-          <button className={styles.backButton} type="button" aria-label="Volver" onClick={() => navigate(config.listPath)}>
+          <button
+            className={styles.backButton}
+            type="button"
+            aria-label="Volver"
+            onClick={() => navigate(config.listPath)}
+          >
             <ArrowLeft size={19} />
           </button>
           {isEditing ? `Editar ${config.singularTitle.toLowerCase()}` : config.newLabel}
         </h1>
 
         <div className={styles.headerActions}>
-          <Button className={styles.iconButton} variant="outline" theme="optional" size="medium" icon={<BookOpen size={16} />} aria-label="Ayuda" />
+          <Button
+            className={styles.iconButton}
+            variant="outline"
+            theme="optional"
+            size="medium"
+            icon={<BookOpen size={16} />}
+            aria-label="Ayuda"
+          />
           <Button variant="outline" theme="optional" size="medium" icon={<Eye size={16} />}>
             Vista previa
           </Button>
-          <Button variant="outline" theme="optional" size="medium" icon={<SlidersHorizontal size={16} />}>
+          <Button
+            variant="outline"
+            theme="optional"
+            size="medium"
+            icon={<SlidersHorizontal size={16} />}
+          >
             Opciones
           </Button>
-          <Button variant="outline" theme="optional" size="medium" disabled={isSavingDocument || isLoadingDocument}>
+          <Button
+            variant="outline"
+            theme="optional"
+            size="medium"
+            disabled={isSavingDocument || isLoadingDocument}
+          >
             Guardar como borrador
           </Button>
           <Button
@@ -470,7 +524,11 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
           {isPurchase && (
             <Menus defaultPlacement="bottom-end">
               <Menus.Menu>
-                <Menus.Toggle id="purchase-save-options" className={styles.splitSaveButton} aria-label="Opciones de guardado">
+                <Menus.Toggle
+                  id="purchase-save-options"
+                  className={styles.splitSaveButton}
+                  aria-label="Opciones de guardado"
+                >
                   <ChevronDown size={16} />
                 </Menus.Toggle>
                 <Menus.List id="purchase-save-options" placement="bottom-end">
@@ -507,11 +565,18 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
                   <h2>Archivo</h2>
                   <Menus defaultPlacement="bottom-end">
                     <Menus.Menu>
-                      <Menus.Toggle id="purchase-file-menu" className={styles.filePanelMenuButton} aria-label="Opciones del archivo">
+                      <Menus.Toggle
+                        id="purchase-file-menu"
+                        className={styles.filePanelMenuButton}
+                        aria-label="Opciones del archivo"
+                      >
                         <MoreHorizontal size={18} />
                       </Menus.Toggle>
                       <Menus.List id="purchase-file-menu" placement="bottom-end">
-                        <Menus.Item id="minimize-file-panel" onClick={() => setIsFilePanelCollapsed(true)}>
+                        <Menus.Item
+                          id="minimize-file-panel"
+                          onClick={() => setIsFilePanelCollapsed(true)}
+                        >
                           Minimizar
                         </Menus.Item>
                         <Menus.Item id="change-file-view">Cambiar vista</Menus.Item>
@@ -525,12 +590,20 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
                   onDragOver={(event) => event.preventDefault()}
                   onDrop={handleSupportFileDrop}
                 >
-                  <input type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" onChange={handleSupportFileChange} />
+                  <input
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png,.webp"
+                    onChange={handleSupportFileChange}
+                  />
                   <FileUp size={30} />
                   <span>{supportFileName || 'Selecciona o arrastra un documento'}</span>
                 </label>
 
-                <button className={styles.minimizeFilePanelButton} type="button" onClick={() => setIsFilePanelCollapsed(true)}>
+                <button
+                  className={styles.minimizeFilePanelButton}
+                  type="button"
+                  onClick={() => setIsFilePanelCollapsed(true)}
+                >
                   <PanelLeftClose size={16} /> Minimizar
                 </button>
               </>
@@ -539,259 +612,300 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
         )}
 
         <div className={isPurchase ? styles.purchaseEditorArea : undefined}>
-        <div className={styles.topFields}>
-          <label className={styles.selectField}>
-            Contacto
-            <select
-              name="contactId"
-              value={formState.contactId}
-              disabled={isSavingDocument}
-              onChange={handleContactChange}
-            >
-              <option value="">Sin contacto seleccionado</option>
-              {shouldShowCurrentContactOption && (
-                <option value={formState.contactId}>{formState.contactName || 'Contacto actual'}</option>
-              )}
-              {contacts.map((contact) => (
-                <option key={String(contact.id)} value={String(contact.id)}>
-                  {contact.tradeName || contact.name}
-                  {contact.email ? ` - ${contact.email}` : ''}
-                </option>
-              ))}
-            </select>
-          </label>
-          <TextInput
-            label="Nombre del contacto"
-            name="contactName"
-            value={formState.contactName}
-            disabled={isSavingDocument || Boolean(formState.contactId)}
-            placeholder="Escribe el nombre"
-            onChange={updateField}
-          />
-          <TextInput
-            label="Número de documento"
-            name="docNumber"
-            value={formState.docNumber}
-            disabled={isSavingDocument}
-            onChange={updateField}
-          />
-          <TextInput
-            label={isPurchase ? 'Fecha emisión' : 'Fecha'}
-            name="date"
-            type="date"
-            value={formState.date}
-            disabled={isSavingDocument}
-            onChange={updateField}
-          />
-          <TextInput label="Vencimiento" name="dueDate" type="date" value={formState.dueDate} disabled={isSavingDocument} onChange={updateField} />
-        </div>
-
-        <div className={styles.tableScroll}>
-          <div className={styles.linesTable}>
-            <div className={styles.linesHeader}>
-              <span />
-              <span>Concepto</span>
-              <span>Descripción</span>
-              <span>Cantidad</span>
-              <span>Precio</span>
-              <span>Impuestos</span>
-              <span>Total</span>
-              <span />
-            </div>
-
-            {lines.map((line) => {
-              const lineSubtotal = toNumber(line.price) * toNumber(line.quantity);
-              const lineTotal = lineSubtotal + lineSubtotal * (toNumber(line.tax) / 100);
-
-              return (
-                <div
-                  className={`${styles.lineRow} ${dragLineId === line.id ? styles.draggingLine : ''} ${dropLineId === line.id ? styles.dropTargetLine : ''}`}
-                  key={line.id}
-                  onDragOver={(event) => handleDragOver(event, line.id)}
-                  onDragLeave={() => setDropLineId((current) => (current === line.id ? null : current))}
-                  onDrop={(event) => handleDrop(event, line.id)}
-                >
-                  <button
-                    className={styles.dragCell}
-                    type="button"
-                    draggable={!isSavingDocument}
-                    aria-label="Arrastrar línea"
-                    onDragStart={(event) => handleDragStart(event, line.id)}
-                    onDragEnd={clearDragState}
-                  >
-                    <GripVertical size={15} />
-                  </button>
-                  <div className={styles.conceptCell}>
-                    <input
-                      className={styles.cellInput}
-                      placeholder="Escribe el concepto o usa @ para buscar"
-                      value={line.concept}
-                      disabled={isSavingDocument}
-                      onChange={(event) => updateLine(line.id, 'concept', event.target.value)}
-                    />
-                    <button className={styles.conceptSearch} type="button" aria-label="Buscar item" onClick={() => setShowItemSelector(true)}>
-                      <BookOpen size={16} />
-                    </button>
-                  </div>
-                  <textarea
-                    className={styles.cellTextarea}
-                    placeholder="Desc"
-                    value={line.description}
-                    disabled={isSavingDocument}
-                    onChange={(event) => updateLine(line.id, 'description', event.target.value)}
-                  />
-                  <input
-                    className={styles.cellInput}
-                    value={line.quantity}
-                    inputMode="decimal"
-                    disabled={isSavingDocument}
-                    onChange={(event) => updateLine(line.id, 'quantity', event.target.value)}
-                  />
-                  <input
-                    className={styles.cellInput}
-                    value={line.price}
-                    inputMode="decimal"
-                    disabled={isSavingDocument}
-                    onChange={(event) => updateLine(line.id, 'price', event.target.value)}
-                  />
-                  <label className={styles.taxField}>
-                    <span>IVA</span>
-                    <input
-                      value={line.tax}
-                      inputMode="decimal"
-                      disabled={isSavingDocument}
-                      onChange={(event) => updateLine(line.id, 'tax', event.target.value)}
-                    />
-                    <span>%</span>
-                  </label>
-                  <span className={styles.totalCell}>{formatCurrency(lineTotal)}</span>
-                  <button className={styles.deleteLine} type="button" aria-label="Eliminar línea" onClick={() => removeLine(line.id)}>
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className={styles.contentArea}>
-          <div className={styles.leftOptions}>
-            <div className={styles.lineActions}>
-              <Button variant="outline" theme="optional" size="medium" onClick={() => addLine()}>
-                Añadir línea
-              </Button>
-              <Button className={styles.iconButton} variant="outline" theme="optional" size="medium" disclosure />
-            </div>
-            <label className={styles.checkboxOption}>
-              <input type="checkbox" /> Campos personalizados
-            </label>
-            <label className={styles.checkboxOption}>
-              <input type="checkbox" /> Añadir texto en el documento
-            </label>
-            <label className={styles.checkboxOption}>
-              <input type="checkbox" /> Añadir mensaje al final
-            </label>
-            {error && <div className={styles.error}>{error}</div>}
-          </div>
-
-          <aside className={styles.summary} aria-label="Totales">
-            <button className={styles.summaryLink} type="button">
-              + Añadir descuento
-            </button>
-            <div className={styles.totals}>
-              <div className={styles.totalRow}>
-                <span>Subtotal</span>
-                <strong>{formatCurrency(totals.subtotal)}</strong>
-              </div>
-              <div className={styles.totalRow}>
-                <span>IVA</span>
-                <strong>{formatCurrency(totals.tax)}</strong>
-              </div>
-              <div className={styles.totalRow}>
-                <strong>Total</strong>
-                <strong>{formatCurrency(totals.total)}</strong>
-              </div>
-            </div>
-          </aside>
-        </div>
-
-        <div className={styles.bottomSections}>
-          <section className={styles.bottomCard}>
-            <h2>Método de pago</h2>
+          <div className={styles.topFields}>
             <label className={styles.selectField}>
-              Selecciona una forma de pago
-              <select name="paymentMethodId" value={formState.paymentMethodId} disabled={isSavingDocument} onChange={handlePaymentMethodChange}>
-                <option value="">No seleccionada</option>
-                {paymentMethods.map((paymentMethod) => (
-                  <option key={String(paymentMethod.id)} value={String(paymentMethod.id)}>
-                    {paymentMethod.name}
-                    {paymentMethod.isDefault ? ' · Predeterminado' : ''}
+              Contacto
+              <select
+                name="contactId"
+                value={formState.contactId}
+                disabled={isSavingDocument}
+                onChange={handleContactChange}
+              >
+                <option value="">Sin contacto seleccionado</option>
+                {shouldShowCurrentContactOption && (
+                  <option value={formState.contactId}>
+                    {formState.contactName || 'Contacto actual'}
+                  </option>
+                )}
+                {contacts.map((contact) => (
+                  <option key={String(contact.id)} value={String(contact.id)}>
+                    {contact.tradeName || contact.name}
+                    {contact.email ? ` - ${contact.email}` : ''}
                   </option>
                 ))}
               </select>
             </label>
-            {isCustomFinancialFee && (
-              <TextInput
-                label="Valor de comisión personalizada"
-                name="financialFeeCustomValue"
-                type="number"
-                min="0"
-                step="0.01"
-                value={formState.financialFeeCustomValue}
-                disabled={isSavingDocument}
-                onChange={updateField}
-              />
-            )}
-            {shouldShowDisbursementDate && (
-              <TextInput
-                label="Fecha de desembolso"
-                name="disbursementDate"
-                type="date"
-                value={formState.disbursementDate}
-                disabled={isSavingDocument || !isManualDisbursementDate}
-                onChange={updateField}
-              />
-            )}
-            <div className={styles.walletBanner}>
-              <strong>Conecta tu pasarela de pago para cobrar online de forma rápida</strong>
-              <div className={styles.walletLogos}>
-                <span>stripe</span>
-                <span>PayPal</span>
-                <span>Square</span>
-                <span>GoCardless</span>
-              </div>
-              <Button variant="outline" theme="optional" size="medium">
-                Conectar
-              </Button>
-            </div>
-          </section>
-
-          <section className={styles.bottomCard}>
-            <h2>Categorización</h2>
-            <label className={styles.selectField}>
-              Cuenta contable
-              <select name="account" value={formState.account} disabled={isSavingDocument} onChange={updateField}>
-                <option value="">Seleccionar cuenta</option>
-                <option value="No asignado">No asignado</option>
-              </select>
-            </label>
-            <label className={styles.checkboxOption}>
-              <input type="checkbox" /> Cuenta por concepto
-            </label>
-            <TextInput label="Etiquetas" name="tags" placeholder="Tags" value={formState.tags} disabled={isSavingDocument} onChange={updateField} />
-            <label className={styles.checkboxOption}>
-              <input type="checkbox" /> Etiquetas por concepto
-            </label>
             <TextInput
-              label="Nota interna"
-              name="internalNote"
-              placeholder="Nota interna"
-              value={formState.internalNote}
+              label="Nombre del contacto"
+              name="contactName"
+              value={formState.contactName}
+              disabled={isSavingDocument || Boolean(formState.contactId)}
+              placeholder="Escribe el nombre"
+              onChange={updateField}
+            />
+            <TextInput
+              label="Número de documento"
+              name="docNumber"
+              value={formState.docNumber}
               disabled={isSavingDocument}
               onChange={updateField}
             />
-          </section>
-        </div>
+            <TextInput
+              label={isPurchase ? 'Fecha emisión' : 'Fecha'}
+              name="date"
+              type="date"
+              value={formState.date}
+              disabled={isSavingDocument}
+              onChange={updateField}
+            />
+            <TextInput
+              label="Vencimiento"
+              name="dueDate"
+              type="date"
+              value={formState.dueDate}
+              disabled={isSavingDocument}
+              onChange={updateField}
+            />
+          </div>
+
+          <div className={styles.tableScroll}>
+            <div className={styles.linesTable}>
+              <div className={styles.linesHeader}>
+                <span />
+                <span>Concepto</span>
+                <span>Descripción</span>
+                <span>Cantidad</span>
+                <span>Precio</span>
+                <span>Impuestos</span>
+                <span>Total</span>
+                <span />
+              </div>
+
+              {lines.map((line) => {
+                const lineSubtotal = toNumber(line.price) * toNumber(line.quantity);
+                const lineTotal = lineSubtotal + lineSubtotal * (toNumber(line.tax) / 100);
+
+                return (
+                  <div
+                    className={`${styles.lineRow} ${dragLineId === line.id ? styles.draggingLine : ''} ${dropLineId === line.id ? styles.dropTargetLine : ''}`}
+                    key={line.id}
+                    onDragOver={(event) => handleDragOver(event, line.id)}
+                    onDragLeave={() =>
+                      setDropLineId((current) => (current === line.id ? null : current))
+                    }
+                    onDrop={(event) => handleDrop(event, line.id)}
+                  >
+                    <button
+                      className={styles.dragCell}
+                      type="button"
+                      draggable={!isSavingDocument}
+                      aria-label="Arrastrar línea"
+                      onDragStart={(event) => handleDragStart(event, line.id)}
+                      onDragEnd={clearDragState}
+                    >
+                      <GripVertical size={15} />
+                    </button>
+                    <div className={styles.conceptCell}>
+                      <input
+                        className={styles.cellInput}
+                        placeholder="Escribe el concepto o usa @ para buscar"
+                        value={line.concept}
+                        disabled={isSavingDocument}
+                        onChange={(event) => updateLine(line.id, 'concept', event.target.value)}
+                      />
+                      <button
+                        className={styles.conceptSearch}
+                        type="button"
+                        aria-label="Buscar item"
+                        onClick={() => setShowItemSelector(true)}
+                      >
+                        <BookOpen size={16} />
+                      </button>
+                    </div>
+                    <textarea
+                      className={styles.cellTextarea}
+                      placeholder="Desc"
+                      value={line.description}
+                      disabled={isSavingDocument}
+                      onChange={(event) => updateLine(line.id, 'description', event.target.value)}
+                    />
+                    <input
+                      className={styles.cellInput}
+                      value={line.quantity}
+                      inputMode="decimal"
+                      disabled={isSavingDocument}
+                      onChange={(event) => updateLine(line.id, 'quantity', event.target.value)}
+                    />
+                    <input
+                      className={styles.cellInput}
+                      value={line.price}
+                      inputMode="decimal"
+                      disabled={isSavingDocument}
+                      onChange={(event) => updateLine(line.id, 'price', event.target.value)}
+                    />
+                    <label className={styles.taxField}>
+                      <span>IVA</span>
+                      <input
+                        value={line.tax}
+                        inputMode="decimal"
+                        disabled={isSavingDocument}
+                        onChange={(event) => updateLine(line.id, 'tax', event.target.value)}
+                      />
+                      <span>%</span>
+                    </label>
+                    <span className={styles.totalCell}>{formatCurrency(lineTotal)}</span>
+                    <button
+                      className={styles.deleteLine}
+                      type="button"
+                      aria-label="Eliminar línea"
+                      onClick={() => removeLine(line.id)}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className={styles.contentArea}>
+            <div className={styles.leftOptions}>
+              <div className={styles.lineActions}>
+                <Button variant="outline" theme="optional" size="medium" onClick={() => addLine()}>
+                  Añadir línea
+                </Button>
+                <Button
+                  className={styles.iconButton}
+                  variant="outline"
+                  theme="optional"
+                  size="medium"
+                  disclosure
+                />
+              </div>
+              <label className={styles.checkboxOption}>
+                <input type="checkbox" /> Campos personalizados
+              </label>
+              <label className={styles.checkboxOption}>
+                <input type="checkbox" /> Añadir texto en el documento
+              </label>
+              <label className={styles.checkboxOption}>
+                <input type="checkbox" /> Añadir mensaje al final
+              </label>
+              {error && <div className={styles.error}>{error}</div>}
+            </div>
+
+            <aside className={styles.summary} aria-label="Totales">
+              <button className={styles.summaryLink} type="button">
+                + Añadir descuento
+              </button>
+              <div className={styles.totals}>
+                <div className={styles.totalRow}>
+                  <span>Subtotal</span>
+                  <strong>{formatCurrency(totals.subtotal)}</strong>
+                </div>
+                <div className={styles.totalRow}>
+                  <span>IVA</span>
+                  <strong>{formatCurrency(totals.tax)}</strong>
+                </div>
+                <div className={styles.totalRow}>
+                  <strong>Total</strong>
+                  <strong>{formatCurrency(totals.total)}</strong>
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          <div className={styles.bottomSections}>
+            <section className={styles.bottomCard}>
+              <h2>Método de pago</h2>
+              <Select
+                name="paymentMethodId"
+                label="Selecciona una forma de pago"
+                value={formState.paymentMethodId}
+                disabled={isSavingDocument}
+                onChange={handlePaymentMethodChange}
+                options={[
+                  { label: 'No seleccionado', value: '' },
+                  ...paymentMethods.map((paymentMethod) => ({
+                    label: `${paymentMethod.name}${paymentMethod.isDefault ? ' · Predeterminado' : ''}`,
+                    value: paymentMethod.id,
+                  })),
+                ]}
+              />
+              {isCustomFinancialFee && (
+                <TextInput
+                  label="Valor de comisión personalizada"
+                  name="financialFeeCustomValue"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formState.financialFeeCustomValue}
+                  disabled={isSavingDocument}
+                  onChange={updateField}
+                />
+              )}
+              {shouldShowDisbursementDate && (
+                <TextInput
+                  label="Fecha de desembolso"
+                  name="disbursementDate"
+                  type="date"
+                  value={formState.disbursementDate}
+                  disabled={isSavingDocument || !isManualDisbursementDate}
+                  onChange={updateField}
+                />
+              )}
+              <div className={styles.walletBanner}>
+                <strong>Conecta tu pasarela de pago para cobrar online de forma rápida</strong>
+                <div className={styles.walletLogos}>
+                  <span>stripe</span>
+                  <span>PayPal</span>
+                  <span>Square</span>
+                  <span>GoCardless</span>
+                </div>
+                <Button variant="outline" theme="optional" size="medium">
+                  Conectar
+                </Button>
+              </div>
+            </section>
+
+            <section className={styles.bottomCard}>
+              <h2>Categorización</h2>
+              <label className={styles.selectField}>
+                Cuenta contable
+                <select
+                  name="account"
+                  value={formState.account}
+                  disabled={isSavingDocument}
+                  onChange={updateField}
+                >
+                  <option value="">Seleccionar cuenta</option>
+                  <option value="No asignado">No asignado</option>
+                </select>
+              </label>
+              <label className={styles.checkboxOption}>
+                <input type="checkbox" /> Cuenta por concepto
+              </label>
+              <TextInput
+                label="Etiquetas"
+                name="tags"
+                placeholder="Tags"
+                value={formState.tags}
+                disabled={isSavingDocument}
+                onChange={updateField}
+              />
+              <label className={styles.checkboxOption}>
+                <input type="checkbox" /> Etiquetas por concepto
+              </label>
+              <TextInput
+                label="Nota interna"
+                name="internalNote"
+                placeholder="Nota interna"
+                value={formState.internalNote}
+                disabled={isSavingDocument}
+                onChange={updateField}
+              />
+            </section>
+          </div>
         </div>
       </form>
 
@@ -803,7 +917,9 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
               const firstEmpty = current.find(isLineEmpty);
               if (!firstEmpty) return [...current, line];
 
-              return current.map((item) => (item.id === firstEmpty.id ? { ...line, id: item.id } : item));
+              return current.map((item) =>
+                item.id === firstEmpty.id ? { ...line, id: item.id } : item,
+              );
             });
           }}
         />
