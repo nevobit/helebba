@@ -857,10 +857,18 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
               <div className={styles.walletBanner}>
                 <strong>Conecta tu pasarela de pago para cobrar online de forma rápida</strong>
                 <div className={styles.walletLogos}>
-                  <span>stripe</span>
-                  <span>PayPal</span>
-                  <span>Square</span>
-                  <span>GoCardless</span>
+                  <span>
+                    <img src="/pm_stripe.png" style={{ width: 60 }} />
+                  </span>
+                  <span>
+                    <img src="/pm_paypal.png" style={{ width: 80 }} />
+                  </span>
+                  <span>
+                    <img src="/Mercado_Pago.svg.png" style={{ width: 120 }} />
+                  </span>
+                  <span>
+                    <img src="/Wompi_LogoPrincipal.svg" style={{ width: 120 }} />
+                  </span>
                 </div>
                 <Button variant="outline" theme="optional" size="medium">
                   Conectar

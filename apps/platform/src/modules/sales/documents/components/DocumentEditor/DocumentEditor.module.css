@@ -442,6 +442,11 @@
     font-weight: 800;
 }
 
+.walletLogos img {
+    width: 8rem;
+    object-fit: contain;
+}
+
 .error {
     border-radius: .6rem;
     background: #fef2f2;
@@ -455,6 +460,7 @@
 }
 
 @media (max-width: 1200px) {
+
     .purchaseFormPanel,
     .purchaseFormPanelCollapsed,
     .topFields,
