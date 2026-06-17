@@ -959,14 +959,13 @@ const main = async () => {
     return;
   }
 
-  // if (!process.env.MONGODB_URI) {
-  //   throw new Error('Falta MONGODB_URI en el entorno o en apps/edge/.env');
-  // }
+  if (!process.env.MONGODB_URI) {
+    throw new Error('Falta MONGODB_URI en el entorno o en apps/edge/.env');
+  }
 
   await initDataSources({
     mongoose: {
-      mongoUri:
-        'mongodb+srv://nevobit_db_user:JLrTaX5rMwOGv7Fh@nevobit-dev-us-east-1.byw9vws.mongodb.net/helebba_test?appName=nevobit-dev-us-east-1',
+      mongoUri: process.env.MONGODB_URI,
     },
   });
 

@@ -16,7 +16,7 @@ export const PrivateRoutes = {
   BRANDS: '/brands',
   WAREHOUSES: '/inventory/warehouses',
   PAYMENTS: '/payments',
-  BANK_ACCOUNTS: '/bank-accounts',
+  BANK_ACCOUNTS: '/banking',
   DAHSBOARD: '/dahsboard',
   INVOICES: '/sales/revenue',
   ESTIMATES: '/sales/estimates',

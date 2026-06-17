@@ -178,7 +178,7 @@
 
 .topFields {
     display: grid;
-    grid-template-columns: 25rem 25rem 25rem 25rem;
+    grid-template-columns: minmax(20rem, 1.2fr) minmax(20rem, 1.2fr) repeat(3, minmax(14rem, 1fr));
     gap: 2rem;
     padding: 2.4rem 2rem 3rem;
 }

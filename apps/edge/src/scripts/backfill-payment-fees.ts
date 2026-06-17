@@ -20,6 +20,7 @@ loadDotenv({ quiet: true });
 loadDotenv({ path: EDGE_ENV_PATH, quiet: true });
 
 type BackfillOptions = {
+  createMissingPayments: boolean;
   limit: number;
   organizationId?: string;
   overwrite: boolean;
@@ -28,7 +29,10 @@ type BackfillOptions = {
 
 type Counters = {
   checked: number;
+  created: number;
+  documentsChecked: number;
   missingDocument: number;
+  missingPayment: number;
   skippedNoFee: number;
   skippedExistingFee: number;
   updated: number;
@@ -46,6 +50,7 @@ Uso:
 Opciones:
   --organization <id>  Limita el proceso a una organización.
   --limit <number>     Máximo de pagos a revisar. Default: 5000
+  --create-missing     Crea payments faltantes para documentos con comisión.
   --overwrite          Recalcula aunque el pago ya tenga feeAmount > 0.
   --write              Ejecuta escrituras. Sin esto solo muestra conteos.
   --help               Muestra esta ayuda.
@@ -84,6 +89,7 @@ const createLogger = () =>
 
 const parseArgs = (argv: string[]): BackfillOptions => {
   const options: BackfillOptions = {
+    createMissingPayments: false,
     limit: 5000,
     overwrite: false,
     write: false,
@@ -106,6 +112,11 @@ const parseArgs = (argv: string[]): BackfillOptions => {
 
     if (arg === '--overwrite') {
       options.overwrite = true;
+      continue;
+    }
+
+    if (arg === '--create-missing') {
+      options.createMissingPayments = true;
       continue;
     }
 
@@ -186,9 +197,53 @@ const buildPaymentUpdate = (payment: Payment, document: Document): Partial<Payme
   };
 };
 
+const buildMissingPayment = (document: Document): Partial<Payment> & { _id: string } => {
+  const direction = directionFromDocument(document);
+  const grossAmount = roundMoney(numberValue(document.total));
+  const feeAmount = roundMoney(Math.max(numberValue(document.financialFeeValue), 0));
+  const netAmount = roundMoney(
+    direction === 'inflow' ? Math.max(grossAmount - feeAmount, 0) : grossAmount + feeAmount,
+  );
+  const documentId = getEntityId(document);
+
+  return {
+    _id: `backfill-payment-${documentId}`,
+    organizationId: document.organizationId,
+    createdBy: document.updatedBy ?? document.createdBy,
+    updatedBy: document.updatedBy ?? document.createdBy,
+    bankAccountId: '',
+    paymentMethodId: document.paymentMethodId,
+    contactId: document.contactId,
+    contactName: document.contactName,
+    amount: grossAmount,
+    direction,
+    grossAmount,
+    feeAmount,
+    netAmount,
+    financialFeePaymentMethodId: document.financialFeePaymentMethodId ?? document.paymentMethodId,
+    feeName: document.financialFeeName ?? 'Comision financiera',
+    feeType: document.financialFeeType ?? 'custom',
+    feeValue: feeAmount,
+    description: `Pago generado por backfill ${document.docNumber || documentId}`,
+    date: document.disbursementDate ?? document.date,
+    status: 'assigned',
+    reconciliationStatus: 'pending',
+    totalDocuments: 1,
+    totalTransactions: 0,
+    totalAdvance: 0,
+    documentType: document.docType as DocumentType,
+    documentId,
+    lifecycleStatus: LifecycleStatus.ACTIVE,
+    deletedAt: null,
+  };
+};
+
 const createCounters = (): Counters => ({
   checked: 0,
+  created: 0,
+  documentsChecked: 0,
   missingDocument: 0,
+  missingPayment: 0,
   skippedNoFee: 0,
   skippedExistingFee: 0,
   updated: 0,
@@ -253,6 +308,45 @@ const runBackfill = async (options: BackfillOptions) => {
     );
   }
 
+  const documentFilter = {
+    lifecycleStatus: LifecycleStatus.ACTIVE,
+    financialFeeValue: { $gt: 0 },
+    ...(options.organizationId ? { organizationId: options.organizationId } : {}),
+  };
+  const documentsWithFee = await documentModel.find(documentFilter).limit(options.limit);
+
+  for (const document of documentsWithFee) {
+    counters.documentsChecked += 1;
+
+    const existingPayment = await paymentModel.findOne({
+      documentId: getEntityId(document),
+      organizationId: document.organizationId,
+      lifecycleStatus: LifecycleStatus.ACTIVE,
+    });
+
+    if (existingPayment) continue;
+
+    counters.missingPayment += 1;
+
+    if (!options.createMissingPayments) continue;
+
+    const payment = buildMissingPayment(document);
+    counters.created += 1;
+
+    if (!options.write) continue;
+
+    await paymentModel.updateOne(
+      { _id: payment._id },
+      {
+        $set: payment,
+        $setOnInsert: {
+          createdAt: new Date(),
+        },
+      },
+      { upsert: true },
+    );
+  }
+
   return counters;
 };
 
@@ -264,14 +358,13 @@ const main = async () => {
   MonoContext.setState({ logger });
   setLogger(logger);
 
-  // if (!process.env.MONGODB_URI) {
-  //   throw new Error('Falta MONGODB_URI en el entorno o en apps/edge/.env');
-  // }
+  if (!process.env.MONGODB_URI) {
+    throw new Error('Falta MONGODB_URI en el entorno o en apps/edge/.env');
+  }
 
   await initDataSources({
     mongoose: {
-      mongoUri:
-        'mongodb+srv://nevobit_db_user:JLrTaX5rMwOGv7Fh@nevobit-dev-us-east-1.byw9vws.mongodb.net/helebba_test?appName=nevobit-dev-us-east-1',
+      mongoUri: process.env.MONGODB_URI,
     },
   });
 
@@ -290,6 +383,9 @@ const printCounters = (title: string, counters: Counters) => {
   console.table({
     checked: counters.checked,
     updated: counters.updated,
+    documentsChecked: counters.documentsChecked,
+    missingPayment: counters.missingPayment,
+    created: counters.created,
     skippedNoFee: counters.skippedNoFee,
     skippedExistingFee: counters.skippedExistingFee,
     missingDocument: counters.missingDocument,

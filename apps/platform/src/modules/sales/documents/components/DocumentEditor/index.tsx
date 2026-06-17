@@ -264,7 +264,7 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
     setFormState((current) => ({
       ...current,
       contactId,
-      contactName: contact?.tradeName || contact?.name || '',
+      contactName: contactId ? contact?.tradeName || contact?.name || '' : current.contactName,
     }));
     setError(null);
   };
@@ -406,8 +406,8 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!formState.contactId || !formState.contactName.trim()) {
-      setError('Selecciona un contacto existente.');
+    if (!formState.contactName.trim()) {
+      setError('Selecciona un contacto existente o escribe el nombre manualmente.');
       return;
     }
 
@@ -543,12 +543,12 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
           <label className={styles.selectField}>
             Contacto
             <select
-              name="contactName"
+              name="contactId"
               value={formState.contactId}
               disabled={isSavingDocument}
               onChange={handleContactChange}
             >
-              <option value="">Seleccionar contacto</option>
+              <option value="">Sin contacto seleccionado</option>
               {shouldShowCurrentContactOption && (
                 <option value={formState.contactId}>{formState.contactName || 'Contacto actual'}</option>
               )}
@@ -560,6 +560,14 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
               ))}
             </select>
           </label>
+          <TextInput
+            label="Nombre del contacto"
+            name="contactName"
+            value={formState.contactName}
+            disabled={isSavingDocument || Boolean(formState.contactId)}
+            placeholder="Escribe el nombre"
+            onChange={updateField}
+          />
           <TextInput
             label="Número de documento"
             name="docNumber"
