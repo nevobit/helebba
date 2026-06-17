@@ -351,19 +351,6 @@ const Summary = () => {
 
           <section className={styles.grid} aria-label="Tablero principal">
             <article className={`${styles.card} ${styles.metricCard}`}>
-              <h2>Ventas</h2>
-              <p>Año actual</p>
-              <strong>{isLoadingPayments ? money(0) : money(dashboard.currentYearSales)}</strong>
-              <div className={styles.progressMeta}>
-                <span>Cobros registrados</span>
-                <span>{money(0)}</span>
-              </div>
-              <div className={styles.progressTrack} aria-hidden="true">
-                <span />
-              </div>
-            </article>
-
-            <article className={`${styles.card} ${styles.metricCard}`}>
               <h2>Facturas</h2>
               <p>Año actual</p>
               <strong>
@@ -375,6 +362,19 @@ const Summary = () => {
               </div>
               <div className={styles.progressTrack} aria-hidden="true">
                 <span className={styles.invoiceTrack} />
+              </div>
+            </article>
+
+            <article className={`${styles.card} ${styles.metricCard}`}>
+              <h2>Ventas</h2>
+              <p>Año actual</p>
+              <strong>{isLoadingPayments ? money(0) : money(dashboard.currentYearSales)}</strong>
+              <div className={styles.progressMeta}>
+                <span>Cobros registrados</span>
+                <span>{money(0)}</span>
+              </div>
+              <div className={styles.progressTrack} aria-hidden="true">
+                <span />
               </div>
             </article>
 
