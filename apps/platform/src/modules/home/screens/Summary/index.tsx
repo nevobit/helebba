@@ -327,7 +327,7 @@ const Summary = () => {
       {activeView === 'summary' ? (
         <div className={styles.summaryContent}>
           <Banner />
-          <Start />
+          {/* <Start /> */}
         </div>
       ) : (
         <div className={styles.shell}>
