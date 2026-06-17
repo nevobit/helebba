@@ -80,7 +80,12 @@ const DocumentList = ({ kind }: DocumentListProps) => {
         )}
       </section>
 
-      <DocumentDetail config={config} documentId={selectedId} fallback={selectedRow} onClose={closeDocument} />
+      <DocumentDetail
+        config={config}
+        documentId={selectedId}
+        fallback={selectedRow}
+        onClose={closeDocument}
+      />
     </main>
   );
 };

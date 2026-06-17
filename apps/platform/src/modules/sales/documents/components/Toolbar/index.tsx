@@ -5,7 +5,7 @@ import styles from '../../screens/DocumentList/DocumentList.module.css';
 
 type ToolbarProps = {
   paymentMethodId: string;
-  paymentMethods: PaymentMethod[];
+  paymentMethods: readonly PaymentMethod[];
   query: string;
   onPaymentMethodChange: (value: string) => void;
   onQueryChange: (value: string) => void;
@@ -32,7 +32,10 @@ export const Toolbar = ({
 
       <label className={styles.selectLabel}>
         <span>Forma de pago</span>
-        <select value={paymentMethodId} onChange={(event) => onPaymentMethodChange(event.target.value)}>
+        <select
+          value={paymentMethodId}
+          onChange={(event) => onPaymentMethodChange(event.target.value)}
+        >
           <option value="">Todas las formas de pago</option>
           {paymentMethods.map((paymentMethod) => (
             <option key={String(paymentMethod.id)} value={String(paymentMethod.id)}>
