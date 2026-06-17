@@ -162,7 +162,9 @@ const buildPaymentUpdate = (payment: Payment, document: Document): Partial<Payme
   if (feeAmount <= 0) return null;
 
   const direction = payment.direction ?? directionFromDocument(document);
-  const grossAmount = roundMoney(numberValue(payment.grossAmount ?? payment.amount ?? document.total));
+  const grossAmount = roundMoney(
+    numberValue(payment.grossAmount ?? payment.amount ?? document.total),
+  );
   const netAmount = roundMoney(
     direction === 'inflow' ? Math.max(grossAmount - feeAmount, 0) : grossAmount + feeAmount,
   );
@@ -174,7 +176,9 @@ const buildPaymentUpdate = (payment: Payment, document: Document): Partial<Payme
     feeAmount,
     netAmount,
     financialFeePaymentMethodId:
-      document.financialFeePaymentMethodId ?? payment.financialFeePaymentMethodId ?? document.paymentMethodId,
+      document.financialFeePaymentMethodId ??
+      payment.financialFeePaymentMethodId ??
+      document.paymentMethodId,
     feeName: document.financialFeeName ?? payment.feeName ?? 'Comision financiera',
     feeType: document.financialFeeType ?? payment.feeType ?? 'custom',
     feeValue: feeAmount,
@@ -260,19 +264,23 @@ const main = async () => {
   MonoContext.setState({ logger });
   setLogger(logger);
 
-  if (!process.env.MONGODB_URI) {
-    throw new Error('Falta MONGODB_URI en el entorno o en apps/edge/.env');
-  }
+  // if (!process.env.MONGODB_URI) {
+  //   throw new Error('Falta MONGODB_URI en el entorno o en apps/edge/.env');
+  // }
 
   await initDataSources({
     mongoose: {
-      mongoUri: process.env.MONGODB_URI,
+      mongoUri:
+        'mongodb+srv://nevobit_db_user:JLrTaX5rMwOGv7Fh@nevobit-dev-us-east-1.byw9vws.mongodb.net/helebba_test?appName=nevobit-dev-us-east-1',
     },
   });
 
   const counters = await runBackfill(options);
 
-  printCounters(options.write ? 'Backfill ejecutado.' : 'Dry-run completado. No se escribio nada.', counters);
+  printCounters(
+    options.write ? 'Backfill ejecutado.' : 'Dry-run completado. No se escribio nada.',
+    counters,
+  );
 
   await disconnectMongoose();
 };
