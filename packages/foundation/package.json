@@ -12,6 +12,9 @@
       "default": "./dist/index.mjs"
     }
   },
+  "scripts": {
+    "dev": "NODE_OPTIONS='--conditions=development' tsup --config tsup.dev.config.ts --watch"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
