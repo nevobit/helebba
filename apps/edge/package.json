@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "NODE_OPTIONS='--conditions=development' tsx watch src/server/index.ts",
-    "legacy:import": "NODE_OPTIONS='--conditions=development' tsx src/scripts/import-legacy-csv.ts"
+    "legacy:import": "NODE_OPTIONS='--conditions=development' tsx src/scripts/import-legacy-csv.ts",
+    "payments:backfill-fees": "NODE_OPTIONS='--conditions=development' tsx src/scripts/backfill-payment-fees.ts"
   },
   "keywords": [],
   "author": "",
