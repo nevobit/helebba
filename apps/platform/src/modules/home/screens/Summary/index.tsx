@@ -13,7 +13,20 @@ import Banner from '../../sections/Banner';
 import { Start } from '../../sections/Start';
 import styles from './Summary.module.css';
 
-const MONTH_LABELS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+const MONTH_LABELS = [
+  'Ene',
+  'Feb',
+  'Mar',
+  'Abr',
+  'May',
+  'Jun',
+  'Jul',
+  'Ago',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dic',
+];
 const DASHBOARD_LIMIT = 100;
 
 const numberValue = (value: unknown) => {
@@ -38,15 +51,14 @@ const isSameMonth = (value: string | undefined, year: number, month: number) => 
 
 const paymentDirection = (payment: Payment) =>
   payment.direction ??
-  (payment.documentType === 'purchase' || payment.documentType === 'expenses' ? 'outflow' : 'inflow');
+  (payment.documentType === 'purchase' || payment.documentType === 'expenses'
+    ? 'outflow'
+    : 'inflow');
 
 const paymentGrossAmount = (payment: Payment) =>
   numberValue(payment.grossAmount ?? payment.amount ?? payment.netAmount);
 
-const getPaymentMethod = (
-  payment: Payment,
-  paymentMethods: Map<string, PaymentMethod>,
-) => {
+const getPaymentMethod = (payment: Payment, paymentMethods: Map<string, PaymentMethod>) => {
   const paymentMethodId = payment.paymentMethodId ? String(payment.paymentMethodId) : '';
   const bankAccountId = payment.bankAccountId ? String(payment.bankAccountId) : '';
 
@@ -60,7 +72,8 @@ const calculateFeeAmount = (
   feeValue?: number,
 ) => {
   const value = Math.max(numberValue(feeValue), 0);
-  const limitForInflow = (amount: number) => (direction === 'inflow' ? Math.min(amount, grossAmount) : amount);
+  const limitForInflow = (amount: number) =>
+    direction === 'inflow' ? Math.min(amount, grossAmount) : amount;
 
   if (feeType === 'fixed' || feeType === 'custom') return limitForInflow(value);
   if (feeType === 'percentage') return limitForInflow(grossAmount * (value / 100));
@@ -76,7 +89,12 @@ const paymentFeeAmount = (payment: Payment, paymentMethods: Map<string, PaymentM
   const feeType = payment.feeType ?? paymentMethod?.financialFeeType ?? 'none';
   const feeValue = payment.feeValue ?? paymentMethod?.financialFeeValue ?? 0;
 
-  return calculateFeeAmount(paymentGrossAmount(payment), paymentDirection(payment), feeType, feeValue);
+  return calculateFeeAmount(
+    paymentGrossAmount(payment),
+    paymentDirection(payment),
+    feeType,
+    feeValue,
+  );
 };
 
 const documentFeeAmount = (payment: Payment, documentsById: Map<string, Document>) => {
@@ -91,10 +109,17 @@ const documentFeeAmount = (payment: Payment, documentsById: Map<string, Document
 const pendingAmount = (document: Document) =>
   Math.max(numberValue(document.paymentsPending ?? document.total), 0);
 
-const sumPending = (documents: Document[], predicate: (document: Document) => boolean) =>
-  documents.reduce((total, document) => (predicate(document) ? total + pendingAmount(document) : total), 0);
+const sumPending = (documents: readonly Document[], predicate: (document: Document) => boolean) =>
+  documents.reduce(
+    (total, document) => (predicate(document) ? total + pendingAmount(document) : total),
+    0,
+  );
 
-const buildMonthlyPaymentSeries = (payments: Payment[], now: Date, direction: 'inflow' | 'outflow') => {
+const buildMonthlyPaymentSeries = (
+  payments: readonly Payment[],
+  now: Date,
+  direction: 'inflow' | 'outflow',
+) => {
   const months = Array.from({ length: 12 }, (_, index) => {
     const date = new Date(now.getFullYear(), now.getMonth() - 11 + index, 1);
     const total = payments.reduce((sum, payment) => {
@@ -120,7 +145,10 @@ const buildMonthlyPaymentSeries = (payments: Payment[], now: Date, direction: 'i
 const monthYearLabel = (date: Date) =>
   new Intl.DateTimeFormat('es-CO', { month: 'long', year: 'numeric' }).format(date);
 
-const methodLabel = (paymentMethodId: string | undefined, paymentMethodNames: Map<string, string>) => {
+const methodLabel = (
+  paymentMethodId: string | undefined,
+  paymentMethodNames: Map<string, string>,
+) => {
   if (!paymentMethodId) return 'Sin método';
 
   return paymentMethodNames.get(String(paymentMethodId)) ?? 'Método configurado';
@@ -162,7 +190,10 @@ const Summary = () => {
     limit: DASHBOARD_LIMIT,
   });
   const paymentMethodNames = useMemo(
-    () => new Map(paymentMethods.map((paymentMethod) => [String(paymentMethod.id), paymentMethod.name])),
+    () =>
+      new Map(
+        paymentMethods.map((paymentMethod) => [String(paymentMethod.id), paymentMethod.name]),
+      ),
     [paymentMethods],
   );
   const paymentMethodsByLookup = useMemo(() => {
@@ -170,7 +201,8 @@ const Summary = () => {
 
     paymentMethods.forEach((paymentMethod) => {
       lookup.set(String(paymentMethod.id), paymentMethod);
-      if (paymentMethod.bankingAccountId) lookup.set(String(paymentMethod.bankingAccountId), paymentMethod);
+      if (paymentMethod.bankingAccountId)
+        lookup.set(String(paymentMethod.bankingAccountId), paymentMethod);
     });
 
     return lookup;
@@ -195,20 +227,26 @@ const Summary = () => {
       .reduce((total, payment) => total + paymentGrossAmount(payment), 0);
     const currentYearFees = currentYearPayments.reduce(
       (total, payment) =>
-        total + (documentFeeAmount(payment, documentsById) ?? paymentFeeAmount(payment, paymentMethodsByLookup)),
+        total +
+        (documentFeeAmount(payment, documentsById) ??
+          paymentFeeAmount(payment, paymentMethodsByLookup)),
       0,
     );
     const currentYearInvoicedSales = invoices
       .filter((invoice) => isSameYear(invoice.date, year))
       .reduce((total, invoice) => total + numberValue(invoice.total), 0);
-    const currentYearInvoiceCount = invoices.filter((invoice) => isSameYear(invoice.date, year)).length;
+    const currentYearInvoiceCount = invoices.filter((invoice) =>
+      isSameYear(invoice.date, year),
+    ).length;
     const currentMonthReceivables = sumPending(invoices, (invoice) =>
       isSameMonth(invoice.dueDate ?? invoice.date, year, month),
     );
     const currentMonthPayables = sumPending(purchases, (purchase) =>
       isSameMonth(purchase.dueDate ?? purchase.date, year, month),
     );
-    const currentMonthPayments = payments.filter((payment) => isSameMonth(payment.date, year, month));
+    const currentMonthPayments = payments.filter((payment) =>
+      isSameMonth(payment.date, year, month),
+    );
     const bankInflow = currentMonthPayments
       .filter((payment) => paymentDirection(payment) === 'inflow')
       .reduce((total, payment) => total + paymentGrossAmount(payment), 0);
@@ -217,7 +255,9 @@ const Summary = () => {
       .reduce((total, payment) => total + paymentGrossAmount(payment), 0);
     const currentMonthFees = currentMonthPayments.reduce(
       (total, payment) =>
-        total + (documentFeeAmount(payment, documentsById) ?? paymentFeeAmount(payment, paymentMethodsByLookup)),
+        total +
+        (documentFeeAmount(payment, documentsById) ??
+          paymentFeeAmount(payment, paymentMethodsByLookup)),
       0,
     );
     const salesByPaymentMethod = invoices
@@ -245,14 +285,26 @@ const Summary = () => {
       expensesSeries: buildMonthlyPaymentSeries(payments, now, 'outflow'),
       salesByPaymentMethod,
     };
-  }, [documentsById, invoices, month, now, paymentMethodNames, paymentMethodsByLookup, payments, purchases, year]);
+  }, [
+    documentsById,
+    invoices,
+    month,
+    now,
+    paymentMethodNames,
+    paymentMethodsByLookup,
+    payments,
+    purchases,
+    year,
+  ]);
 
   const bankAccounts = accounts.filter((account) => account.kind === 'bank');
   const hasBankAccounts = bankAccounts.length > 0;
   const hasSalesByPaymentMethod = Object.keys(dashboard.salesByPaymentMethod).length > 0;
 
   return (
-    <main className={`${styles.page} ${activeView === 'summary' ? styles.summaryPage : styles.boardsPage}`}>
+    <main
+      className={`${styles.page} ${activeView === 'summary' ? styles.summaryPage : styles.boardsPage}`}
+    >
       <div className={`${styles.shell} ${styles.tabShell}`}>
         <nav className={styles.tabs} aria-label="Secciones del home">
           <button
@@ -287,7 +339,12 @@ const Summary = () => {
             <Button variant="plain" size="slim" icon={<Plus size={16} />}>
               Nuevo board
             </Button>
-            <Button className={styles.addButton} variant="plain" size="slim" icon={<Plus size={16} />}>
+            <Button
+              className={styles.addButton}
+              variant="plain"
+              size="slim"
+              icon={<Plus size={16} />}
+            >
               Añadir
             </Button>
           </div>
@@ -306,144 +363,168 @@ const Summary = () => {
               </div>
             </article>
 
-          <article className={`${styles.card} ${styles.metricCard}`}>
-            <h2>Facturas</h2>
-            <p>Año actual</p>
-            <strong>{isLoadingInvoices ? money(0) : money(dashboard.currentYearInvoicedSales)}</strong>
-            <div className={styles.progressMeta}>
-              <span>Total emitido</span>
-              <span>{isLoadingInvoices ? '0' : `${dashboard.currentYearInvoiceCount}`}</span>
-            </div>
-            <div className={styles.progressTrack} aria-hidden="true">
-              <span className={styles.invoiceTrack} />
-            </div>
-          </article>
+            <article className={`${styles.card} ${styles.metricCard}`}>
+              <h2>Facturas</h2>
+              <p>Año actual</p>
+              <strong>
+                {isLoadingInvoices ? money(0) : money(dashboard.currentYearInvoicedSales)}
+              </strong>
+              <div className={styles.progressMeta}>
+                <span>Total emitido</span>
+                <span>{isLoadingInvoices ? '0' : `${dashboard.currentYearInvoiceCount}`}</span>
+              </div>
+              <div className={styles.progressTrack} aria-hidden="true">
+                <span className={styles.invoiceTrack} />
+              </div>
+            </article>
 
-          <article className={`${styles.card} ${styles.metricCard}`}>
-            <h2>Gastos</h2>
-            <p>Año actual</p>
-            <strong>{isLoadingPayments ? money(0) : money(dashboard.currentYearExpenses)}</strong>
-            <div className={styles.progressMeta}>
-              <span>Pagos registrados</span>
-              <span className={styles.negative}>{money(0)}</span>
-            </div>
-            <div className={styles.progressTrack} aria-hidden="true">
-              <span className={styles.expenseTrack} />
-            </div>
-          </article>
+            <article className={`${styles.card} ${styles.metricCard}`}>
+              <h2>Gastos</h2>
+              <p>Año actual</p>
+              <strong>{isLoadingPayments ? money(0) : money(dashboard.currentYearExpenses)}</strong>
+              <div className={styles.progressMeta}>
+                <span>Pagos registrados</span>
+                <span className={styles.negative}>{money(0)}</span>
+              </div>
+              <div className={styles.progressTrack} aria-hidden="true">
+                <span className={styles.expenseTrack} />
+              </div>
+            </article>
 
-          <article className={`${styles.card} ${styles.metricCard}`}>
-            <h2>Ganancia</h2>
-            <p>Año actual</p>
-            <strong>{isLoadingPayments ? money(0) : money(dashboard.benefit)}</strong>
-            <div className={styles.progressMeta}>
-              <span>Comisiones descontadas</span>
-              <span className={styles.negative}>{isLoadingPayments ? money(0) : money(dashboard.currentYearFees)}</span>
-            </div>
-          </article>
+            <article className={`${styles.card} ${styles.metricCard}`}>
+              <h2>Ganancia</h2>
+              <p>Año actual</p>
+              <strong>{isLoadingPayments ? money(0) : money(dashboard.benefit)}</strong>
+              <div className={styles.progressMeta}>
+                <span>Comisiones descontadas</span>
+                <span className={styles.negative}>
+                  {isLoadingPayments ? money(0) : money(dashboard.currentYearFees)}
+                </span>
+              </div>
+            </article>
 
-          <article className={`${styles.card} ${styles.bankCard}`}>
-            <div className={styles.bankIllustration} aria-hidden="true">
-              <Landmark size={34} />
-              <span />
-            </div>
-            <strong>{hasBankAccounts ? 'Banco conectado' : 'Crea tu primer banco'}</strong>
-            <p>
-              {hasBankAccounts
-                ? `${bankAccounts.length} cuentas listas para controlar tus movimientos.`
-                : isLoadingAccounts
-                  ? 'Estamos cargando tus cuentas bancarias.'
-                  : 'Conecta tus bancos para relacionar y tener un control máximo de tus movimientos.'}
-            </p>
-          </article>
+            <article className={`${styles.card} ${styles.bankCard}`}>
+              <div className={styles.bankIllustration} aria-hidden="true">
+                <Landmark size={34} />
+                <span />
+              </div>
+              <strong>{hasBankAccounts ? 'Banco conectado' : 'Crea tu primer banco'}</strong>
+              <p>
+                {hasBankAccounts
+                  ? `${bankAccounts.length} cuentas listas para controlar tus movimientos.`
+                  : isLoadingAccounts
+                    ? 'Estamos cargando tus cuentas bancarias.'
+                    : 'Conecta tus bancos para relacionar y tener un control máximo de tus movimientos.'}
+              </p>
+            </article>
 
-          <article className={`${styles.card} ${styles.wideCard}`}>
-            <DashboardChart
-              title="Resumen ventas"
-              subtitle="Últimos 12 meses"
-              value={isLoadingPayments ? money(0) : money(dashboard.currentYearSales)}
-              referenceLabel="Objetivo"
-              referenceValue={money(0)}
-              series={dashboard.salesSeries}
-            />
-          </article>
+            <article className={`${styles.card} ${styles.wideCard}`}>
+              <DashboardChart
+                title="Resumen ventas"
+                subtitle="Últimos 12 meses"
+                value={isLoadingPayments ? money(0) : money(dashboard.currentYearSales)}
+                referenceLabel="Objetivo"
+                referenceValue={money(0)}
+                series={dashboard.salesSeries}
+              />
+            </article>
 
-          <article className={`${styles.card} ${styles.compactMetric}`}>
-            <div className={styles.statusTitle}>
-              <span className={styles.greenDot} />
-              <h2>Pagos pendientes</h2>
-            </div>
-            <p>Mes actual</p>
-            <strong>{isLoadingPurchases ? money(0) : money(dashboard.currentMonthPayables)}</strong>
-          </article>
+            <article className={`${styles.card} ${styles.compactMetric}`}>
+              <div className={styles.statusTitle}>
+                <span className={styles.greenDot} />
+                <h2>Pagos pendientes</h2>
+              </div>
+              <p>Mes actual</p>
+              <strong>
+                {isLoadingPurchases ? money(0) : money(dashboard.currentMonthPayables)}
+              </strong>
+            </article>
 
-          <article className={`${styles.card} ${styles.bankFlowCard}`}>
-            <h2>Entradas y salidas de banco</h2>
-            <p>Mes actual</p>
-            <dl>
-              <FlowRow color="green" label="Entradas" value={isLoadingPayments ? money(0) : money(dashboard.bankInflow)} />
-              <FlowRow color="red" label="Salidas" value={isLoadingPayments ? money(0) : money(dashboard.bankOutflow)} />
-              <FlowRow color="red" label="Comisiones" value={isLoadingPayments ? money(0) : money(dashboard.currentMonthFees)} />
-              <FlowRow color="blue" label="Saldo" value={isLoadingPayments ? money(0) : money(dashboard.bankBalance)} />
-            </dl>
-          </article>
+            <article className={`${styles.card} ${styles.bankFlowCard}`}>
+              <h2>Entradas y salidas de banco</h2>
+              <p>Mes actual</p>
+              <dl>
+                <FlowRow
+                  color="green"
+                  label="Entradas"
+                  value={isLoadingPayments ? money(0) : money(dashboard.bankInflow)}
+                />
+                <FlowRow
+                  color="red"
+                  label="Salidas"
+                  value={isLoadingPayments ? money(0) : money(dashboard.bankOutflow)}
+                />
+                <FlowRow
+                  color="red"
+                  label="Comisiones"
+                  value={isLoadingPayments ? money(0) : money(dashboard.currentMonthFees)}
+                />
+                <FlowRow
+                  color="blue"
+                  label="Saldo"
+                  value={isLoadingPayments ? money(0) : money(dashboard.bankBalance)}
+                />
+              </dl>
+            </article>
 
-          <article className={`${styles.card} ${styles.compactMetric}`}>
-            <div className={styles.statusTitle}>
-              <span className={styles.redDot} />
-              <h2>Cobros pendientes</h2>
-            </div>
-            <p>Mes actual</p>
-            <strong>{isLoadingInvoices ? money(0) : money(dashboard.currentMonthReceivables)}</strong>
-          </article>
+            <article className={`${styles.card} ${styles.compactMetric}`}>
+              <div className={styles.statusTitle}>
+                <span className={styles.redDot} />
+                <h2>Cobros pendientes</h2>
+              </div>
+              <p>Mes actual</p>
+              <strong>
+                {isLoadingInvoices ? money(0) : money(dashboard.currentMonthReceivables)}
+              </strong>
+            </article>
 
-          <article className={`${styles.card} ${styles.wideCard}`}>
-            <DashboardChart
-              title="Resumen gastos"
-              subtitle="Últimos 12 meses"
-              value={isLoadingPayments ? money(0) : money(dashboard.currentYearExpenses)}
-              referenceLabel="Presupuesto"
-              referenceValue={money(0)}
-              series={dashboard.expensesSeries}
-            />
-          </article>
+            <article className={`${styles.card} ${styles.wideCard}`}>
+              <DashboardChart
+                title="Resumen gastos"
+                subtitle="Últimos 12 meses"
+                value={isLoadingPayments ? money(0) : money(dashboard.currentYearExpenses)}
+                referenceLabel="Presupuesto"
+                referenceValue={money(0)}
+                series={dashboard.expensesSeries}
+              />
+            </article>
 
-          <article className={`${styles.card} ${styles.centerCard}`}>
-            <Mail size={32} strokeWidth={1.6} aria-hidden="true" />
-            <strong>0 Emails no leídos</strong>
-            <p>Envía facturas y presupuestos por email y podrás saber si han sido leídos.</p>
-          </article>
+            <article className={`${styles.card} ${styles.centerCard}`}>
+              <Mail size={32} strokeWidth={1.6} aria-hidden="true" />
+              <strong>0 Emails no leídos</strong>
+              <p>Envía facturas y presupuestos por email y podrás saber si han sido leídos.</p>
+            </article>
 
-          <article className={`${styles.card} ${styles.centerCard}`}>
-            <UsersRound size={22} strokeWidth={1.6} aria-hidden="true" />
-            <strong>{isLoadingContacts ? '0 Contactos' : `${contactsTotal} Contactos`}</strong>
-          </article>
+            <article className={`${styles.card} ${styles.centerCard}`}>
+              <UsersRound size={22} strokeWidth={1.6} aria-hidden="true" />
+              <strong>{isLoadingContacts ? '0 Contactos' : `${contactsTotal} Contactos`}</strong>
+            </article>
 
-          <article className={`${styles.card} ${styles.paymentCard}`}>
-            <h2>Ventas por método de pago</h2>
-            <p>Mes actual</p>
-            {hasSalesByPaymentMethod ? (
-              <ul>
-                {Object.entries(dashboard.salesByPaymentMethod).map(([method, value]) => (
-                  <li key={method}>
-                    <span>{method}</span>
-                    <strong>{money(value)}</strong>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <strong>No hay datos</strong>
-            )}
-          </article>
+            <article className={`${styles.card} ${styles.paymentCard}`}>
+              <h2>Ventas por método de pago</h2>
+              <p>Mes actual</p>
+              {hasSalesByPaymentMethod ? (
+                <ul>
+                  {Object.entries(dashboard.salesByPaymentMethod).map(([method, value]) => (
+                    <li key={method}>
+                      <span>{method}</span>
+                      <strong>{money(value)}</strong>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <strong>No hay datos</strong>
+              )}
+            </article>
 
-          <article className={`${styles.card} ${styles.tasksCard}`}>
-            <h2>Mis tareas</h2>
-            <p>Todos los proyectos</p>
-            <div className={styles.taskEmpty}>
-              <span aria-hidden="true" />
-              <strong>No tienes tareas asignadas</strong>
-            </div>
-          </article>
+            <article className={`${styles.card} ${styles.tasksCard}`}>
+              <h2>Mis tareas</h2>
+              <p>Todos los proyectos</p>
+              <div className={styles.taskEmpty}>
+                <span aria-hidden="true" />
+                <strong>No tienes tareas asignadas</strong>
+              </div>
+            </article>
           </section>
         </div>
       )}
