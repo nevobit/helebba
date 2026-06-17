@@ -370,8 +370,8 @@ const Summary = () => {
               <p>Año actual</p>
               <strong>{isLoadingPayments ? money(0) : money(dashboard.currentYearSales)}</strong>
               <div className={styles.progressMeta}>
-                <span>Cobros registrados</span>
-                <span>{money(0)}</span>
+                <span>Ventas registradas</span>
+                <span>{money(dashboard.currentYearInvoicedSales)}</span>
               </div>
               <div className={styles.progressTrack} aria-hidden="true">
                 <span />
