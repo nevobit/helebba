@@ -50,19 +50,19 @@ export function safeJsonParse<T>(input: string): T | null {
   }
 }
 
-export async function hashString(
-  input: string,
-  algorithm: 'SHA-256' | 'SHA-1' | 'SHA-384' | 'SHA-512' = 'SHA-256',
-): Promise<string> {
-  if (globalThis.crypto?.subtle) {
-    const enc = new TextEncoder().encode(input);
-    const buf = await globalThis.crypto.subtle.digest(algorithm, enc);
-    return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
-  }
-  try {
-    const { createHash } = await import('crypto');
-    return createHash(algorithm.replace('-', '').toLowerCase()).update(input).digest('hex');
-  } catch {
-    throw new Error('No crypto available to hash string');
-  }
-}
+// export async function hashString(
+//   input: string,
+//   algorithm: 'SHA-256' | 'SHA-1' | 'SHA-384' | 'SHA-512' = 'SHA-256',
+// ): Promise<string> {
+//   if (globalThis.crypto?.subtle) {
+//     const enc = new TextEncoder().encode(input);
+//     const buf = await globalThis.crypto.subtle.digest(algorithm, enc);
+//     return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+//   }
+//   try {
+//     const { createHash } = await import('crypto');
+//     return createHash(algorithm.replace('-', '').toLowerCase()).update(input).digest('hex');
+//   } catch {
+//     throw new Error('No crypto available to hash string');
+//   }
+// }

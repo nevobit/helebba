@@ -2,9 +2,9 @@ export function invariant(condition: unknown, message: string): asserts conditio
   if (!condition) throw new Error(message);
 }
 
-export function assertNever(x: never, message = 'Unexpected variant'): never {
-  throw new Error(message);
-}
+// export function assertNever(x: never, message = 'Unexpected variant'): never {
+//   throw new Error(message);
+// }
 
 export function isNonEmptyString(s: unknown): s is string {
   return typeof s === 'string' && s.trim().length > 0;
