@@ -12,6 +12,7 @@ import { useTreasuryAccounts } from '@/modules/treasury/accounts/hooks';
 import Banner from '../../sections/Banner';
 // import { Start } from '../../sections/Start';
 import styles from './Summary.module.css';
+import Plan from '../../sections/Plan';
 
 const MONTH_LABELS = [
   'Ene',
@@ -327,6 +328,7 @@ const Summary = () => {
       {activeView === 'summary' ? (
         <div className={styles.summaryContent}>
           <Banner />
+          <Plan />
           {/* <Start /> */}
         </div>
       ) : (
