@@ -10,7 +10,7 @@ import { useDocuments } from '@/modules/sales/documents/hooks';
 import { usePaymentMethods } from '@/modules/settings/payment-methods/hooks';
 import { useTreasuryAccounts } from '@/modules/treasury/accounts/hooks';
 import Banner from '../../sections/Banner';
-import { Start } from '../../sections/Start';
+// import { Start } from '../../sections/Start';
 import styles from './Summary.module.css';
 
 const MONTH_LABELS = [
