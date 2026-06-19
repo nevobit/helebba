@@ -110,6 +110,16 @@ const documentFeeAmount = (payment: Payment, documentsById: Map<string, Document
 const pendingAmount = (document: Document) =>
   Math.max(numberValue(document.paymentsPending ?? document.total), 0);
 
+const pendingFeeAmount = (document: Document) => {
+  const fee = Math.max(numberValue(document.financialFeeValue), 0);
+  const total = Math.max(numberValue(document.total), 0);
+  const pending = pendingAmount(document);
+
+  if (fee <= 0 || total <= 0 || pending <= 0) return 0;
+
+  return Math.min(fee, fee * (pending / total));
+};
+
 const sumPending = (documents: readonly Document[], predicate: (document: Document) => boolean) =>
   documents.reduce(
     (total, document) => (predicate(document) ? total + pendingAmount(document) : total),
@@ -242,6 +252,9 @@ const Summary = () => {
     const currentMonthReceivables = sumPending(invoices, (invoice) =>
       isSameMonth(invoice.dueDate ?? invoice.date, year, month),
     );
+    const currentMonthPendingFees = invoices
+      .filter((invoice) => isSameMonth(invoice.dueDate ?? invoice.date, year, month))
+      .reduce((total, invoice) => total + pendingFeeAmount(invoice), 0);
     const currentMonthPayables = sumPending(purchases, (purchase) =>
       isSameMonth(purchase.dueDate ?? purchase.date, year, month),
     );
@@ -278,6 +291,7 @@ const Summary = () => {
       benefit: currentYearCollections - currentYearOutflows - currentYearFees,
       currentMonthPayables,
       currentMonthReceivables,
+      currentMonthPendingFees,
       bankInflow,
       bankOutflow,
       bankBalance: bankInflow - bankOutflow - currentMonthFees,
@@ -476,6 +490,17 @@ const Summary = () => {
               <p>Mes actual</p>
               <strong>
                 {isLoadingInvoices ? money(0) : money(dashboard.currentMonthReceivables)}
+              </strong>
+            </article>
+
+            <article className={`${styles.card} ${styles.compactMetric}`}>
+              <div className={styles.statusTitle}>
+                <span className={styles.amberDot} />
+                <h2>Comisiones pendientes</h2>
+              </div>
+              <p>Mes actual</p>
+              <strong>
+                {isLoadingInvoices ? money(0) : money(dashboard.currentMonthPendingFees)}
               </strong>
             </article>
 
