@@ -73,7 +73,7 @@ const initialLine = (): DocumentLineForm => ({
   description: '',
   quantity: '1',
   price: '0',
-  tax: '21',
+  tax: '0',
 });
 
 const toNumber = (value: string) => {

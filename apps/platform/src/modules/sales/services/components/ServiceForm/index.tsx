@@ -33,7 +33,7 @@ const initialState: ServiceFormState = {
   price: '0',
   cost: '0',
   timeInMinutes: '',
-  tax: '21',
+  tax: '0',
 };
 
 const toNumber = (value: string) => {

@@ -55,7 +55,7 @@ export const ItemSelectorModal = ({ onClose, onSelect }: ItemSelectorModalProps)
       virtualStock: 0,
       availableStock: 0,
       price: Number(service.price ?? 0),
-      tax: Number(service.tax ?? 21),
+      tax: Number(service.tax ?? 0),
     }));
     const mapped = [...productItems, ...serviceItems];
 
@@ -75,7 +75,7 @@ export const ItemSelectorModal = ({ onClose, onSelect }: ItemSelectorModalProps)
         virtualStock: 0,
         availableStock: 0,
         price: 90000,
-        tax: 21,
+        tax: 0,
       },
     ];
   }, [products, services]);
