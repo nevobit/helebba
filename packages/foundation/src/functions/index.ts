@@ -15,3 +15,4 @@ export * from './dates-advanced';
 export * from './net';
 export * from './runtime';
 export * from './infra';
+export * from './storage';

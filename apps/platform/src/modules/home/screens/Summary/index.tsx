@@ -324,7 +324,7 @@ const Summary = () => {
           </button>
         </nav>
       </div>
-
+xw
       {activeView === 'summary' ? (
         <div className={styles.summaryContent}>
           <Banner />

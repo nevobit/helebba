@@ -23,6 +23,7 @@
     "@hlb/integrations": "workspace:*",
     "@hlb/kernel": "workspace:*",
     "@hlb/security": "workspace:*",
+    "@hlb/foundation": "workspace:*",
     "dotenv": "^17.4.2",
     "envalid": "^8.1.1",
     "fastify": "catalog:",

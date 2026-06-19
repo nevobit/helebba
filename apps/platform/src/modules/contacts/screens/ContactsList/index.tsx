@@ -1,15 +1,24 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import styles from './ContactsList.module.css';
 import { ContactDetailsDrawer, ContactsTable, Header, Pagination, Toolbar } from '../../components';
 import { useContactsListController, useCreateContactModal, useDeleteContact } from '../../hooks';
 import type { ContactRow } from '../../types';
+import { useModal } from '@hlb/design-system';
+
+const PAGE_TITLE = 'Contactos - Helebba';
 
 const ContactsList = () => {
   const controller = useContactsListController();
   const { openCreateContactModal } = useCreateContactModal();
   const { deleteContact, isDeletingContact } = useDeleteContact();
+  const { requestCloseModal } = useModal();
+
   const [selectedContact, setSelectedContact] = useState<ContactRow | null>(null);
-  const refreshContacts = () => controller.refetch();
+
+  const refreshContacts = useCallback(() => {
+    controller.refetch();
+  }, [controller]);
+
   const openContactModal = () => openCreateContactModal({ onSuccess: refreshContacts });
   const editContact = (contact: ContactRow) => {
     openCreateContactModal({
@@ -20,27 +29,37 @@ const ContactsList = () => {
       },
     });
   };
-  const removeContact = (contact: ContactRow) => {
-    if (isDeletingContact) return;
 
-    const confirmed = window.confirm(`¿Eliminar el contacto "${contact.name}"?`);
+  const closeDetailsDrawer = useCallback(() => {
+    setSelectedContact(null);
+  }, []);
 
-    if (!confirmed) return;
+  const removeContact = useCallback(
+    (contact: ContactRow) => {
+      if (isDeletingContact) return;
 
-    deleteContact(contact.id, {
-      onSuccess: () => {
-        setSelectedContact(null);
-        refreshContacts();
-      },
-      onError: (err) => {
-        window.alert(err instanceof Error ? err.message : 'No pudimos eliminar el contacto.');
-      },
-    });
-  };
+      requestCloseModal({
+        confirm: true,
+        title: 'Eliminar contacto',
+        description: `Esta acción eliminará el contacto "${contact.name}". Esta operación no se puede deshacer.`,
+        confirmLabel: 'Eliminar contacto',
+        cancelLabel: 'Cancelar',
+        onConfirm: () => {
+          deleteContact(contact.id, {
+            onSuccess: () => {
+              closeDetailsDrawer();
+              refreshContacts();
+            },
+          });
+        },
+      });
+    },
+    [closeDetailsDrawer, deleteContact, isDeletingContact, refreshContacts, requestCloseModal],
+  );
 
   return (
     <main className={styles.page}>
-      <title>Contactos - Helebba</title>
+      <title>{PAGE_TITLE}</title>
 
       <Header onContactCreated={refreshContacts} />
 

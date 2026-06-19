@@ -16,7 +16,7 @@ export const loadEnv = () => {
       default: 'info',
     }),
 
-    BASE_DOMAIN: str({ default: 'keystone.app' }),
+    BASE_DOMAIN: str({ default: 'helebba.com' }),
 
     RESEND_API_KEY: str(),
     EMAIL_FROM: str({ default: 'Helebba <no-reply@lytos.app>' }),
@@ -26,6 +26,14 @@ export const loadEnv = () => {
     API_KEY_PEPPER: str(),
     API_HMAC_SECRET: str(),
     DEV_API_KEYS: str({ default: '' }),
+
+    STORAGE_PROVIDER: str({ choices: ['aws-s3'], default: 'aws-s3' }),
+
+    AWS_REGION: str({ default: 'us-east-1' }),
+    AWS_ACCESS_KEY_ID: str(),
+    AWS_SECRET_ACCESS_KEY: str(),
+    AWS_S3_BUCKET: str(),
+    AWS_S3_PUBLIC_BASE_URL: str({ default: '' }),
 
     REDIS_URL: str({ default: '' }),
     PG_URI: str({

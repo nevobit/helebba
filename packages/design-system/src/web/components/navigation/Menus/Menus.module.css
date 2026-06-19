@@ -22,13 +22,16 @@
       background var(--ds-motion-duration-2),
       border-color var(--ds-motion-duration-2);
   }
+
   .toggle:hover {
     background: var(--ds-state-hover-bg);
   }
+
   .toggle:focus-visible {
     outline: none;
     box-shadow: var(--ds-focus-ring-action);
   }
+
   .icon {
     display: block;
   }
@@ -43,6 +46,7 @@
     box-shadow: var(--ds-elevation-popover);
     padding: 0.4rem;
     overflow: auto;
+    margin-top: 0;
   }
 
   .item {
@@ -59,15 +63,19 @@
     color: inherit;
     border-radius: var(--ds-radius-6);
     cursor: pointer;
+    font-size: 1.4rem;
   }
+
   .item:hover,
   .item:focus-visible {
     background: var(--ds-state-hover-bg);
     outline: none;
   }
+
   .danger {
     color: var(--ds-danger);
   }
+
   .inset {
     padding-inline-start: 2.4rem;
   }
@@ -78,6 +86,7 @@
     display: inline-grid;
     place-items: center;
   }
+
   .label {
     min-width: 0;
   }
@@ -92,6 +101,7 @@
   .labelRow {
     list-style: none;
   }
+
   .sectionLabel {
     font-size: var(--ds-font-size-12);
     color: var(--ds-fg-muted);

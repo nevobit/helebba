@@ -55,6 +55,12 @@ const resolveDisbursementDate = (
 const resolvePaymentDirection = (docType: DocumentType) =>
   docType === 'purchase' || docType === 'expenses' ? 'outflow' : 'inflow';
 
+const isPurchaseLikeDocument = (docType: DocumentType) =>
+  docType === 'purchase' || docType === 'expenses';
+
+const isImmediatePurchasePaymentMethod = (paymentMethod: PaymentMethod | null) =>
+  paymentMethod?.type === 'bank_transfer' || paymentMethod?.type === 'cash';
+
 const getPaymentMethodId = (paymentMethod: PaymentMethod | null) =>
   paymentMethod ? String(paymentMethod.id ?? paymentMethod._id ?? '') : undefined;
 
@@ -111,7 +117,9 @@ export const createDocument = async (
       })
     : null;
   const shouldCreateAutomaticPayment =
-    paymentMethod?.settlementMode === 'instant' || paymentMethod?.disbursementRule === 'immediate';
+    paymentMethod?.settlementMode === 'instant' ||
+    paymentMethod?.disbursementRule === 'immediate' ||
+    (isPurchaseLikeDocument(docType) && isImmediatePurchasePaymentMethod(paymentMethod));
   const paymentsTotal = data.paymentsTotal ?? 0;
   const paymentsPending = data.paymentsPending ?? Math.max(totals.total - paymentsTotal, 0);
   const disbursementDate = resolveDisbursementDate(data, paymentMethod);

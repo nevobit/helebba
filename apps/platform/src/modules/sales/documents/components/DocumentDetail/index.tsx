@@ -5,7 +5,7 @@ import { formatCurrency } from '@hlb/foundation';
 import { ArrowLeftRight, LockKeyhole, Send, Share2, X } from 'lucide-react';
 import { useSession } from '@/shared';
 import { PaymentFormModal } from '@/modules/accounting/payments/components';
-import { useConvertDocument, useDocument, useSendDocumentEmail } from '../../hooks';
+import { useConvertDocument, useDeleteDocument, useDocument, useSendDocumentEmail } from '../../hooks';
 import type { DocumentConfig, DocumentRow } from '../../types';
 import styles from './DocumentDetail.module.css';
 
@@ -14,6 +14,7 @@ type DocumentDetailProps = {
   documentId: string | null;
   fallback?: DocumentRow | null;
   onClose: () => void;
+  onDeleted?: () => void;
 };
 
 type SendEmailFormState = {
@@ -63,9 +64,10 @@ const getDefaultMessage = ({
     .filter(Boolean)
     .join('\n\n');
 
-export const DocumentDetail = ({ config, documentId, fallback, onClose }: DocumentDetailProps) => {
+export const DocumentDetail = ({ config, documentId, fallback, onClose, onDeleted }: DocumentDetailProps) => {
   const navigate = useNavigate();
   const { convertDocument, isConvertingDocument } = useConvertDocument(config.kind);
+  const { deleteDocumentAsync } = useDeleteDocument(config.kind);
   const {
     error: sendEmailError,
     isSendingDocumentEmail,
@@ -160,6 +162,19 @@ export const DocumentDetail = ({ config, documentId, fallback, onClose }: Docume
     setIsSendModalOpen(false);
   };
 
+  const handleDeleteDocument = async () => {
+    if (!documentId || !current) return;
+
+    const shouldDelete = window.confirm(
+      `¿Eliminar ${config.singularTitle.toLowerCase()} ${current.docNumber}? Esta acción también eliminará sus pagos asociados.`,
+    );
+
+    if (!shouldDelete) return;
+
+    await deleteDocumentAsync(documentId);
+    onDeleted?.();
+  };
+
   if (!documentId) return null;
 
   const title = current
@@ -219,7 +234,7 @@ export const DocumentDetail = ({ config, documentId, fallback, onClose }: Docume
                 <Menus.Item id="edit" onClick={() => documentId && navigate(`${config.listPath}/${documentId}/edit`)}>
                   Editar
                 </Menus.Item>
-                <Menus.Item id="delete" danger>
+                <Menus.Item id="delete" danger onClick={handleDeleteDocument}>
                   Eliminar
                 </Menus.Item>
                 <Menus.Item id="cancel" danger>

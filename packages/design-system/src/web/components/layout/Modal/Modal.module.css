@@ -7,19 +7,19 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: color-mix(
-    in srgb,
-    var(--bg-overlay, rgba(3, 6, 23, 1)) calc(var(--overlay-opacity) * 100%),
-    transparent
-  );
+  background: color-mix(in srgb,
+      var(--bg-overlay, rgba(3, 6, 23, 1)) calc(var(--overlay-opacity) * 100%),
+      transparent);
   backdrop-filter: blur(2px);
   transition: opacity var(--modal-duration) ease;
   opacity: 0;
   z-index: 1;
 }
+
 .overlay[data-state='open'] {
   opacity: 1;
 }
+
 .overlay[data-state='closed'] {
   opacity: 0;
 }
@@ -45,10 +45,12 @@
   opacity: 0;
   z-index: 2;
 }
+
 .modal[data-state='open'] {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
 .modal[data-state='closed'] {
   opacity: 0;
   transform: translateX(-50%) translateY(-8px);
@@ -87,18 +89,21 @@
   padding: 6px;
   border-radius: 8px;
 }
+
 .closeBtn:hover {
   background: rgba(0, 0, 0, 0.05);
 }
 
 .confirmTitle {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.6rem;
 }
+
 .confirmCopy {
-  font-size: 0.9375rem;
+  font-size: 1.4rem;
   margin-top: 6px;
 }
+
 .confirmFooter {
   display: flex;
   justify-content: flex-end;
@@ -113,12 +118,16 @@
   border-radius: 8px;
   cursor: pointer;
 }
+
 .btnPrimary {
   border-color: transparent;
   background: var(--brand, #2563eb);
   color: #fff;
+  font-size: 1.4rem;
 }
+
 .btnCritical {
   background: #dc2626;
   color: #fff;
+  font-size: 1.4rem;
 }

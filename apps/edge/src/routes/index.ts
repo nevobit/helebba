@@ -14,6 +14,7 @@ import { estimateRoutes, invoiceRoutes, purchaseRoutes } from './sales/documents
 import { paymentMethodRoutes } from './treasury/payment-methods';
 import { treasuryAccountRoutes } from './treasury/accounts';
 import { paymentRoutes } from './accounting/payments';
+import { mediaRoutes } from './media';
 
 const routes: RouteOptions[] = [
   ...opsRoutes,
@@ -33,6 +34,7 @@ const routes: RouteOptions[] = [
   ...paymentMethodRoutes,
   ...treasuryAccountRoutes,
   ...paymentRoutes,
+  ...mediaRoutes,
 ];
 
 export const registerRoutes = (app: FastifyInstance) => {

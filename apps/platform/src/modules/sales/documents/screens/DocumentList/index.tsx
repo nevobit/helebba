@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Header, DocumentDetail, DocumentsTable, Pagination, Toolbar } from '../../components';
 import { getDocumentConfig } from '../../config';
-import { useDocumentsListController } from '../../hooks';
+import { useDeleteDocument, useDocumentsListController } from '../../hooks';
 import type { DocumentKind, DocumentRow } from '../../types';
 import styles from './DocumentList.module.css';
 
@@ -18,6 +18,7 @@ const getOpenId = (hash: string) => {
 const DocumentList = ({ kind }: DocumentListProps) => {
   const config = getDocumentConfig(kind);
   const controller = useDocumentsListController(kind);
+  const { deleteDocumentAsync } = useDeleteDocument(kind);
   const location = useLocation();
   const navigate = useNavigate();
   const selectedId = getOpenId(location.hash);
@@ -33,6 +34,18 @@ const DocumentList = ({ kind }: DocumentListProps) => {
 
   const editDocument = (row: DocumentRow) => {
     navigate(`${config.listPath}/${row.id}/edit`);
+  };
+
+  const deleteDocument = async (row: DocumentRow) => {
+    const shouldDelete = window.confirm(
+      `¿Eliminar ${config.singularTitle.toLowerCase()} ${row.docNumber}? Esta acción también eliminará sus pagos asociados.`,
+    );
+
+    if (!shouldDelete) return;
+
+    await deleteDocumentAsync(row.id);
+
+    if (selectedId === row.id) closeDocument();
   };
 
   const closeDocument = () => {
@@ -62,6 +75,7 @@ const DocumentList = ({ kind }: DocumentListProps) => {
           selectedId={selectedId}
           config={config}
           refetch={controller.refetch}
+          onDeleteDocument={deleteDocument}
           onEditDocument={editDocument}
           onOpenDocument={openDocument}
         />
@@ -85,6 +99,7 @@ const DocumentList = ({ kind }: DocumentListProps) => {
         documentId={selectedId}
         fallback={selectedRow}
         onClose={closeDocument}
+        onDeleted={closeDocument}
       />
     </main>
   );

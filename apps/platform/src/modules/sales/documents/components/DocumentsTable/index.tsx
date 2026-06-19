@@ -14,6 +14,7 @@ type DocumentsTableProps = {
   config: DocumentConfig;
   refetch: () => void;
   onEditDocument: (row: DocumentRow) => void;
+  onDeleteDocument: (row: DocumentRow) => void;
   onOpenDocument: (row: DocumentRow) => void;
 };
 
@@ -22,6 +23,7 @@ export const DocumentsTable = ({
   error,
   hasDocuments,
   isLoading,
+  onDeleteDocument,
   onEditDocument,
   onOpenDocument,
   refetch,
@@ -47,7 +49,11 @@ export const DocumentsTable = ({
     <div className={styles.tableWrap}>
       <Table
         ariaLabel={config.title}
-        columns={documentColumns({ onEdit: onEditDocument, onOpen: onOpenDocument })}
+        columns={documentColumns({
+          onDelete: onDeleteDocument,
+          onEdit: onEditDocument,
+          onOpen: onOpenDocument,
+        })}
         rows={rows}
         pageSize={rows.length}
         selectionMode="multi"

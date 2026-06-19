@@ -4,6 +4,7 @@ import {
   getAllDocuments,
   getDocumentById,
   sendDocumentEmail,
+  softDeleteDocument,
   updateDocument,
 } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod, withPrefix } from '@hlb/constant-definitions';
@@ -113,6 +114,24 @@ export const createDocumentRoutes = (prefix: string, docType: DocumentType): Rou
         );
 
         reply.status(200).send(document);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.DELETE,
+      '/:documentId',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const document = await softDeleteDocument({
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          userId,
+        });
+
+        reply.status(document ? 200 : 404).send(document ?? { message: 'Document not found' });
       },
     ),
     makeFastifyRoute(

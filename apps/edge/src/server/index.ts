@@ -7,8 +7,8 @@ import type { Environment } from './types';
 import { loadEnv } from './env';
 import { buildApiPrefix } from '../adapters/versioning/api-versioning';
 import { initDataSources } from '@hlb/data-sources';
-import { setLogger, setMailer } from '@hlb/constant-definitions';
-import { createMailer } from '@hlb/integrations';
+import { setLogger, setMailer, setStorageProvider } from '@hlb/constant-definitions';
+import { createMailer, createStorageProvider } from '@hlb/integrations';
 
 type BuildServer = ReturnType<typeof buildApp>;
 
@@ -57,6 +57,17 @@ const main = async (): Promise<void> => {
       from: env.EMAIL_FROM,
       replyTo: env.EMAIL_REPLY_TO,
       RESEND_API_KEY: env.RESEND_API_KEY,
+    }),
+  );
+
+  setStorageProvider(
+    createStorageProvider({
+      provider: env.STORAGE_PROVIDER,
+      region: env.AWS_REGION,
+      accessKeyId: env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+      bucket: env.AWS_S3_BUCKET,
+      publicBaseUrl: env.AWS_S3_PUBLIC_BASE_URL || undefined,
     }),
   );
 

@@ -43,6 +43,12 @@ export const updateDocument = async (kind: DocumentKind, documentId: string, pay
   return data;
 };
 
+export const deleteDocument = async (kind: DocumentKind, documentId: string) => {
+  const { data } = await api.delete<Document>(`${endpointFor(kind)}/${documentId}`);
+
+  return data;
+};
+
 export const convertDocument = async (kind: DocumentKind, documentId: string, docType?: DocumentType) => {
   const { data } = await api.post<Document>(`${endpointFor(kind)}/${documentId}/convert`, docType ? { docType } : {});
 
