@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useModal } from '@hlb/design-system';
 import { Header, DocumentDetail, DocumentsTable, Pagination, Toolbar } from '../../components';
 import { getDocumentConfig } from '../../config';
 import { useDeleteDocument, useDocumentsListController } from '../../hooks';
@@ -19,6 +20,7 @@ const DocumentList = ({ kind }: DocumentListProps) => {
   const config = getDocumentConfig(kind);
   const controller = useDocumentsListController(kind);
   const { deleteDocumentAsync } = useDeleteDocument(kind);
+  const { requestCloseModal } = useModal();
   const location = useLocation();
   const navigate = useNavigate();
   const selectedId = getOpenId(location.hash);
@@ -36,16 +38,19 @@ const DocumentList = ({ kind }: DocumentListProps) => {
     navigate(`${config.listPath}/${row.id}/edit`);
   };
 
-  const deleteDocument = async (row: DocumentRow) => {
-    const shouldDelete = window.confirm(
-      `¿Eliminar ${config.singularTitle.toLowerCase()} ${row.docNumber}? Esta acción también eliminará sus pagos asociados.`,
-    );
-
-    if (!shouldDelete) return;
-
-    await deleteDocumentAsync(row.id);
-
-    if (selectedId === row.id) closeDocument();
+  const deleteDocument = (row: DocumentRow) => {
+    requestCloseModal({
+      confirm: true,
+      title: `Eliminar ${config.singularTitle.toLowerCase()}`,
+      description: `Esta acción eliminará ${config.singularTitle.toLowerCase()} ${row.docNumber} y sus pagos asociados. Esta operación no se puede deshacer.`,
+      confirmLabel: 'Eliminar',
+      cancelLabel: 'Cancelar',
+      onConfirm: () => {
+        void deleteDocumentAsync(row.id).then(() => {
+          if (selectedId === row.id) closeDocument();
+        });
+      },
+    });
   };
 
   const closeDocument = () => {

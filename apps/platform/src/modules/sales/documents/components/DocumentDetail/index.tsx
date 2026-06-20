@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Menus } from '@hlb/design-system';
+import { Button, Menus, useModal } from '@hlb/design-system';
 import { formatCurrency } from '@hlb/foundation';
 import { ArrowLeftRight, LockKeyhole, Send, Share2, X } from 'lucide-react';
 import { useSession } from '@/shared';
@@ -68,6 +68,7 @@ export const DocumentDetail = ({ config, documentId, fallback, onClose, onDelete
   const navigate = useNavigate();
   const { convertDocument, isConvertingDocument } = useConvertDocument(config.kind);
   const { deleteDocumentAsync } = useDeleteDocument(config.kind);
+  const { requestCloseModal } = useModal();
   const {
     error: sendEmailError,
     isSendingDocumentEmail,
@@ -162,17 +163,19 @@ export const DocumentDetail = ({ config, documentId, fallback, onClose, onDelete
     setIsSendModalOpen(false);
   };
 
-  const handleDeleteDocument = async () => {
+  const handleDeleteDocument = () => {
     if (!documentId || !current) return;
 
-    const shouldDelete = window.confirm(
-      `¿Eliminar ${config.singularTitle.toLowerCase()} ${current.docNumber}? Esta acción también eliminará sus pagos asociados.`,
-    );
-
-    if (!shouldDelete) return;
-
-    await deleteDocumentAsync(documentId);
-    onDeleted?.();
+    requestCloseModal({
+      confirm: true,
+      title: `Eliminar ${config.singularTitle.toLowerCase()}`,
+      description: `Esta acción eliminará ${config.singularTitle.toLowerCase()} ${current.docNumber} y sus pagos asociados. Esta operación no se puede deshacer.`,
+      confirmLabel: 'Eliminar',
+      cancelLabel: 'Cancelar',
+      onConfirm: () => {
+        void deleteDocumentAsync(documentId).then(() => onDeleted?.());
+      },
+    });
   };
 
   if (!documentId) return null;

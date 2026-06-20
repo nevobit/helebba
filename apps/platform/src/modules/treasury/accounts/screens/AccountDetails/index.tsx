@@ -9,7 +9,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
-import { Button, Menus, Modal, TextInput, Tooltip } from '@hlb/design-system';
+import { Button, Menus, Modal, TextInput, Tooltip, useModal } from '@hlb/design-system';
 import { formatCurrency } from '@hlb/foundation';
 import type { TreasuryAccountKind, TreasuryMovement } from '@hlb/contracts';
 import {
@@ -197,6 +197,7 @@ const AccountDetails = () => {
   const { reconcileMovement, isReconcilingMovement } = useReconcileBankMovement();
   const { archiveAccount, isArchivingAccount } = useArchiveTreasuryAccount();
   const { deleteAccount, isDeletingAccount } = useDeleteTreasuryAccount();
+  const { requestCloseModal } = useModal();
 
   const pendingMovements = movements.filter((movement) => movement.reconciliationStatus !== 'reconciled');
   const inflow = movements
@@ -217,13 +218,25 @@ const AccountDetails = () => {
   }
 
   const archiveCurrent = () => {
-    if (!window.confirm(`¿Archivar "${account.name}"?`)) return;
-    archiveAccount(accountId, { onSuccess: () => navigate('/bank-accounts') });
+    requestCloseModal({
+      confirm: true,
+      title: 'Archivar cuenta',
+      description: `Esta acción archivará "${account.name}". Podrás verla si filtras las cuentas archivadas.`,
+      confirmLabel: 'Archivar',
+      cancelLabel: 'Cancelar',
+      onConfirm: () => archiveAccount(accountId, { onSuccess: () => navigate('/bank-accounts') }),
+    });
   };
 
   const deleteCurrent = () => {
-    if (!window.confirm(`¿Eliminar "${account.name}"?`)) return;
-    deleteAccount(accountId, { onSuccess: () => navigate('/bank-accounts') });
+    requestCloseModal({
+      confirm: true,
+      title: 'Eliminar cuenta',
+      description: `Esta acción eliminará "${account.name}". Esta operación no se puede deshacer.`,
+      confirmLabel: 'Eliminar',
+      cancelLabel: 'Cancelar',
+      onConfirm: () => deleteAccount(accountId, { onSuccess: () => navigate('/bank-accounts') }),
+    });
   };
 
   return (

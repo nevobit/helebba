@@ -19,6 +19,7 @@ import {
   Table,
   TextInput,
   Tooltip,
+  useModal,
   type DataTableColumn,
 } from '@hlb/design-system';
 import { formatCurrency } from '@hlb/foundation';
@@ -309,6 +310,7 @@ const AccountsList = () => {
   const { accounts, error, isLoading, refetch, total } = useTreasuryAccounts({ kind, limit: 100, search: query });
   const { archiveAccount } = useArchiveTreasuryAccount();
   const { deleteAccount } = useDeleteTreasuryAccount();
+  const { requestCloseModal } = useModal();
   const totalBalance = useMemo(
     () => accounts.reduce((sum, account) => sum + Number(account.balance ?? 0), 0),
     [accounts],
@@ -382,18 +384,32 @@ const AccountsList = () => {
                 </Menus.Item>
                 <Menus.Item
                   id={`archive-${row.id}`}
-                  onClick={() => {
-                    if (window.confirm(`¿Archivar "${row.account}"?`)) archiveAccount(row.id);
-                  }}
+                  onClick={() =>
+                    requestCloseModal({
+                      confirm: true,
+                      title: 'Archivar cuenta',
+                      description: `Esta acción archivará "${row.account}". Podrás verla si filtras las cuentas archivadas.`,
+                      confirmLabel: 'Archivar',
+                      cancelLabel: 'Cancelar',
+                      onConfirm: () => archiveAccount(row.id),
+                    })
+                  }
                 >
                   Archivar
                 </Menus.Item>
                 <Menus.Item
                   id={`delete-${row.id}`}
                   danger
-                  onClick={() => {
-                    if (window.confirm(`¿Eliminar "${row.account}"?`)) deleteAccount(row.id);
-                  }}
+                  onClick={() =>
+                    requestCloseModal({
+                      confirm: true,
+                      title: 'Eliminar cuenta',
+                      description: `Esta acción eliminará "${row.account}". Esta operación no se puede deshacer.`,
+                      confirmLabel: 'Eliminar',
+                      cancelLabel: 'Cancelar',
+                      onConfirm: () => deleteAccount(row.id),
+                    })
+                  }
                 >
                   Eliminar
                 </Menus.Item>
@@ -403,7 +419,7 @@ const AccountsList = () => {
         ),
       },
     ],
-    [archiveAccount, deleteAccount, navigate],
+    [archiveAccount, deleteAccount, navigate, requestCloseModal],
   );
 
   return (

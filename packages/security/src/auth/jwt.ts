@@ -1,4 +1,4 @@
-import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
+import { SignJWT, errors, jwtVerify, type JWTPayload } from 'jose';
 import type { AccessTokenClaims } from '@hlb/contracts';
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -116,6 +116,8 @@ const encodeSecret = (secret: string): Uint8Array => {
   return new TextEncoder().encode(secret);
 };
 
+const isJoseError = (error: unknown) => error instanceof errors.JOSEError;
+
 export const issueAccessToken = async (options: IssueAccessTokenOptions): Promise<string> => {
   const secret = encodeSecret(options.secret);
 
@@ -137,7 +139,6 @@ export const verifyAccessToken = async (
 ): Promise<AccessTokenClaims> => {
   const secret = encodeSecret(options.secret);
 
-  console.log({ token: options.token });
   const result = await jwtVerify(options.token, secret, {
     issuer: options.issuer,
     audience: options.audience,
@@ -161,7 +162,32 @@ export const verifyJwt: AuthFunction = async (
     };
   }
 
-  const { payload } = (await jwtVerify(token, secret)) as { payload: JwtClaims };
+  let payload: JwtClaims;
+
+  try {
+    const result = (await jwtVerify(token, secret)) as { payload: JwtClaims };
+    payload = result.payload;
+  } catch (error) {
+    if (error instanceof errors.JWTExpired) {
+      return {
+        ok: false,
+        code: 401,
+        type: 'invalid_token',
+        message: 'Token expired',
+      };
+    }
+
+    if (isJoseError(error)) {
+      return {
+        ok: false,
+        code: 401,
+        type: 'invalid_token',
+        message: 'Invalid bearer token',
+      };
+    }
+
+    throw error;
+  }
 
   if (!payload.userId) {
     return {
