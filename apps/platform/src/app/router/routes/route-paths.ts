@@ -22,4 +22,5 @@ export const PrivateRoutes = {
   ESTIMATES: '/sales/estimates',
   PURCHASES: '/purchases',
   SETUP: '/setup',
+  TRIAL_EXPIRED: '/trial/expired',
 } as const;

@@ -15,6 +15,7 @@ import { servicesRoutes } from '@/modules/sales/services/routes';
 import { paymentRoutes } from '@/modules/accounting/payments/routes';
 import { treasuryAccountRoutes } from '@/modules/treasury/accounts/routes';
 import Summary from '@/modules/home/screens/Summary';
+import TrialExpired from '@/modules/subscriptions/screens/TrialExpired';
 
 export const privateRoutes: RouteObject[] = [
   {
@@ -36,6 +37,11 @@ export const privateRoutes: RouteObject[] = [
         path: '/',
         loader: authLoader,
         element: withSuspense(<Summary />),
+      },
+      {
+        path: PrivateRoutes.TRIAL_EXPIRED,
+        loader: authLoader,
+        element: withSuspense(<TrialExpired />),
       },
       ...contactsRoutes,
       ...documentRoutes,

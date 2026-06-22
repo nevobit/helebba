@@ -16,10 +16,11 @@ El código debe sentirse como un producto empresarial serio: limpio, escalable, 
 
 ## 2. Stack principal
 
-- Monorepo con PNPM Workspaces y Turborepo.
+- Monorepo con PNPM Workspaces, Catalog, y Turborepo.
 - TypeScript como lenguaje base.
-- Frontend principal: React + Vite.
-- Backend/API: Fastify.
+- Frontend principal plataforma: React + Vite.
+- Frontend principal sitio marketing: NextJs
+- Backend/API: Node + Fastify.
 - Data fetching frontend: `@tanstack/react-query`.
 - Estado frontend: Zustand cuando aplique.
 - UI: `@hlb/design-system`.
@@ -41,13 +42,13 @@ packages/
   business-logic/          # Casos de uso reutilizables si aplican fuera de edge
   constant-definitions/    # Constantes, route helpers, MonoContext helpers
   contracts/               # Tipos compartidos frontend/backend
-  data-sources/            # Acceso a datos / repositorios / fuentes
+  data-sources/            # Acceso a datos / fuentes / bases de datos
   design-system/           # Componentes UI, tokens y estilos base
   foundation/              # Helpers puros, reutilizables e isomórficos
   integrations/            # Clientes/proveedores externos: email, storage, AWS, etc.
   kernel/                  # MonoContext y núcleo compartido
   security/                # Auth, JWT, seguridad
-  tooling/                 # Configuración de tooling
+  tooling/                 # Configuración de tooling y typescirpt, tsconfig
 ```
 
 ## 4. Reglas de oro
@@ -323,9 +324,7 @@ import { withPrefix } from '@hlb/constant-definitions';
 import type { RouteOptions } from 'fastify';
 import { createPresignedUploadUrlRoute } from './create-presigned-upload-url';
 
-export const mediaRoutes: RouteOptions[] = withPrefix('/media', [
-  createPresignedUploadUrlRoute,
-]);
+export const mediaRoutes: RouteOptions[] = withPrefix('/media', [createPresignedUploadUrlRoute]);
 ```
 
 ## 12. Business logic
