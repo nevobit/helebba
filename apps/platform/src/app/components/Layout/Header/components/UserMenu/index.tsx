@@ -1,11 +1,12 @@
 import { useSession } from '@/shared';
 import { Avatar, Menus } from '@hlb/design-system';
 import styles from './UserMenu.module.css';
-import { LogOut, Settings, Users } from 'lucide-react';
+import { Code2, LogOut, Settings, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google';
 import {
   SETTINGS_DATA_HASH,
+  SETTINGS_DEVELOPER_CREDENTIALS_HASH,
   SETTINGS_PAYMENT_METHODS_HASH,
   SETTINGS_USERS_HASH,
 } from '@/modules/settings/hooks';
@@ -59,6 +60,13 @@ export const UserMenu = () => {
             onClick={() => navigateHash(SETTINGS_USERS_HASH)}
           >
             <Users size={16} /> <span> Usuarios</span>
+          </Menus.Item>
+          <Menus.Item
+            className={styles.btn}
+            id="developer-credentials"
+            onClick={() => navigateHash(SETTINGS_DEVELOPER_CREDENTIALS_HASH)}
+          >
+            <Code2 size={16} /> <span> API Tokens</span>
           </Menus.Item>
 
           <Menus.Item className={styles.btn} id="logout" onClick={logout}>

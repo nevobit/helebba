@@ -5,6 +5,7 @@ export type ApiKeyRecord = {
   status: ApiKeyStatus;
   scopes: string[];
   products: string[];
+  organizationId?: string;
 };
 
 export type ApiKeyRepository = {

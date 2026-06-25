@@ -10,6 +10,7 @@ import { Button, Modal, TextInput } from '@hlb/design-system';
 import { BriefcaseBusiness, ChevronRight, Plus, Search, X } from 'lucide-react';
 import type { Role, RoleId } from '@hlb/contracts';
 import { useSession } from '@/shared';
+import { SETTINGS_DEVELOPER_CREDENTIALS_HASH } from '@/modules/settings/hooks';
 import {
   useCreateRole,
   useInviteUser,
@@ -18,10 +19,11 @@ import {
   useRevokeInvitation,
   useRoles,
 } from '../../hooks';
+import { ApiCredentialsView } from './ApiCredentialsView';
 import styles from './UsersSettingsPanel.module.css';
 
 type UsersSettingsPanelProps = {
-  initialView?: 'users' | 'roles';
+  initialView?: 'users' | 'roles' | 'credentials';
   onClose: () => void;
 };
 
@@ -209,7 +211,8 @@ const initialRoleForm: RoleFormState = {
 };
 
 const roleDescription = (role?: Role) =>
-  role?.description || (role?.name === 'Propietario' ? 'Acceso total a toda la cuenta' : 'Acceso completo');
+  role?.description ||
+  (role?.name === 'Propietario' ? 'Acceso total a toda la cuenta' : 'Acceso completo');
 
 const getInitials = (name: string) =>
   name
@@ -241,7 +244,7 @@ const formatLastSession = (value?: string, status?: string) => {
 
 export const UsersSettingsPanel = ({ initialView = 'users', onClose }: UsersSettingsPanelProps) => {
   const organization = useSession((state) => state.organization);
-  const [view, setView] = useState<'users' | 'roles'>(initialView);
+  const [view, setView] = useState<'users' | 'roles' | 'credentials'>(initialView);
   const [search, setSearch] = useState('');
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
@@ -251,23 +254,21 @@ export const UsersSettingsPanel = ({ initialView = 'users', onClose }: UsersSett
   const { roles } = useRoles();
   const { createRole, isCreatingRole } = useCreateRole();
   const { inviteUser, isInvitingUser } = useInviteUser();
-  const { isResendingInvitation, resendInvitation, resendingInvitationId } =
-    useResendInvitation();
+  const { isResendingInvitation, resendInvitation, resendingInvitationId } = useResendInvitation();
   const { isRevokingInvitation, revokeInvitation, revokingInvitationId } = useRevokeInvitation();
 
   useEffect(() => {
     setView(initialView);
   }, [initialView]);
 
-  const rolesById = useMemo(
-    () => new Map(roles.map((role) => [String(role.id), role])),
-    [roles],
-  );
+  const rolesById = useMemo(() => new Map(roles.map((role) => [String(role.id), role])), [roles]);
   const usersByRole = useMemo(() => {
     const counts = new Map<string, number>();
-    users.filter((user) => user.status === 'active').forEach((user) => {
-      counts.set(String(user.roleId), (counts.get(String(user.roleId)) ?? 0) + 1);
-    });
+    users
+      .filter((user) => user.status === 'active')
+      .forEach((user) => {
+        counts.set(String(user.roleId), (counts.get(String(user.roleId)) ?? 0) + 1);
+      });
     return counts;
   }, [users]);
 
@@ -287,7 +288,8 @@ export const UsersSettingsPanel = ({ initialView = 'users', onClose }: UsersSett
 
   const selectedInviteRole = rolesById.get(inviteForm.roleId);
   const activePermissionSection =
-    permissionSections.find((section) => section.key === roleForm.activeTab) ?? permissionSections[0];
+    permissionSections.find((section) => section.key === roleForm.activeTab) ??
+    permissionSections[0];
 
   const openRolesView = () => {
     setView('roles');
@@ -304,6 +306,15 @@ export const UsersSettingsPanel = ({ initialView = 'users', onClose }: UsersSett
       null,
       '',
       `${window.location.pathname}${window.location.search}#settings:/users`,
+    );
+  };
+
+  const openCredentialsView = () => {
+    setView('credentials');
+    window.history.replaceState(
+      null,
+      '',
+      `${window.location.pathname}${window.location.search}#${SETTINGS_DEVELOPER_CREDENTIALS_HASH}`,
     );
   };
 
@@ -417,7 +428,12 @@ export const UsersSettingsPanel = ({ initialView = 'users', onClose }: UsersSett
         <div className={styles.shell}>
           <header className={styles.header}>
             <h2>{organization?.legalName || organization?.name || 'Configuración'}</h2>
-            <button className={styles.closeButton} type="button" aria-label="Cerrar" onClick={onClose}>
+            <button
+              className={styles.closeButton}
+              type="button"
+              aria-label="Cerrar"
+              onClick={onClose}
+            >
               <X size={20} />
             </button>
           </header>
@@ -429,7 +445,7 @@ export const UsersSettingsPanel = ({ initialView = 'users', onClose }: UsersSett
               </button>
               <ChevronRight size={16} />
               <button type="button" onClick={openUsersView}>
-                Usuarios
+                {view === 'credentials' ? 'Credenciales' : 'Usuarios'}
               </button>
               {view === 'roles' && (
                 <>
@@ -439,59 +455,74 @@ export const UsersSettingsPanel = ({ initialView = 'users', onClose }: UsersSett
               )}
             </nav>
 
-            {view === 'users' ? (
+            {view === 'credentials' ? (
+              <ApiCredentialsView />
+            ) : view === 'users' ? (
               <>
                 <section className={styles.card}>
-                <div className={styles.cardHeader}>
-                  <div>
-                    <h3>Usuarios</h3>
-                    <p>
-                      {invitationsRemaining} Invitaciones restantes.{' '}
-                      <button type="button">Cambia tu plan</button>
-                    </p>
-                  </div>
-                  <div className={styles.headerControls}>
-                    <TextInput
-                      labelHidden
-                      label="Buscar usuarios"
-                      icon={<Search size={17} />}
-                      value={search}
-                      placeholder=""
-                      onChange={(event) => setSearch(event.target.value)}
-                    />
-                    <Button theme="optional" variant="outline" size="medium" onClick={openRolesView}>
-                      Gestionar roles
-                    </Button>
-                    <Button size="medium" icon={<Plus size={17} />} onClick={openInviteModal}>
-                      Invitar usuarios
-                    </Button>
-                  </div>
-                </div>
-
-                <div className={styles.table}>
-                  <div className={styles.userHeaderRow}>
-                    <span>Nombre</span>
-                    <span>Email</span>
-                    <span>Rol</span>
-                    <span>Perfil</span>
-                    <span>Última sesión</span>
-                  </div>
-                  {filteredUsers.map((user) => (
-                    <div className={styles.userRow} key={user.membershipId}>
-                      <span className={styles.userName}>
-                        <span className={styles.avatar}>{getInitials(user.name)}</span>
-                        {user.name}
-                      </span>
-                      <span>{user.email}</span>
-                      <span>
-                        {rolesById.get(String(user.roleId))?.name ?? user.roleName ?? 'Usuario'}
-                      </span>
-                      <span>No asignado</span>
-                      <span>{formatLastSession(user.lastSelectedAt, user.status)}</span>
+                  <div className={styles.cardHeader}>
+                    <div>
+                      <h3>Usuarios</h3>
+                      <p>
+                        {invitationsRemaining} Invitaciones restantes.{' '}
+                        <button type="button">Cambia tu plan</button>
+                      </p>
                     </div>
-                  ))}
-                </div>
-              </section>
+                    <div className={styles.headerControls}>
+                      <TextInput
+                        labelHidden
+                        label="Buscar usuarios"
+                        icon={<Search size={17} />}
+                        value={search}
+                        placeholder=""
+                        onChange={(event) => setSearch(event.target.value)}
+                      />
+                      <Button
+                        theme="optional"
+                        variant="outline"
+                        size="medium"
+                        onClick={openRolesView}
+                      >
+                        Gestionar roles
+                      </Button>
+                      <Button
+                        theme="optional"
+                        variant="outline"
+                        size="medium"
+                        onClick={openCredentialsView}
+                      >
+                        API Tokens
+                      </Button>
+                      <Button size="medium" icon={<Plus size={17} />} onClick={openInviteModal}>
+                        Invitar usuarios
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className={styles.table}>
+                    <div className={styles.userHeaderRow}>
+                      <span>Nombre</span>
+                      <span>Email</span>
+                      <span>Rol</span>
+                      <span>Perfil</span>
+                      <span>Última sesión</span>
+                    </div>
+                    {filteredUsers.map((user) => (
+                      <div className={styles.userRow} key={user.membershipId}>
+                        <span className={styles.userName}>
+                          <span className={styles.avatar}>{getInitials(user.name)}</span>
+                          {user.name}
+                        </span>
+                        <span>{user.email}</span>
+                        <span>
+                          {rolesById.get(String(user.roleId))?.name ?? user.roleName ?? 'Usuario'}
+                        </span>
+                        <span>No asignado</span>
+                        <span>{formatLastSession(user.lastSelectedAt, user.status)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
                 {pendingUsers.length > 0 && (
                   <section className={`${styles.card} ${styles.pendingCard}`}>
                     <div className={styles.pendingHeader}>
@@ -547,7 +578,11 @@ export const UsersSettingsPanel = ({ initialView = 'users', onClose }: UsersSett
                     <h3>Roles</h3>
                     <p>Controla cómo interactúan los miembros de tu equipo con Helebba.</p>
                   </div>
-                  <Button size="medium" icon={<Plus size={17} />} onClick={() => setIsRoleModalOpen(true)}>
+                  <Button
+                    size="medium"
+                    icon={<Plus size={17} />}
+                    onClick={() => setIsRoleModalOpen(true)}
+                  >
                     Crear rol
                   </Button>
                 </div>
@@ -604,7 +639,11 @@ export const UsersSettingsPanel = ({ initialView = 'users', onClose }: UsersSett
                   {inviteForm.emails.map((email) => (
                     <span className={styles.emailChip} key={email}>
                       {email}
-                      <button type="button" aria-label={`Quitar ${email}`} onClick={() => removeInviteEmail(email)}>
+                      <button
+                        type="button"
+                        aria-label={`Quitar ${email}`}
+                        onClick={() => removeInviteEmail(email)}
+                      >
                         ×
                       </button>
                     </span>
@@ -725,7 +764,9 @@ export const UsersSettingsPanel = ({ initialView = 'users', onClose }: UsersSett
                       key={section.key}
                       type="button"
                       className={section.key === roleForm.activeTab ? styles.activeTab : undefined}
-                      onClick={() => setRoleForm((current) => ({ ...current, activeTab: section.key }))}
+                      onClick={() =>
+                        setRoleForm((current) => ({ ...current, activeTab: section.key }))
+                      }
                     >
                       {section.label}
                       {!hasAll && <span />}

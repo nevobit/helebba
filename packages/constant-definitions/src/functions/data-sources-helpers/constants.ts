@@ -10,6 +10,7 @@ export enum Collection {
   CONTACTS = 'contacts',
   WAREHOUSES = 'warehouses',
   SESSIONS = 'sessions',
+  API_KEYS = 'api_keys',
   MEMBERSHIPS = 'memberships',
   ROLES = 'roles',
   SUBSCRIPTIONS = 'subscriptions',

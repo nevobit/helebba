@@ -1,10 +1,10 @@
 import { createVerifier, buildApiKeyStore } from '@hlb/security';
-import { localApiKeyRepo } from './api-key-repo.local';
+import { apiKeyRepo } from './api-key-repo.composite';
 
 export const buildVerifier = async () => {
   //   const redis = await getRedis();
 
-  const repo = localApiKeyRepo();
+  const repo = apiKeyRepo();
 
   const apiKeyStore = buildApiKeyStore({
     repo,

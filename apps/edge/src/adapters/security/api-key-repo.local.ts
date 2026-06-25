@@ -8,7 +8,7 @@ type Seed = {
 
 const parseSeed = (): Seed[] => {
   // Formato:
-  // DEV_API_KEYS="key1:id=dev1,scopes=*,products=Edge;key2:id=dev2,scopes=tickets:read|tickets:write,products=Edge|Worker"
+  // DEV_API_KEYS="key1:id=dev1,organizationId=org1,scopes=*,products=Edge;key2:id=dev2,scopes=inventory:read,products=GSDK"
   const raw = process.env.DEV_API_KEYS ?? '';
   if (!raw.trim()) return [];
 
@@ -31,12 +31,14 @@ const parseSeed = (): Seed[] => {
     const id = kv.get('id') || 'dev';
     const scopes = (kv.get('scopes') || '').split('|').filter(Boolean);
     const products = (kv.get('products') || '').split('|').filter(Boolean);
+    const organizationId = kv.get('organizationId') || undefined;
 
     const record: ApiKeyRecord = {
       id,
       status: 'active',
       scopes: scopes.length ? scopes : ['*'],
       products: products.length ? products : ['Edge'],
+      organizationId,
     };
 
     return { rawKey, record };
@@ -45,7 +47,6 @@ const parseSeed = (): Seed[] => {
 
 export const localApiKeyRepo = (): ApiKeyRepository => {
   const seeds = parseSeed();
-  console.log(seeds);
 
   const byHash = new Map<string, ApiKeyRecord>();
   for (const s of seeds) {

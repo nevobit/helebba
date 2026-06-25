@@ -32,6 +32,32 @@ export type InviteUserPayload = {
   roleId: RoleId;
 };
 
+export type ExternalApiKey = {
+  id?: string;
+  _id?: string;
+  name: string;
+  keyPrefix: string;
+  keyLast4: string;
+  scopes: string[];
+  products: string[];
+  status: 'active' | 'revoked';
+  lastUsedAt?: string | null;
+  expiresAt?: string | null;
+  createdAt?: string;
+  revokedAt?: string | null;
+};
+
+export type CreateExternalApiKeyPayload = {
+  name: string;
+  scopes?: string[];
+  expiresAt?: string | null;
+};
+
+export type CreateExternalApiKeyResponse = {
+  apiKey: string;
+  record: ExternalApiKey;
+};
+
 export const organizationUsers = async () => {
   const { data } = await api.get<OrganizationUsersResponse>('/me/users');
 
@@ -64,6 +90,24 @@ export const resendInvitation = async (membershipId: string) => {
 
 export const revokeInvitation = async (membershipId: string) => {
   const { data } = await api.delete(`/me/users/invitations/${membershipId}`);
+
+  return data;
+};
+
+export const apiKeys = async () => {
+  const { data } = await api.get<ExternalApiKey[]>('/me/api-keys');
+
+  return data;
+};
+
+export const createApiKey = async (payload: CreateExternalApiKeyPayload) => {
+  const { data } = await api.post<CreateExternalApiKeyResponse>('/me/api-keys', payload);
+
+  return data;
+};
+
+export const revokeApiKey = async (apiKeyId: string) => {
+  const { data } = await api.delete<ExternalApiKey>(`/me/api-keys/${apiKeyId}`);
 
   return data;
 };

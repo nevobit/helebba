@@ -1,4 +1,5 @@
 export * from './auth';
+export * from './api-keys';
 export * from './memberships';
 export * from './organizations';
 export * from './rbac';

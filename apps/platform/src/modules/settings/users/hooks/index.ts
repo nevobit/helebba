@@ -1,11 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  apiKeys,
+  createApiKey,
   createRole,
   inviteUser,
   organizationUsers,
+  revokeApiKey,
   resendInvitation,
   revokeInvitation,
   roles,
+  type CreateExternalApiKeyPayload,
   type CreateRolePayload,
   type InviteUserPayload,
 } from '../services';
@@ -99,5 +103,53 @@ export const useRevokeInvitation = () => {
     revokeInvitation: mutation.mutate,
     revokingInvitationId: mutation.variables,
     isRevokingInvitation: mutation.isPending,
+  };
+};
+
+export const useApiKeys = () => {
+  const { data, error, isFetching, isLoading, refetch } = useQuery({
+    queryKey: ['api-keys'],
+    queryFn: apiKeys,
+  });
+
+  return {
+    apiKeys: data ?? [],
+    error,
+    isFetching,
+    isLoading,
+    refetch,
+  };
+};
+
+export const useCreateApiKey = () => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (payload: CreateExternalApiKeyPayload) => createApiKey(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['api-keys'] });
+    },
+  });
+
+  return {
+    createApiKey: mutation.mutate,
+    createdApiKey: mutation.data,
+    resetCreatedApiKey: mutation.reset,
+    isCreatingApiKey: mutation.isPending,
+  };
+};
+
+export const useRevokeApiKey = () => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (apiKeyId: string) => revokeApiKey(apiKeyId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['api-keys'] });
+    },
+  });
+
+  return {
+    revokeApiKey: mutation.mutate,
+    revokingApiKeyId: mutation.variables,
+    isRevokingApiKey: mutation.isPending,
   };
 };

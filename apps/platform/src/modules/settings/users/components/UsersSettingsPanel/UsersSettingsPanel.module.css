@@ -1,136 +1,136 @@
 .overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 60;
-    display: flex;
-    justify-content: flex-end;
-    background: rgb(17 24 39 / 36%);
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  justify-content: flex-end;
+  background: rgb(17 24 39 / 36%);
 }
 
 .panel {
-    width: min(84.8rem, calc(100vw - 5.6rem));
-    height: 100dvh;
-    background: #f7f8fa;
-    border-left: .1rem solid #d7dce3;
-    box-shadow: -1.6rem 0 3.2rem rgb(15 23 42 / 12%);
+  width: min(84.8rem, calc(100vw - 5.6rem));
+  height: 100dvh;
+  background: #f7f8fa;
+  border-left: 0.1rem solid #d7dce3;
+  box-shadow: -1.6rem 0 3.2rem rgb(15 23 42 / 12%);
 }
 
 .shell {
-    display: grid;
-    grid-template-rows: 7rem minmax(0, 1fr);
-    height: 100%;
+  display: grid;
+  grid-template-rows: 7rem minmax(0, 1fr);
+  height: 100%;
 }
 
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
-    border-bottom: .1rem solid #dde2ea;
-    background: #ffffff;
-    padding: 0 3rem 0 3.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  border-bottom: 0.1rem solid #dde2ea;
+  background: #ffffff;
+  padding: 0 3rem 0 3.2rem;
 }
 
 .header h2 {
-    margin: 0;
-    color: #111827;
-    font-size: 1.8rem;
-    font-weight: 650;
+  margin: 0;
+  color: #111827;
+  font-size: 1.8rem;
+  font-weight: 650;
 }
 
 .closeButton {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 3.6rem;
-    height: 3.6rem;
-    border: 0;
-    border-left: .1rem solid #e5e7eb;
-    background: transparent;
-    color: #111827;
-    cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  border: 0;
+  border-left: 0.1rem solid #e5e7eb;
+  background: transparent;
+  color: #111827;
+  cursor: pointer;
 }
 
 .content {
-    min-height: 0;
-    overflow-y: auto;
-    padding: 2.8rem 2.8rem 4.8rem 3.2rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2.8rem 2.8rem 4.8rem 3.2rem;
 }
 
 .breadcrumb {
-    display: inline-flex;
-    align-items: center;
-    gap: .6rem;
-    margin-bottom: 2.8rem;
-    color: #111827;
-    font-size: 1.4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 2.8rem;
+  color: #111827;
+  font-size: 1.4rem;
 }
 
 .breadcrumb button {
-    border: 0;
-    background: transparent;
-    color: #2168c8;
-    cursor: pointer;
-    font: inherit;
-    padding: 0;
+  border: 0;
+  background: transparent;
+  color: #2168c8;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
 }
 
 .breadcrumb strong {
-    font-weight: 500;
+  font-weight: 500;
 }
 
 .card {
-    overflow: hidden;
-    border: .1rem solid #e0e4ea;
-    border-radius: .8rem;
-    background: #ffffff;
-    box-shadow: 0 .1rem .3rem rgb(15 23 42 / 5%);
+  overflow: hidden;
+  border: 0.1rem solid #e0e4ea;
+  border-radius: 0.8rem;
+  background: #ffffff;
+  box-shadow: 0 0.1rem 0.3rem rgb(15 23 42 / 5%);
 }
 
-.card+.card {
-    margin-top: 2.2rem;
+.card + .card {
+  margin-top: 2.2rem;
 }
 
 .cardHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.6rem;
-    min-height: 9rem;
-    padding: 2rem 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  min-height: 9rem;
+  padding: 2rem 2.4rem;
 }
 
 .cardHeader h3 {
-    margin: 0 0 .8rem;
-    color: #1f2937;
-    font-size: 1.8rem;
-    font-weight: 700;
+  margin: 0 0 0.8rem;
+  color: #1f2937;
+  font-size: 1.8rem;
+  font-weight: 700;
 }
 
 .cardHeader p {
-    margin: 0;
-    color: #64748b;
-    font-size: 1.4rem;
+  margin: 0;
+  color: #64748b;
+  font-size: 1.4rem;
 }
 
 .cardHeader p button,
 .inviteCounter button {
-    border: 0;
-    background: transparent;
-    color: #2168c8;
-    cursor: pointer;
-    font: inherit;
-    padding: 0;
+  border: 0;
+  background: transparent;
+  color: #2168c8;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
 }
 
 .headerControls {
-    display: inline-flex;
-    align-items: center;
-    gap: .8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
 }
 
 .table {
-    border-top: .1rem solid #e5e7eb;
+  border-top: 0.1rem solid #e5e7eb;
 }
 
 .userHeaderRow,
@@ -139,500 +139,946 @@
 .roleRow,
 .pendingHeaderRow,
 .pendingRow {
-    display: grid;
-    align-items: center;
-    min-height: 5.8rem;
-    border-bottom: .1rem solid #e5e7eb;
-    color: #1f2937;
-    font-size: 1.4rem;
-    padding: 0 2.4rem;
+  display: grid;
+  align-items: center;
+  min-height: 5.8rem;
+  border-bottom: 0.1rem solid #e5e7eb;
+  color: #1f2937;
+  font-size: 1.4rem;
+  padding: 0 2.4rem;
 }
 
 .userHeaderRow,
 .roleHeaderRow,
 .pendingHeaderRow {
-    min-height: 5rem;
-    color: #667085;
-    font-size: 1.3rem;
-    font-weight: 700;
+  min-height: 5rem;
+  color: #667085;
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 .userHeaderRow,
 .userRow {
-    grid-template-columns: 1.3fr 1.25fr .7fr .75fr .9fr;
-    gap: 1.8rem;
+  grid-template-columns: 1.3fr 1.25fr 0.7fr 0.75fr 0.9fr;
+  gap: 1.8rem;
 }
 
 .roleHeaderRow,
 .roleRow {
-    grid-template-columns: 1.15fr 2.8fr .5fr;
-    gap: 1.8rem;
+  grid-template-columns: 1.15fr 2.8fr 0.5fr;
+  gap: 1.8rem;
 }
 
 .pendingHeaderRow,
 .pendingRow {
-    grid-template-columns: 1.4fr .9fr auto;
-    gap: 1.8rem;
+  grid-template-columns: 1.4fr 0.9fr auto;
+  gap: 1.8rem;
 }
 
 .userRow:last-child,
 .roleRow:last-child,
 .pendingRow:last-child {
-    border-bottom: 0;
+  border-bottom: 0;
 }
 
 .userName,
 .roleName {
-    display: inline-flex;
-    align-items: center;
-    gap: .9rem;
-    min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
 }
 
 .avatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 999rem;
-    background: #d936b8;
-    color: #ffffff;
-    font-size: 1.3rem;
-    font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 999rem;
+  background: #d936b8;
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 800;
 }
 
 .pendingCard {
-    margin-top: 2.2rem;
+  margin-top: 2.2rem;
 }
 
 .pendingHeader {
-    display: grid;
-    gap: 1.2rem;
-    padding: 2rem 2.4rem 2.4rem;
+  display: grid;
+  gap: 1.2rem;
+  padding: 2rem 2.4rem 2.4rem;
 }
 
 .pendingHeader h3 {
-    margin: 0;
-    color: #1f2937;
-    font-size: 1.8rem;
-    font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.8rem;
+  font-weight: 700;
 }
 
 .pendingHeader p {
-    max-width: 66rem;
-    margin: 0;
-    color: #64748b;
-    font-size: 1.4rem;
-    line-height: 1.45;
+  max-width: 66rem;
+  margin: 0;
+  color: #64748b;
+  font-size: 1.4rem;
+  line-height: 1.45;
 }
 
 .pendingAvatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 999rem;
-    background: #a60fd6;
-    color: #ffffff;
-    font-size: 1.3rem;
-    font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 999rem;
+  background: #a60fd6;
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 800;
 }
 
 .pendingActions {
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 1.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.8rem;
 }
 
 .pendingActions > button:not(:first-child) {
-    border: 0;
-    background: transparent;
-    color: #ef1212;
-    cursor: pointer;
-    font: inherit;
-    font-size: 1.4rem;
-    font-weight: 600;
-    padding: 0;
+  border: 0;
+  background: transparent;
+  color: #ef1212;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.4rem;
+  font-weight: 600;
+  padding: 0;
 }
 
 .pendingActions > button:not(:first-child):disabled {
-    cursor: wait;
-    opacity: .55;
+  cursor: wait;
+  opacity: 0.55;
 }
 
 .inviteModal {
-    top: 6.4rem;
-    overflow: hidden;
+  top: 6.4rem;
+  overflow: hidden;
 }
 
 .roleModal {
-    top: 6.4rem;
-    overflow: hidden;
+  top: 6.4rem;
+  overflow: hidden;
 }
 
 .modalHeader {
-    min-height: 6.4rem;
-    border-bottom: 0;
-    padding: 0 2.6rem;
+  min-height: 6.4rem;
+  border-bottom: 0;
+  padding: 0 2.6rem;
 }
 
 .modalHeader h2 {
-    margin: 0;
-    color: #111827;
-    font-size: 2.4rem;
-    font-weight: 750;
+  margin: 0;
+  color: #111827;
+  font-size: 2.4rem;
+  font-weight: 750;
 }
 
 .modalBody {
-    display: grid;
-    gap: 1.4rem;
-    padding: .6rem 2.6rem 2.4rem;
+  display: grid;
+  gap: 1.4rem;
+  padding: 0.6rem 2.6rem 2.4rem;
 }
 
 .emailChipField {
-    display: grid;
-    gap: .8rem;
-    color: #1f2937;
-    font-size: 1.4rem;
-    font-weight: 650;
+  display: grid;
+  gap: 0.8rem;
+  color: #1f2937;
+  font-size: 1.4rem;
+  font-weight: 650;
 }
 
 .emailChipControl {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: .6rem;
-    min-height: 3.8rem;
-    border: .1rem solid #d8dee8;
-    border-radius: .4rem;
-    background: #ffffff;
-    padding: .5rem .7rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  min-height: 3.8rem;
+  border: 0.1rem solid #d8dee8;
+  border-radius: 0.4rem;
+  background: #ffffff;
+  padding: 0.5rem 0.7rem;
 }
 
 .emailChipControl:focus-within {
-    border-color: #2563eb;
+  border-color: #2563eb;
 }
 
 .emailChipControl input {
-    flex: 1 1 12rem;
-    min-width: 10rem;
-    border: 0;
-    outline: 0;
-    color: #111827;
-    font: inherit;
-    font-size: 1.4rem;
-    padding: .3rem 0;
+  flex: 1 1 12rem;
+  min-width: 10rem;
+  border: 0;
+  outline: 0;
+  color: #111827;
+  font: inherit;
+  font-size: 1.4rem;
+  padding: 0.3rem 0;
 }
 
 .emailChip {
-    display: inline-flex;
-    align-items: center;
-    gap: .6rem;
-    max-width: 100%;
-    border-radius: .7rem;
-    background: #e5e7eb;
-    color: #666b75;
-    font-size: 1.4rem;
-    font-weight: 600;
-    line-height: 1.2;
-    padding: .4rem .7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  max-width: 100%;
+  border-radius: 0.7rem;
+  background: #e5e7eb;
+  color: #666b75;
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.2;
+  padding: 0.4rem 0.7rem;
 }
 
 .emailChip button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.6rem;
-    height: 1.6rem;
-    border: 0;
-    border-radius: 999rem;
-    background: transparent;
-    color: #666b75;
-    cursor: pointer;
-    font: inherit;
-    font-size: 1.7rem;
-    line-height: 1;
-    padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 0;
+  border-radius: 999rem;
+  background: transparent;
+  color: #666b75;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.7rem;
+  line-height: 1;
+  padding: 0;
 }
 
 .checkboxField {
-    display: inline-flex;
-    align-items: center;
-    gap: .8rem;
-    color: #1f2937;
-    font-size: 1.4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: #1f2937;
+  font-size: 1.4rem;
 }
 
 .checkboxField input {
-    width: 1.7rem;
-    height: 1.7rem;
-    accent-color: #2563eb;
+  width: 1.7rem;
+  height: 1.7rem;
+  accent-color: #2563eb;
 }
 
 .inviteRoleBox {
-    display: grid;
-    gap: 1rem;
-    border-radius: .8rem;
-    background: #f4f6f9;
-    padding: 1.6rem;
+  display: grid;
+  gap: 1rem;
+  border-radius: 0.8rem;
+  background: #f4f6f9;
+  padding: 1.6rem;
 }
 
 .inviteRoleBox p {
-    margin: .2rem 0 0;
-    color: #1f2937;
-    font-size: 1.4rem;
+  margin: 0.2rem 0 0;
+  color: #1f2937;
+  font-size: 1.4rem;
 }
 
 .inviteRoleHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    color: #1f2937;
-    font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #1f2937;
+  font-size: 1.4rem;
 }
 
 .inviteRoleHeader span {
-    display: inline-flex;
-    align-items: center;
-    gap: .8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
 }
 
 .toggle {
-    width: 3.4rem;
-    height: 2.2rem;
-    border: .1rem solid #d1d5db;
-    border-radius: 999rem;
-    background: #ffffff;
-    box-shadow: inset 0 0 0 .1rem #eef2f7;
+  width: 3.4rem;
+  height: 2.2rem;
+  border: 0.1rem solid #d1d5db;
+  border-radius: 999rem;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 0.1rem #eef2f7;
 }
 
 .selectField {
-    display: grid;
-    gap: .8rem;
+  display: grid;
+  gap: 0.8rem;
 }
 
 .selectField select {
-    width: 100%;
-    min-height: 3.8rem;
-    border: .1rem solid #cbd5e1;
-    border-radius: .6rem;
-    background: #ffffff;
-    color: #1f2937;
-    font: inherit;
-    font-size: 1.4rem;
-    padding: 0 1.2rem;
+  width: 100%;
+  min-height: 3.8rem;
+  border: 0.1rem solid #cbd5e1;
+  border-radius: 0.6rem;
+  background: #ffffff;
+  color: #1f2937;
+  font: inherit;
+  font-size: 1.4rem;
+  padding: 0 1.2rem;
 }
 
 .inviteFooter {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.6rem;
-    padding: 0 2.6rem 2.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  padding: 0 2.6rem 2.6rem;
 }
 
 .inviteCounter {
-    display: inline-flex;
-    align-items: center;
-    gap: .8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
 }
 
 .inviteCounter > span {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 3.6rem;
-    height: 3.6rem;
-    border: .2rem solid #16c7a4;
-    border-radius: 999rem;
-    color: #1f2937;
-    font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  border: 0.2rem solid #16c7a4;
+  border-radius: 999rem;
+  color: #1f2937;
+  font-weight: 800;
 }
 
 .inviteCounter p {
-    display: grid;
-    gap: .2rem;
-    margin: 0;
-    color: #98a2b3;
-    font-size: 1.2rem;
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  color: #98a2b3;
+  font-size: 1.2rem;
 }
 
 .roleForm {
-    display: grid;
-    grid-template-rows: minmax(0, 1fr) auto;
-    min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-height: 0;
 }
 
 .roleModalBody {
-    display: grid;
-    gap: 1.6rem;
-    min-height: 0;
-    overflow-y: auto;
-    padding: 0 2.2rem 2.4rem;
+  display: grid;
+  gap: 1.6rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 2.2rem 2.4rem;
 }
 
 .inlineLink {
-    display: inline-flex;
-    align-items: center;
-    gap: .3rem;
-    width: fit-content;
-    border: 0;
-    background: transparent;
-    color: #2168c8;
-    cursor: pointer;
-    font: inherit;
-    font-size: 1.4rem;
-    padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: fit-content;
+  border: 0;
+  background: transparent;
+  color: #2168c8;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.4rem;
+  padding: 0;
 }
 
 .textareaField {
-    display: grid;
-    gap: .8rem;
-    color: #667085;
-    font-size: 1.2rem;
-    font-weight: 650;
+  display: grid;
+  gap: 0.8rem;
+  color: #667085;
+  font-size: 1.2rem;
+  font-weight: 650;
 }
 
 .textareaField textarea {
-    min-height: 8rem;
-    border: .1rem solid #cbd5e1;
-    border-radius: .6rem;
-    color: #111827;
-    font: inherit;
-    font-size: 1.4rem;
-    resize: vertical;
-    padding: 1.2rem;
+  min-height: 8rem;
+  border: 0.1rem solid #cbd5e1;
+  border-radius: 0.6rem;
+  color: #111827;
+  font: inherit;
+  font-size: 1.4rem;
+  resize: vertical;
+  padding: 1.2rem;
 }
 
 .tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .2rem 1rem;
-    border: .1rem solid #e5e7eb;
-    border-bottom: .1rem solid #d9dee7;
-    border-radius: .4rem .4rem 0 0;
-    padding: 0 1.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1rem;
+  border: 0.1rem solid #e5e7eb;
+  border-bottom: 0.1rem solid #d9dee7;
+  border-radius: 0.4rem 0.4rem 0 0;
+  padding: 0 1.8rem;
 }
 
 .tabs button {
-    display: inline-flex;
-    align-items: center;
-    gap: .6rem;
-    min-height: 3.6rem;
-    border: 0;
-    border-bottom: .2rem solid transparent;
-    background: transparent;
-    color: #8b8b8b;
-    cursor: pointer;
-    font: inherit;
-    font-size: 1.4rem;
-    font-weight: 700;
-    padding: 0 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3.6rem;
+  border: 0;
+  border-bottom: 0.2rem solid transparent;
+  background: transparent;
+  color: #8b8b8b;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding: 0 0.8rem;
 }
 
 .tabs button span {
-    width: .8rem;
-    height: .8rem;
-    border-radius: 999rem;
-    background: #ef4444;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 999rem;
+  background: #ef4444;
 }
 
 .tabs .activeTab {
-    border-bottom-color: #2563eb;
-    color: #2563eb;
+  border-bottom-color: #2563eb;
+  color: #2563eb;
 }
 
 .permissionCard {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.6rem;
-    min-height: 6.2rem;
-    border: .1rem solid #e5e7eb;
-    border-radius: .4rem;
-    background: #f7f7f8;
-    padding: 1.2rem 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  min-height: 6.2rem;
+  border: 0.1rem solid #e5e7eb;
+  border-radius: 0.4rem;
+  background: #f7f7f8;
+  padding: 1.2rem 1.6rem;
 }
 
 .permissionCard strong {
-    color: #1f2937;
-    font-size: 1.4rem;
+  color: #1f2937;
+  font-size: 1.4rem;
 }
 
 .permissionCard p {
-    margin: .2rem 0 0;
-    color: #1f2937;
-    font-size: 1.4rem;
+  margin: 0.2rem 0 0;
+  color: #1f2937;
+  font-size: 1.4rem;
 }
 
 .switchButton {
-    display: inline-flex;
-    align-items: center;
-    width: 3.7rem;
-    height: 2.2rem;
-    border: .1rem solid #d1d5db;
-    border-radius: 999rem;
-    background: #ffffff;
-    cursor: pointer;
-    padding: .2rem;
+  display: inline-flex;
+  align-items: center;
+  width: 3.7rem;
+  height: 2.2rem;
+  border: 0.1rem solid #d1d5db;
+  border-radius: 999rem;
+  background: #ffffff;
+  cursor: pointer;
+  padding: 0.2rem;
 }
 
 .switchButton span {
-    width: 1.8rem;
-    height: 1.8rem;
-    border-radius: 999rem;
-    background: #ffffff;
-    box-shadow: 0 .1rem .4rem rgb(15 23 42 / 28%);
-    transition: transform 160ms ease;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 999rem;
+  background: #ffffff;
+  box-shadow: 0 0.1rem 0.4rem rgb(15 23 42 / 28%);
+  transition: transform 160ms ease;
 }
 
 .switchButton[data-checked='true'] {
-    justify-content: flex-start;
-    background: #2563eb;
-    border-color: #2563eb;
+  justify-content: flex-start;
+  background: #2563eb;
+  border-color: #2563eb;
 }
 
 .switchButton[data-checked='true'] span {
-    transform: translateX(1.4rem);
+  transform: translateX(1.4rem);
 }
 
 .roleFooter {
-    display: flex;
-    justify-content: flex-end;
-    border-top: .1rem solid #e5e7eb;
-    background: #f7f8fa;
-    padding: 1.6rem 2.6rem;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 0.1rem solid #e5e7eb;
+  background: #f7f8fa;
+  padding: 1.6rem 2.6rem;
+}
+
+.apiCredentialsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  min-height: 11rem;
+  padding: 2rem 2.4rem;
+}
+
+.apiCredentialsHeader h3 {
+  margin: 0 0 0.8rem;
+  color: #111827;
+  font-size: 1.8rem;
+  font-weight: 750;
+}
+
+.apiCredentialsHeader p {
+  max-width: 47rem;
+  margin: 0;
+  color: #64748b;
+  font-size: 1.4rem;
+  line-height: 1.45;
+}
+
+.apiTable {
+  border-top: 0.1rem solid #e5e7eb;
+}
+
+.apiHeaderRow,
+.apiRow {
+  display: grid;
+  grid-template-columns: 1.35fr 1.05fr 0.75fr 0.75fr 0.45fr;
+  align-items: center;
+  gap: 1.8rem;
+  min-height: 5.8rem;
+  border-bottom: 0.1rem solid #e5e7eb;
+  padding: 0 2.4rem;
+}
+
+.apiHeaderRow {
+  min-height: 5rem;
+  background: #f1f3f6;
+  color: #667085;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.apiRow {
+  color: #1f2937;
+  font-size: 1.4rem;
+}
+
+.apiRow:last-child {
+  border-bottom: 0;
+}
+
+.apiNameCell {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.apiNameCell strong,
+.apiNameCell small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.apiNameCell strong {
+  color: #1f2937;
+  font-size: 1.4rem;
+  font-weight: 650;
+}
+
+.apiNameCell small {
+  color: #667085;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font-size: 1.2rem;
+}
+
+.apiScopes {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  color: #667085;
+}
+
+.apiScopes svg {
+  flex: 0 0 auto;
+  color: #111827;
+}
+
+.apiStatusSwitch {
+  display: inline-flex;
+  align-items: center;
+  width: 3.8rem;
+  height: 2.2rem;
+  border: 0.1rem solid #d1d5db;
+  border-radius: 999rem;
+  background: #ffffff;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.apiStatusSwitch span {
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 999rem;
+  background: #ffffff;
+  box-shadow: 0 0.1rem 0.4rem rgb(15 23 42 / 28%);
+  transition: transform 160ms ease;
+}
+
+.apiStatusSwitch[data-active='true'] {
+  justify-content: flex-start;
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.apiStatusSwitch[data-active='true'] span {
+  transform: translateX(1.5rem);
+}
+
+.apiStatusSwitch:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.apiEmptyState {
+  display: grid;
+  justify-items: center;
+  gap: 1.2rem;
+  min-height: 28rem;
+  padding: 3.6rem 2.4rem;
+  text-align: center;
+}
+
+.apiEmptyIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 1.6rem;
+  background: #f0f2f5;
+  color: #667085;
+}
+
+.apiEmptyState h3 {
+  margin: 0.4rem 0 0;
+  color: #111827;
+  font-size: 2.6rem;
+  font-weight: 750;
+}
+
+.apiEmptyState p {
+  max-width: 52rem;
+  margin: 0;
+  color: #667085;
+  font-size: 1.4rem;
+}
+
+.apiHelperText {
+  margin: 1.2rem 0 0;
+  color: #667085;
+  font-size: 1.3rem;
+}
+
+.apiTokenModal,
+.generatedTokenModal {
+  top: 6.4rem;
+  overflow: hidden;
+}
+
+.apiTokenModalHeader {
+  min-height: 7.2rem;
+  border-bottom: 0.1rem solid #e5e7eb;
+  padding: 0 2.6rem;
+}
+
+.apiTokenModalHeader h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 2.2rem;
+  font-weight: 750;
+}
+
+.apiTokenModalHeader p {
+  margin: 0.4rem 0 0;
+  color: #4b5563;
+  font-size: 1.4rem;
+}
+
+.apiTokenModalBody {
+  display: grid;
+  gap: 1.6rem;
+  max-height: min(66rem, calc(100dvh - 24rem));
+  overflow-y: auto;
+  padding: 2rem 2.6rem;
+}
+
+.apiPermissionGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(26rem, 0.95fr);
+  gap: 1.6rem;
+}
+
+.apiPermissionBox {
+  display: grid;
+  align-content: start;
+  gap: 1.4rem;
+  min-height: 31rem;
+  border: 0.1rem solid #e1e5eb;
+  border-radius: 0.6rem;
+  background: #f7f8fa;
+  padding: 1.8rem;
+}
+
+.apiPermissionBox h3,
+.apiUsageBox h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 1.8rem;
+  font-weight: 750;
+}
+
+.apiPermissionList {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.apiPermissionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  min-height: 4.4rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #1f2937;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.7rem 0.8rem;
+  text-align: left;
+}
+
+.apiPermissionItem:hover {
+  background: #ffffff;
+}
+
+.apiPermissionItem > span {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.2rem 0.8rem;
+  min-width: 0;
+}
+
+.apiPermissionItem strong {
+  color: #1f2937;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.apiPermissionItem small {
+  grid-column: 2;
+  color: #667085;
+  font-size: 1.2rem;
+  line-height: 1.35;
+}
+
+.apiPermissionItem em {
+  flex: 0 0 auto;
+  border-radius: 0.5rem;
+  background: #e5e7eb;
+  color: #374151;
+  font-size: 1.2rem;
+  font-style: normal;
+  font-weight: 700;
+  padding: 0.4rem 0.8rem;
+}
+
+.apiPermissionItem[data-selected='true'] em {
+  background: #dff5e8;
+  color: #137a45;
+}
+
+.apiPermissionDot {
+  width: 0.8rem;
+  height: 0.8rem;
+  margin-top: 0.6rem;
+  border-radius: 999rem;
+  background: #98a2b3;
+}
+
+.apiPermissionItem[data-selected='true'] .apiPermissionDot {
+  background: #12b76a;
+}
+
+.apiNoPermissions {
+  margin: 0;
+  color: #667085;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.apiSelectedPermissions {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.apiSelectedPermissions span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: #1f2937;
+  font-size: 1.4rem;
+}
+
+.apiSelectedPermissions svg {
+  color: #12b76a;
+}
+
+.apiUsageBox {
+  display: grid;
+  gap: 1rem;
+  border: 0.1rem solid #e1e5eb;
+  border-radius: 0.6rem;
+  background: #f7f8fa;
+  padding: 1.6rem 1.8rem;
+}
+
+.apiUsageBox h3 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.5rem;
+}
+
+.apiUsageBox ul {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  color: #374151;
+  font-size: 1.3rem;
+  line-height: 1.45;
+  padding-left: 2rem;
+}
+
+.apiUsageBox code {
+  border-radius: 0.4rem;
+  background: #fff1f2;
+  color: #d14343;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  padding: 0.2rem 0.4rem;
+}
+
+.apiModalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  border-top: 0.1rem solid #e5e7eb;
+  background: #ffffff;
+  padding: 1.8rem 2.6rem;
+}
+
+.generatedTokenBody {
+  display: grid;
+  gap: 1.6rem;
+  padding: 2rem 2.6rem 2.4rem;
+}
+
+.generatedTokenBody p {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.4rem;
+}
+
+.generatedTokenValue {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.8rem;
+  border: 0.1rem solid #86efac;
+  border-radius: 0.6rem;
+  background: #f0fdf4;
+  color: #15803d;
+  padding: 1.2rem 1.4rem;
+}
+
+.generatedTokenValue code {
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font-size: 1.4rem;
+  line-height: 1.45;
+}
+
+.generatedTokenValue button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #16a34a;
+  cursor: pointer;
+  padding: 0;
+}
+
+.generatedTokenValue button:hover {
+  background: #dcfce7;
+}
+
+.apiWarningBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  border: 0.1rem solid #f59e0b;
+  border-radius: 0.6rem;
+  background: #fffbeb;
+  color: #374151;
+  font-size: 1.4rem;
+  line-height: 1.45;
+  padding: 1.6rem;
+}
+
+.apiWarningBox svg {
+  flex: 0 0 auto;
+  color: #f59e0b;
 }
 
 @media (max-width: 72rem) {
-    .panel {
-        width: 100vw;
-    }
+  .panel {
+    width: 100vw;
+  }
 
-    .cardHeader {
-        align-items: flex-start;
-        flex-direction: column;
-    }
+  .cardHeader,
+  .apiCredentialsHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 
-    .headerControls {
-        flex-wrap: wrap;
-        width: 100%;
-    }
+  .headerControls {
+    flex-wrap: wrap;
+    width: 100%;
+  }
 
-    .userHeaderRow,
-    .userRow,
-    .roleHeaderRow,
-    .roleRow,
-    .pendingHeaderRow,
-    .pendingRow {
-        grid-template-columns: 1fr;
-        gap: .6rem;
-        padding: 1.4rem 2rem;
-    }
+  .userHeaderRow,
+  .userRow,
+  .roleHeaderRow,
+  .roleRow,
+  .pendingHeaderRow,
+  .pendingRow,
+  .apiHeaderRow,
+  .apiRow {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+    padding: 1.4rem 2rem;
+  }
+
+  .apiPermissionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .apiTokenModalBody {
+    max-height: calc(100dvh - 22rem);
+  }
 }

@@ -15,6 +15,7 @@ import { paymentMethodRoutes } from './treasury/payment-methods';
 import { treasuryAccountRoutes } from './treasury/accounts';
 import { paymentRoutes } from './accounting/payments';
 import { mediaRoutes } from './media';
+import { sdkRoutes } from './sdk';
 
 const routes: RouteOptions[] = [
   ...opsRoutes,
@@ -35,6 +36,7 @@ const routes: RouteOptions[] = [
   ...treasuryAccountRoutes,
   ...paymentRoutes,
   ...mediaRoutes,
+  ...sdkRoutes,
 ];
 
 export const registerRoutes = (app: FastifyInstance) => {
