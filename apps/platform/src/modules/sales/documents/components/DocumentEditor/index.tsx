@@ -205,6 +205,7 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
   const [supportFileName, setSupportFileName] = useState('');
   const [showItemSelector, setShowItemSelector] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasTouchedPaymentMethod, setHasTouchedPaymentMethod] = useState(false);
   const { contacts } = useContacts({ page: 1, limit: 100, search: '', scope: 'all' });
   const { paymentMethods } = usePaymentMethods({ page: 1, limit: 100 });
   const { createDocumentAsync, isCreatingDocument } = useCreateDocument(config.kind);
@@ -240,6 +241,24 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
     setLines(documentToLines(document));
     setInitializedDocumentId(documentId);
   }, [config.kind, document, documentId, initializedDocumentId]);
+
+  useEffect(() => {
+    if (isEditing || hasTouchedPaymentMethod || formState.paymentMethodId) return;
+
+    const defaultPaymentMethod = paymentMethods.find((paymentMethod) => paymentMethod.isDefault);
+    if (!defaultPaymentMethod) return;
+
+    setFormState((current) => {
+      if (current.paymentMethodId) return current;
+
+      return {
+        ...current,
+        paymentMethodId: String(defaultPaymentMethod.id),
+        disbursementDate: resolveDisbursementInputDate(defaultPaymentMethod, current.date),
+        financialFeeCustomValue: '',
+      };
+    });
+  }, [formState.paymentMethodId, hasTouchedPaymentMethod, isEditing, paymentMethods]);
 
   const totals = useMemo(() => {
     return lines.reduce(
@@ -299,6 +318,7 @@ export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
     const paymentMethodId = event.target.value;
     const paymentMethod = paymentMethods.find((item) => String(item.id) === paymentMethodId);
 
+    setHasTouchedPaymentMethod(true);
     setFormState((current) => ({
       ...current,
       paymentMethodId,
