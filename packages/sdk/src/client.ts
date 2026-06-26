@@ -14,16 +14,16 @@ export const createHelebbaClient = (options: HelebbaClientOptions): HelebbaClien
   return {
     products: {
       list: (params = {}) =>
-        http.get<OffsetPaginatedResult<Product>>('/sdk/products', { query: params }),
-      get: (productId) => http.get<Product>(`/sdk/products/${encodeURIComponent(productId)}`),
+        http.get<OffsetPaginatedResult<Product>>('/products', { query: params }),
+      get: (productId) => http.get<Product>(`/products/${encodeURIComponent(productId)}`),
     },
     brands: {
       list: (params = {}) =>
-        http.get<OffsetPaginatedResult<InventoryBrand>>('/sdk/brands', { query: params }),
+        http.get<OffsetPaginatedResult<InventoryBrand>>('/brands', { query: params }),
     },
     categories: {
       list: (params = {}) =>
-        http.get<OffsetPaginatedResult<Category>>('/sdk/categories', { query: params }),
+        http.get<OffsetPaginatedResult<Category>>('/categories', { query: params }),
     },
   };
 };

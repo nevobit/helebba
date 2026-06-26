@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { hashApiKey, type ApiKeyRecord } from '@hlb/security';
+import { hashApiKey } from '@hlb/security';
 import { apiKeyRepo } from '../../adapters/security';
 
 const API_KEY_HEADER = 'api-key';
@@ -12,14 +12,7 @@ const getHeader = (req: FastifyRequest, name: string): string => {
   return typeof value === 'string' ? value : '';
 };
 
-const hasScope = (record: ApiKeyRecord, requiredScope: string) =>
-  record.scopes.includes('*') || record.scopes.includes(requiredScope);
-
-export const requireSdkApiKey = async (
-  req: FastifyRequest,
-  reply: FastifyReply,
-  requiredScope: string,
-) => {
+export const validateSdkApiKey = async (req: FastifyRequest, reply: FastifyReply) => {
   const rawApiKey = getHeader(req, API_KEY_HEADER).trim();
 
   if (!rawApiKey) {
@@ -41,14 +34,8 @@ export const requireSdkApiKey = async (
     return null;
   }
 
-  if (!hasScope(record, requiredScope)) {
-    reply.status(403).send({ error: 'forbidden', message: 'Missing required API key scope' });
-    return null;
-  }
-
   return {
     apiKeyId: record.id,
     organizationId: record.organizationId,
-    scopes: record.scopes,
   };
 };
