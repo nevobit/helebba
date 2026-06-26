@@ -160,6 +160,7 @@ const methodLabel = (
   paymentMethodId: string | undefined,
   paymentMethodNames: Map<string, string>,
 ) => {
+  console.log({ paymentMethodId });
   if (!paymentMethodId) return 'Sin método';
 
   return paymentMethodNames.get(String(paymentMethodId)) ?? 'Método configurado';
@@ -274,6 +275,8 @@ const Summary = () => {
           paymentFeeAmount(payment, paymentMethodsByLookup)),
       0,
     );
+
+    console.log({ invoices });
     const salesByPaymentMethod = invoices
       .filter((invoice) => isSameMonth(invoice.date, year, month))
       .reduce<Record<string, number>>((groups, invoice) => {

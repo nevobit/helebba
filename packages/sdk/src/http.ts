@@ -111,11 +111,15 @@ export const createHttpClient = (options: HelebbaClientOptions): HttpClient => {
       const url = new URL(`${baseUrl}${path}`);
       appendQuery(url, options.query);
       const accessToken = await requestAccessToken();
+      const timestamp = Date.now().toString();
 
       const response = await fetcher(url, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          'api-key': apiKey,
+          'x-timestamp': timestamp,
+          'x-path': url.pathname,
           'x-client-user-agent': 'GSDK/0.1.0 (node)',
           Accept: 'application/json',
         },

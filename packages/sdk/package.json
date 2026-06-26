@@ -1,6 +1,6 @@
 {
   "name": "@helebba/sdk",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Helebba SDK for external applications.",
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
