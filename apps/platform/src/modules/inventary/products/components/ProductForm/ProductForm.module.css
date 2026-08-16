@@ -202,37 +202,59 @@
     accent-color: #3f7df6;
 }
 
-.variantToolbar {
+.variantList {
     display: grid;
-    grid-template-columns: max-content max-content minmax(0, 1fr);
     gap: 1.6rem;
-    align-items: center;
 }
 
-.variantTable {
+.variantCard {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    overflow: hidden;
+    gap: 1.6rem;
     border: .1rem solid #d9dee8;
-    border-radius: .4rem;
+    border-radius: .6rem;
+    background: #f9fafb;
+    padding: 1.6rem;
 }
 
-.variantTable span,
-.variantTable strong {
-    min-height: 4.4rem;
-    border-bottom: .1rem solid #e5e7eb;
-    background: #f3f4f6;
-    color: #667085;
-    font-size: 1.4rem;
-    font-weight: 500;
-    padding: 1.2rem;
+.variantHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.variantTable strong {
-    border-bottom: 0;
-    background: #ffffff;
+.variantHeader strong {
     color: #1f2937;
-    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 750;
+}
+
+.variantFields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.6rem;
+}
+
+.removeVariantButton {
+    display: grid;
+    width: 3.2rem;
+    height: 3.2rem;
+    place-items: center;
+    border: .1rem solid #e5e7eb;
+    border-radius: .4rem;
+    background: #ffffff;
+    color: #b42318;
+    cursor: pointer;
+}
+
+.removeVariantButton:hover:not(:disabled) {
+    border-color: #fda29b;
+    background: #fff5f4;
+}
+
+.removeVariantButton:disabled,
+.linkButton:disabled {
+    cursor: not-allowed;
+    opacity: .55;
 }
 
 .uploadBox {
@@ -279,8 +301,7 @@
     .tableHeader,
     .tableRow,
     .twoColumns,
-    .variantToolbar,
-    .variantTable {
+    .variantFields {
         grid-template-columns: 1fr;
     }
 }

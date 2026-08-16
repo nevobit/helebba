@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { Button, TextInput } from '@hlb/design-system';
-import { Search } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { useCreateProduct } from '../../hooks';
 import { useBrands } from '@/modules/inventary/brands/hooks';
 import { useCategories } from '@/modules/inventary/categories/hooks';
@@ -43,6 +43,14 @@ type ProductFormState = {
   manufactured: boolean;
 };
 
+type VariantFormState = {
+  id: string;
+  color: string;
+  size: string;
+  price: string;
+  purchasePrice: string;
+};
+
 const initialState: ProductFormState = {
   name: '',
   description: '',
@@ -79,8 +87,17 @@ const splitList = (value: string) =>
     .map((item) => item.trim())
     .filter(Boolean);
 
+const createVariant = (salePrice = '0', purchasePrice = '0'): VariantFormState => ({
+  id: crypto.randomUUID(),
+  color: '',
+  size: '',
+  price: salePrice,
+  purchasePrice,
+});
+
 export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormProps) => {
   const [formState, setFormState] = useState<ProductFormState>(initialState);
+  const [variants, setVariants] = useState<VariantFormState[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -101,6 +118,28 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
   const updateCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
     const { checked, name } = event.target;
     setFormState((current) => ({ ...current, [name]: checked }));
+
+    if (name === 'addVariants' && checked && variants.length === 0) {
+      setVariants([createVariant(formState.salePrice, formState.purchasePrice)]);
+    }
+
+    setDirty();
+  };
+
+  const updateVariant = (variantId: string, field: keyof Omit<VariantFormState, 'id'>, value: string) => {
+    setVariants((current) =>
+      current.map((variant) => (variant.id === variantId ? { ...variant, [field]: value } : variant)),
+    );
+    setDirty();
+  };
+
+  const addVariant = () => {
+    setVariants((current) => [...current, createVariant(formState.salePrice, formState.purchasePrice)]);
+    setDirty();
+  };
+
+  const removeVariant = (variantId: string) => {
+    setVariants((current) => current.filter((variant) => variant.id !== variantId));
     setDirty();
   };
 
@@ -130,21 +169,21 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
       forSale: true,
       forPurchase: true,
       variants: formState.addVariants
-        ? [
-            {
-              name: formState.name.trim() || 'Variante principal',
-              sku: formState.sku.trim(),
-              barcode: formState.barcode.trim(),
-              factoryCode: formState.factoryCode.trim(),
-              price,
-              cost: toNumber(formState.cost),
-              purchasePrice: toNumber(formState.purchasePrice),
-              weight: toNumber(formState.weight),
-              stock: toNumber(formState.stock),
-              color: '',
-              size: '',
-            },
-          ]
+        ? variants.map((variant, index) => ({
+            name:
+              [formState.name.trim(), variant.color.trim(), variant.size.trim()].filter(Boolean).join(' - ') ||
+              `Variante ${index + 1}`,
+            sku: formState.sku.trim(),
+            barcode: formState.barcode.trim(),
+            factoryCode: formState.factoryCode.trim(),
+            price: toNumber(variant.price),
+            cost: toNumber(formState.cost),
+            purchasePrice: toNumber(variant.purchasePrice),
+            weight: toNumber(formState.weight),
+            stock: formState.manageStock ? toNumber(formState.stock) : 0,
+            color: variant.color.trim(),
+            size: variant.size.trim(),
+          }))
         : undefined,
     };
   };
@@ -159,6 +198,11 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
 
     if (isUploadingImage) {
       setError('Espera a que termine de subir la imagen.');
+      return;
+    }
+
+    if (formState.addVariants && variants.length === 0) {
+      setError('Agrega al menos una variante al producto.');
       return;
     }
 
@@ -386,27 +430,62 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
           {formState.addVariants && (
             <section className={styles.card}>
               <h3>Variantes</h3>
-              <p>Edita la información de las variantes, precios de venta y compra.</p>
-              <div className={styles.variantToolbar}>
-                <Button type="button" theme="optional" variant="outline" size="medium">
-                  Precios de venta
-                </Button>
-                <Button type="button" theme="optional" variant="outline" size="medium">
-                  Precios de compra
-                </Button>
-                <TextInput label="Buscar variante" labelHidden icon={<Search size={15} />} />
+              <p>Define las combinaciones de color y tamaño, junto con sus precios de venta y compra.</p>
+              <div className={styles.variantList}>
+                {variants.map((variant, index) => (
+                  <article className={styles.variantCard} key={variant.id}>
+                    <header className={styles.variantHeader}>
+                      <strong>Variante {index + 1}</strong>
+                      <button
+                        type="button"
+                        className={styles.removeVariantButton}
+                        disabled={isCreatingProduct}
+                        onClick={() => removeVariant(variant.id)}
+                        aria-label={`Eliminar variante ${index + 1}`}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </header>
+                    <div className={styles.variantFields}>
+                      <TextInput
+                        label="Color"
+                        placeholder="Ej. Azul"
+                        value={variant.color}
+                        disabled={isCreatingProduct}
+                        onChange={(event) => updateVariant(variant.id, 'color', event.target.value)}
+                      />
+                      <TextInput
+                        label="Tamaño"
+                        placeholder="Ej. M, 38, 500 ml"
+                        value={variant.size}
+                        disabled={isCreatingProduct}
+                        onChange={(event) => updateVariant(variant.id, 'size', event.target.value)}
+                      />
+                      <label className={styles.amountInput}>
+                        <span>Precio de venta</span>
+                        <input
+                          inputMode="decimal"
+                          value={variant.price}
+                          disabled={isCreatingProduct}
+                          onChange={(event) => updateVariant(variant.id, 'price', event.target.value)}
+                        />
+                        <b>COP</b>
+                      </label>
+                      <label className={styles.amountInput}>
+                        <span>Precio de compra</span>
+                        <input
+                          inputMode="decimal"
+                          value={variant.purchasePrice}
+                          disabled={isCreatingProduct}
+                          onChange={(event) => updateVariant(variant.id, 'purchasePrice', event.target.value)}
+                        />
+                        <b>COP</b>
+                      </label>
+                    </div>
+                  </article>
+                ))}
               </div>
-              <div className={styles.variantTable}>
-                <span>SKU</span>
-                <span>Cód. barras</span>
-                <span>Cód. fábrica</span>
-                <span>Precio venta</span>
-                <strong>{formState.sku || '-'}</strong>
-                <strong>{formState.barcode || '-'}</strong>
-                <strong>{formState.factoryCode || '-'}</strong>
-                <strong>{formState.salePrice}</strong>
-              </div>
-              <button type="button" className={styles.linkButton}>
+              <button type="button" className={styles.linkButton} disabled={isCreatingProduct} onClick={addVariant}>
                 + Nueva variante
               </button>
             </section>
