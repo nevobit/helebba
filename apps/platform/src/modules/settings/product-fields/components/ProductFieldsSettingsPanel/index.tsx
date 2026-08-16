@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { Button, TextInput } from '@hlb/design-system';
 import { ChevronRight, Pencil, Trash2, X } from 'lucide-react';
 import type { CategoryId, ProductFieldDefinition, ProductFieldDefinitionId, ProductFieldType } from '@hlb/contracts';
@@ -30,7 +31,7 @@ export const ProductFieldsSettingsPanel = ({ onClose }: Props) => {
     catch (reason) { setError(reason instanceof Error ? reason.message : 'No pudimos guardar el campo.'); }
   };
 
-  return <div className={styles.overlay} role="presentation"><aside className={styles.panel} aria-label="Campos personalizados de productos">
+  const panel = <div className={styles.overlay} data-modal-layer="true" role="presentation"><aside className={styles.panel} aria-label="Campos personalizados de productos">
     <header className={styles.header}><h2>Campos personalizados</h2><button className={styles.closeButton} type="button" aria-label="Cerrar" onClick={onClose}><X size={20} /></button></header>
     <nav className={styles.breadcrumb}><span>Configuración</span><ChevronRight size={16} /><strong>Campos de productos</strong></nav>
     <div className={styles.content}>
@@ -56,4 +57,6 @@ export const ProductFieldsSettingsPanel = ({ onClose }: Props) => {
       </form>
     </div>
   </aside></div>;
+
+  return createPortal(panel, document.body);
 };
