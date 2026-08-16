@@ -5,7 +5,9 @@ const STORAGE_PROVIDER_KEY = 'storageProvider';
 export type StorageProvider = {
   createUploadUrl: (input: { key: string; contentType: string; expiresIn?: number }) => Promise<{
     uploadUrl: string;
-    publicUrl: string;
+    publicUrl?: string;
+    method?: 'PUT' | 'POST';
+    fields?: Record<string, string>;
   }>;
 };
 

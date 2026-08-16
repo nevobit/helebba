@@ -27,13 +27,17 @@ export const loadEnv = () => {
     API_HMAC_SECRET: str(),
     DEV_API_KEYS: str({ default: '' }),
 
-    STORAGE_PROVIDER: str({ choices: ['aws-s3'], default: 'aws-s3' }),
+    STORAGE_PROVIDER: str({ choices: ['aws-s3', 'cloudinary'], default: 'cloudinary' }),
 
     AWS_REGION: str({ default: 'us-east-1' }),
-    AWS_ACCESS_KEY_ID: str(),
-    AWS_SECRET_ACCESS_KEY: str(),
-    AWS_S3_BUCKET: str(),
+    AWS_ACCESS_KEY_ID: str({ default: '' }),
+    AWS_SECRET_ACCESS_KEY: str({ default: '' }),
+    AWS_S3_BUCKET: str({ default: '' }),
     AWS_S3_PUBLIC_BASE_URL: str({ default: '' }),
+
+    CLOUDINARY_CLOUD_NAME: str({ default: '' }),
+    CLOUDINARY_API_KEY: str({ default: '' }),
+    CLOUDINARY_API_SECRET: str({ default: '' }),
 
     REDIS_URL: str({ default: '' }),
     PG_URI: str({

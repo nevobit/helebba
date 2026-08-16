@@ -17,7 +17,9 @@ export type CreatePresignedUploadUrlInput = {
 export type CreatePresignedUploadUrlOutput = {
   key: string;
   uploadUrl: string;
-  publicUrl: string;
+  publicUrl?: string;
+  method: 'PUT' | 'POST';
+  fields?: Record<string, string>;
   contentType: string;
   size: number;
   expiresIn: number;
@@ -72,6 +74,8 @@ export const createPresignedUploadUrl = async ({
     key,
     uploadUrl: upload.uploadUrl,
     publicUrl: upload.publicUrl,
+    method: upload.method ?? 'PUT',
+    fields: upload.fields,
     contentType,
     size,
     expiresIn: UPLOAD_URL_EXPIRATION_SECONDS,

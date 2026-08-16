@@ -6,7 +6,9 @@ export type CreateUploadUrlInput = {
 
 export type CreateUploadUrlOutput = {
   uploadUrl: string;
-  publicUrl: string;
+  publicUrl?: string;
+  method?: 'PUT' | 'POST';
+  fields?: Record<string, string>;
 };
 
 export type StorageProvider = {

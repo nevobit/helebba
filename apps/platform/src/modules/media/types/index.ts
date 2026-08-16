@@ -8,7 +8,9 @@ export type CreatePresignedUploadUrlPayload = {
 export type PresignedUploadUrl = {
   key: string;
   uploadUrl: string;
-  publicUrl: string;
+  publicUrl?: string;
+  method: 'PUT' | 'POST';
+  fields?: Record<string, string>;
   contentType: string;
   size: number;
   expiresIn: number;

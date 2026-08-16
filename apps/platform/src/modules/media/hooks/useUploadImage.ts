@@ -18,11 +18,15 @@ export const useUploadImage = () => {
         folder,
       });
 
-      await uploadFileToPresignedUrl(file, presigned.uploadUrl);
+      const uploadedUrl = await uploadFileToPresignedUrl(file, presigned);
+
+      if (!uploadedUrl) {
+        throw new Error('No pudimos obtener la URL pública de la imagen.');
+      }
 
       return {
         key: presigned.key,
-        url: presigned.publicUrl,
+        url: uploadedUrl,
         mimeType: file.type,
         size: file.size,
       };

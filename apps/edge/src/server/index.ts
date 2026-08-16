@@ -68,6 +68,9 @@ const main = async (): Promise<void> => {
       secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
       bucket: env.AWS_S3_BUCKET,
       publicBaseUrl: env.AWS_S3_PUBLIC_BASE_URL || undefined,
+      cloudinaryCloudName: env.CLOUDINARY_CLOUD_NAME,
+      cloudinaryApiKey: env.CLOUDINARY_API_KEY,
+      cloudinaryApiSecret: env.CLOUDINARY_API_SECRET,
     }),
   );
 
