@@ -1,56 +1,57 @@
-#!/bin/bash
+#!/bin/sh
 
-echo "Do you want to skip running tests on modified packages [y/N]: "
-read should_skip < /dev/tty
+printf "Do you want to skip running tests on modified packages [y/N]: "
+read -r should_skip < /dev/tty || should_skip="N"
 
-if [ "$should_skip" == "N" ];
-then
+if [ "$should_skip" != "y" ] && [ "$should_skip" != "Y" ]; then
 
   echo "Running tests..."
 
-  STAGED=`git diff --name-only --cached`
+  STAGED=$(git diff --name-only --cached)
   package="/package.json"
   git="/.git"
   find_package() {
-      parentDirectory=$(dirname $1)
-      if [ -f $parentDirectory$package ]; then
-          RESULT=$parentDirectory$package
-      elif [ -d $parentDirectory$git ]; then
-          RESULT=''
+      parentDirectory=$(dirname "$1")
+      if [ -f "$parentDirectory$package" ]; then
+          RESULT="$parentDirectory$package"
+      elif [ -d "$parentDirectory$git" ]; then
+          RESULT=""
       else
-          RESULT=$(find_package $parentDirectory)
+          RESULT=$(find_package "$parentDirectory")
       fi
-      echo $RESULT
+      printf '%s\n' "$RESULT"
   }
-  list=()
-  set -f; IFS=$'\n'
+  list=""
+  set -f
+  IFS='
+'
   for staged in $STAGED; do
-      item=$(find_package $staged)
-      if [[ -z "$item" ]]; then
-          echo skipped $staged
+      item=$(find_package "$staged")
+      if [ -z "$item" ]; then
+          echo "skipped $staged"
       elif grep -q precommit "$item"; then
-          list+=($item)
+          list="$list
+$item"
       fi
   done
-  files=$(echo "${list[*]}" | sort -u)
+  files=$(printf '%s\n' "$list" | sed '/^$/d' | sort -u)
   set +f
 
   exitCode=0
   for file in $files; do
-      fileDirectory=$(dirname $file)
+      fileDirectory=$(dirname "$file")
       echo
       echo "[$fileDirectory] > pnpm run -s precommit"
-      cd $fileDirectory
+      cd "$fileDirectory" || exit 1
 
       pnpm run -s precommit || {
           echo
           echo "[$fileDirectory] > pre-commit hook failed (add --no-verify to bypass)"
           exitCode=1
       }
-      cd -
+      cd - >/dev/null || exit 1
   done
-  if [ $exitCode == 1 ]
-  then
+  if [ "$exitCode" -eq 1 ]; then
     exit 1
   fi
 

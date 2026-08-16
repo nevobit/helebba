@@ -81,7 +81,7 @@ const splitList = (value: string) =>
 
 export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormProps) => {
   const [formState, setFormState] = useState<ProductFormState>(initialState);
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { createProduct, isCreatingProduct } = useCreateProduct();
@@ -111,7 +111,7 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
     return {
       name: formState.name.trim(),
       description: formState.description.trim() || undefined,
-      images: imageUrl ? [imageUrl] : [],
+      images: imageUrls,
       tags,
       brand: formState.brand || undefined,
       categories: formState.category ? [formState.category] : undefined,
@@ -496,18 +496,16 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
               Sube una imagen de tu producto. Podrás utilizarla en documentos y en el <strong>Catálogo</strong>.
             </p>
             <ImageUploader
-              label="Imagen principal"
               folder="products/images"
-              value={imageUrl}
+              value={imageUrls}
               disabled={isCreatingProduct}
               onUploadingChange={setIsUploadingImage}
-              onChange={(image) => {
-                setImageUrl(image?.url ?? '');
+              onChange={(images) => {
+                setImageUrls(images);
                 setError(null);
                 setDirty();
               }}
             />
-            <small>Hasta 5 MB (JPEG, PNG, WebP o SVG)</small>
           </section>
         </aside>
       </div>
