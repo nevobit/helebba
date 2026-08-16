@@ -1,10 +1,11 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { Button, TextInput } from '@hlb/design-system';
-import { Search, Upload } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useCreateProduct } from '../../hooks';
 import { useBrands } from '@/modules/inventary/brands/hooks';
 import { useCategories } from '@/modules/inventary/categories/hooks';
 import { useWarehouses } from '@/modules/inventary/warehouses/hooks';
+import { ImageUploader } from '@/modules/media/components';
 import type { CreateProductPayload } from '../../services';
 import type { WarehouseId } from '@hlb/contracts';
 import styles from './ProductForm.module.css';
@@ -80,6 +81,8 @@ const splitList = (value: string) =>
 
 export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormProps) => {
   const [formState, setFormState] = useState<ProductFormState>(initialState);
+  const [imageUrl, setImageUrl] = useState('');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { createProduct, isCreatingProduct } = useCreateProduct();
   const { categories, isLoading: isLoadingCategories } = useCategories({ page: 1, limit: 100, search: '' });
@@ -108,6 +111,7 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
     return {
       name: formState.name.trim(),
       description: formState.description.trim() || undefined,
+      images: imageUrl ? [imageUrl] : [],
       tags,
       brand: formState.brand || undefined,
       categories: formState.category ? [formState.category] : undefined,
@@ -150,6 +154,11 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
 
     if (!formState.name.trim()) {
       setError('Ingresa el nombre del producto.');
+      return;
+    }
+
+    if (isUploadingImage) {
+      setError('Espera a que termine de subir la imagen.');
       return;
     }
 
@@ -486,11 +495,19 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
             <p>
               Sube una imagen de tu producto. Podrás utilizarla en documentos y en el <strong>Catálogo</strong>.
             </p>
-            <button type="button" className={styles.uploadBox}>
-              <Upload size={19} strokeWidth={2} />
-              <span>Selecciona o arrastra aquí tus archivos</span>
-              <small>Hasta 30 MB y 7680 x 4320 píxeles (JPEG, JPG, PNG)</small>
-            </button>
+            <ImageUploader
+              label="Imagen principal"
+              folder="products/images"
+              value={imageUrl}
+              disabled={isCreatingProduct}
+              onUploadingChange={setIsUploadingImage}
+              onChange={(image) => {
+                setImageUrl(image?.url ?? '');
+                setError(null);
+                setDirty();
+              }}
+            />
+            <small>Hasta 5 MB (JPEG, PNG, WebP o SVG)</small>
           </section>
         </aside>
       </div>
@@ -500,12 +517,17 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
           type="button"
           theme="optional"
           variant="outline"
-          disabled={isCreatingProduct}
+          disabled={isCreatingProduct || isUploadingImage}
           onClick={onCancel}
         >
           Descartar
         </Button>
-        <Button form={PRODUCT_FORM_ID} type="submit" loading={isCreatingProduct}>
+        <Button
+          form={PRODUCT_FORM_ID}
+          type="submit"
+          loading={isCreatingProduct || isUploadingImage}
+          disabled={isUploadingImage}
+        >
           Guardar
         </Button>
       </div>

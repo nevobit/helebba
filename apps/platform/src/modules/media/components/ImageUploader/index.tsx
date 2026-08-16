@@ -11,6 +11,7 @@ type ImageUploaderProps = {
   value?: string;
   disabled?: boolean;
   onChange: (image: UploadedImage | null) => void;
+  onUploadingChange?: (uploading: boolean) => void;
 };
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/webp,image/svg+xml';
@@ -21,6 +22,7 @@ export const ImageUploader = ({
   value,
   disabled,
   onChange,
+  onUploadingChange,
 }: ImageUploaderProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [previewUrl, setPreviewUrl] = useState(value ?? '');
@@ -48,6 +50,7 @@ export const ImageUploader = ({
 
     const localPreviewUrl = URL.createObjectURL(file);
     setPreviewUrl(localPreviewUrl);
+    onUploadingChange?.(true);
 
     try {
       const uploadedImage = await uploadImageAsync({
@@ -62,6 +65,7 @@ export const ImageUploader = ({
       onChange(null);
     } finally {
       URL.revokeObjectURL(localPreviewUrl);
+      onUploadingChange?.(false);
     }
   };
 

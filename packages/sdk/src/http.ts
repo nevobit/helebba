@@ -28,7 +28,7 @@ export const createHelebbaApiError = (
 };
 
 const trimTrailingSlash = (value: string) => value.replace(/\/+$/, '');
-const DEFAULT_BASE_URL = 'https://api.helebba.com/api/v1';
+const DEFAULT_BASE_URL = 'https://apis.helebba.com/api/v1';
 
 const appendQuery = (url: URL, query: ListParams | undefined) => {
   if (!query) return;
