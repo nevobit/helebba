@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { Button, TextInput } from '@hlb/design-system';
-import { Trash2 } from 'lucide-react';
+import { List, Search, Trash2 } from 'lucide-react';
 import { useCreateProduct } from '../../hooks';
 import { useBrands } from '@/modules/inventary/brands/hooks';
 import { useCategories } from '@/modules/inventary/categories/hooks';
@@ -49,6 +49,7 @@ type VariantFormState = {
   size: string;
   price: string;
   purchasePrice: string;
+  weight: string;
 };
 
 const initialState: ProductFormState = {
@@ -87,17 +88,19 @@ const splitList = (value: string) =>
     .map((item) => item.trim())
     .filter(Boolean);
 
-const createVariant = (salePrice = '0', purchasePrice = '0'): VariantFormState => ({
+const createVariant = (salePrice = '0', purchasePrice = '0', weight = '0'): VariantFormState => ({
   id: crypto.randomUUID(),
   color: '',
   size: '',
   price: salePrice,
   purchasePrice,
+  weight,
 });
 
 export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormProps) => {
   const [formState, setFormState] = useState<ProductFormState>(initialState);
   const [variants, setVariants] = useState<VariantFormState[]>([]);
+  const [variantSearch, setVariantSearch] = useState('');
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -120,7 +123,7 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
     setFormState((current) => ({ ...current, [name]: checked }));
 
     if (name === 'addVariants' && checked && variants.length === 0) {
-      setVariants([createVariant(formState.salePrice, formState.purchasePrice)]);
+      setVariants([createVariant(formState.salePrice, formState.purchasePrice, formState.weight)]);
     }
 
     setDirty();
@@ -134,7 +137,11 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
   };
 
   const addVariant = () => {
-    setVariants((current) => [...current, createVariant(formState.salePrice, formState.purchasePrice)]);
+    setVariants((current) => [
+      ...current,
+      createVariant(formState.salePrice, formState.purchasePrice, formState.weight),
+    ]);
+    setVariantSearch('');
     setDirty();
   };
 
@@ -142,6 +149,13 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
     setVariants((current) => current.filter((variant) => variant.id !== variantId));
     setDirty();
   };
+
+  const visibleVariants = variants.filter((variant) => {
+    const search = variantSearch.trim().toLocaleLowerCase();
+    if (!search) return true;
+
+    return [variant.color, variant.size].some((value) => value.toLocaleLowerCase().includes(search));
+  });
 
   const buildPayload = (): CreateProductPayload => {
     const price = toNumber(formState.salePrice);
@@ -179,7 +193,7 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
             price: toNumber(variant.price),
             cost: toNumber(formState.cost),
             purchasePrice: toNumber(variant.purchasePrice),
-            weight: toNumber(formState.weight),
+            weight: toNumber(variant.weight),
             stock: formState.manageStock ? toNumber(formState.stock) : 0,
             color: variant.color.trim(),
             size: variant.size.trim(),
@@ -430,64 +444,128 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
           {formState.addVariants && (
             <section className={styles.card}>
               <h3>Variantes</h3>
-              <p>Define las combinaciones de color y tamaño, junto con sus precios de venta y compra.</p>
-              <div className={styles.variantList}>
-                {variants.map((variant, index) => (
-                  <article className={styles.variantCard} key={variant.id}>
-                    <header className={styles.variantHeader}>
-                      <strong>Variante {index + 1}</strong>
-                      <button
-                        type="button"
-                        className={styles.removeVariantButton}
-                        disabled={isCreatingProduct}
-                        onClick={() => removeVariant(variant.id)}
-                        aria-label={`Eliminar variante ${index + 1}`}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </header>
-                    <div className={styles.variantFields}>
-                      <TextInput
-                        label="Color"
-                        placeholder="Ej. Azul"
-                        value={variant.color}
-                        disabled={isCreatingProduct}
-                        onChange={(event) => updateVariant(variant.id, 'color', event.target.value)}
-                      />
-                      <TextInput
-                        label="Tamaño"
-                        placeholder="Ej. M, 38, 500 ml"
-                        value={variant.size}
-                        disabled={isCreatingProduct}
-                        onChange={(event) => updateVariant(variant.id, 'size', event.target.value)}
-                      />
-                      <label className={styles.amountInput}>
-                        <span>Precio de venta</span>
-                        <input
-                          inputMode="decimal"
-                          value={variant.price}
-                          disabled={isCreatingProduct}
-                          onChange={(event) => updateVariant(variant.id, 'price', event.target.value)}
-                        />
-                        <b>COP</b>
-                      </label>
-                      <label className={styles.amountInput}>
-                        <span>Precio de compra</span>
-                        <input
-                          inputMode="decimal"
-                          value={variant.purchasePrice}
-                          disabled={isCreatingProduct}
-                          onChange={(event) => updateVariant(variant.id, 'purchasePrice', event.target.value)}
-                        />
-                        <b>COP</b>
-                      </label>
-                    </div>
-                  </article>
-                ))}
+              <p>Edita la información de las variantes, precios de venta y compra.</p>
+              <div className={styles.variantPanel}>
+                <div className={styles.variantToolbar}>
+                  <Button type="button" theme="optional" variant="outline" size="medium">
+                    Precios de venta
+                  </Button>
+                  <Button type="button" theme="optional" variant="outline" size="medium">
+                    Precios de compra
+                  </Button>
+                  <label className={styles.variantSearch}>
+                    <Search size={17} />
+                    <input
+                      value={variantSearch}
+                      placeholder="Buscar por color o tamaño"
+                      disabled={isCreatingProduct}
+                      onChange={(event) => setVariantSearch(event.target.value)}
+                    />
+                  </label>
+                  <List size={20} aria-hidden="true" />
+                </div>
+
+                <div className={styles.variantTableScroll}>
+                  <table className={styles.variantTable}>
+                    <thead>
+                      <tr>
+                        <th>SKU</th>
+                        <th>Cód. barras</th>
+                        <th>Cód. fábrica</th>
+                        <th>Color</th>
+                        <th>Tamaño</th>
+                        <th>Precio venta</th>
+                        <th>Precio compra</th>
+                        <th>Peso</th>
+                        <th aria-label="Acciones" />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {visibleVariants.map((variant) => {
+                        const variantIndex = variants.findIndex((item) => item.id === variant.id);
+
+                        return (
+                          <tr key={variant.id}>
+                            <td>{formState.sku || '-'}</td>
+                            <td>{formState.barcode || '-'}</td>
+                            <td>{formState.factoryCode || '-'}</td>
+                            <td>
+                              <input
+                                value={variant.color}
+                                placeholder="Color"
+                                disabled={isCreatingProduct}
+                                aria-label={`Color de variante ${variantIndex + 1}`}
+                                onChange={(event) => updateVariant(variant.id, 'color', event.target.value)}
+                              />
+                            </td>
+                            <td>
+                              <input
+                                value={variant.size}
+                                placeholder="Tamaño"
+                                disabled={isCreatingProduct}
+                                aria-label={`Tamaño de variante ${variantIndex + 1}`}
+                                onChange={(event) => updateVariant(variant.id, 'size', event.target.value)}
+                              />
+                            </td>
+                            <td>
+                              <input
+                                inputMode="decimal"
+                                value={variant.price}
+                                disabled={isCreatingProduct}
+                                aria-label={`Precio de venta de variante ${variantIndex + 1}`}
+                                onChange={(event) => updateVariant(variant.id, 'price', event.target.value)}
+                              />
+                            </td>
+                            <td>
+                              <input
+                                inputMode="decimal"
+                                value={variant.purchasePrice}
+                                disabled={isCreatingProduct}
+                                aria-label={`Precio de compra de variante ${variantIndex + 1}`}
+                                onChange={(event) => updateVariant(variant.id, 'purchasePrice', event.target.value)}
+                              />
+                            </td>
+                            <td>
+                              <div className={styles.variantWeightInput}>
+                                <input
+                                  inputMode="decimal"
+                                  value={variant.weight}
+                                  disabled={isCreatingProduct}
+                                  aria-label={`Peso de variante ${variantIndex + 1}`}
+                                  onChange={(event) => updateVariant(variant.id, 'weight', event.target.value)}
+                                />
+                                <span>kg</span>
+                              </div>
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className={styles.removeVariantButton}
+                                disabled={isCreatingProduct}
+                                onClick={() => removeVariant(variant.id)}
+                                aria-label={`Eliminar variante ${variantIndex + 1}`}
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  {visibleVariants.length === 0 && (
+                    <p className={styles.emptyVariants}>No hay variantes que coincidan con la búsqueda.</p>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  className={`${styles.linkButton} ${styles.addVariantButton}`}
+                  disabled={isCreatingProduct}
+                  onClick={addVariant}
+                >
+                  + Nueva variante
+                </button>
               </div>
-              <button type="button" className={styles.linkButton} disabled={isCreatingProduct} onClick={addVariant}>
-                + Nueva variante
-              </button>
             </section>
           )}
 
