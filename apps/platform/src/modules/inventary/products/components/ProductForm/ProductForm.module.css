@@ -307,6 +307,82 @@
     outline: .1rem solid #2563eb;
 }
 
+.colorSelect {
+    position: relative;
+    min-width: 13rem;
+    text-align: left;
+}
+
+.colorSelectButton,
+.colorOption {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    width: 100%;
+    border: 0;
+    background: #ffffff;
+    color: #1f2937;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+}
+
+.colorSelectButton {
+    min-height: 3.6rem;
+    border: .1rem solid #cfd6e2;
+    border-radius: .4rem;
+    padding: 0 .8rem;
+}
+
+.colorSelectButton:focus-visible,
+.colorSelectButton[aria-expanded='true'] {
+    border-color: #2563eb;
+    outline: .1rem solid #2563eb;
+}
+
+.colorSelectButton:disabled {
+    cursor: not-allowed;
+    opacity: .6;
+}
+
+.colorSwatch {
+    flex: 0 0 auto;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: .1rem solid rgba(17, 24, 39, .2);
+    border-radius: 50%;
+}
+
+.colorPlaceholder {
+    color: #98a2b3;
+}
+
+.colorOptions {
+    position: absolute;
+    z-index: 5;
+    top: calc(100% + .4rem);
+    left: 0;
+    width: 100%;
+    max-height: 20rem;
+    overflow-y: auto;
+    border: .1rem solid #d9dee8;
+    border-radius: .5rem;
+    background: #ffffff;
+    box-shadow: 0 .8rem 2rem rgba(15, 23, 42, .14);
+    padding: .4rem;
+}
+
+.colorOption {
+    min-height: 3.4rem;
+    border-radius: .3rem;
+    padding: .6rem .8rem;
+}
+
+.colorOption:hover,
+.colorOption[aria-selected='true'] {
+    background: #f3f6fb;
+}
+
 .variantWeightInput {
     display: grid;
     grid-template-columns: minmax(7rem, 1fr) auto;

@@ -52,6 +52,84 @@ type VariantFormState = {
   weight: string;
 };
 
+const PRODUCT_COLORS = [
+  { name: 'Negro', hex: '#000000' },
+  { name: 'Blanco', hex: '#FFFFFF' },
+  { name: 'Gris', hex: '#808080' },
+  { name: 'Rojo', hex: '#DC2626' },
+  { name: 'Naranja', hex: '#F97316' },
+  { name: 'Amarillo', hex: '#FACC15' },
+  { name: 'Verde', hex: '#16A34A' },
+  { name: 'Azul', hex: '#2563EB' },
+  { name: 'Morado', hex: '#9333EA' },
+  { name: 'Rosa', hex: '#EC4899' },
+  { name: 'Marrón', hex: '#92400E' },
+] as const;
+
+const getColorName = (hex: string) => PRODUCT_COLORS.find((color) => color.hex === hex)?.name ?? '';
+
+type ColorSelectProps = {
+  value: string;
+  disabled?: boolean;
+  label: string;
+  onChange: (hex: string) => void;
+};
+
+const ColorSelect = ({ value, disabled, label, onChange }: ColorSelectProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const selectedColor = PRODUCT_COLORS.find((color) => color.hex === value);
+
+  return (
+    <div
+      className={styles.colorSelect}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setIsOpen(false);
+      }}
+    >
+      <button
+        className={styles.colorSelectButton}
+        type="button"
+        disabled={disabled}
+        aria-label={label}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen((current) => !current)}
+      >
+        {selectedColor ? (
+          <>
+            <span className={styles.colorSwatch} style={{ backgroundColor: selectedColor.hex }} />
+            <span>{selectedColor.name}</span>
+          </>
+        ) : (
+          <span className={styles.colorPlaceholder}>Seleccionar</span>
+        )}
+      </button>
+
+      {isOpen && (
+        <div className={styles.colorOptions} role="listbox" aria-label="Colores disponibles">
+          {PRODUCT_COLORS.map((color) => (
+            <button
+              className={styles.colorOption}
+              type="button"
+              role="option"
+              aria-selected={color.hex === value}
+              key={color.hex}
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => {
+                onChange(color.hex);
+                setIsOpen(false);
+              }}
+            >
+              <span className={styles.colorSwatch} style={{ backgroundColor: color.hex }} />
+              <span>{color.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const initialState: ProductFormState = {
   name: '',
   description: '',
@@ -154,7 +232,9 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
     const search = variantSearch.trim().toLocaleLowerCase();
     if (!search) return true;
 
-    return [variant.color, variant.size].some((value) => value.toLocaleLowerCase().includes(search));
+    return [variant.color, getColorName(variant.color), variant.size].some((value) =>
+      value.toLocaleLowerCase().includes(search),
+    );
   });
 
   const buildPayload = (): CreateProductPayload => {
@@ -490,12 +570,11 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
                             <td>{formState.barcode || '-'}</td>
                             <td>{formState.factoryCode || '-'}</td>
                             <td>
-                              <input
+                              <ColorSelect
                                 value={variant.color}
-                                placeholder="Color"
                                 disabled={isCreatingProduct}
-                                aria-label={`Color de variante ${variantIndex + 1}`}
-                                onChange={(event) => updateVariant(variant.id, 'color', event.target.value)}
+                                label={`Color de variante ${variantIndex + 1}`}
+                                onChange={(hex) => updateVariant(variant.id, 'color', hex)}
                               />
                             </td>
                             <td>
