@@ -6,6 +6,7 @@ export enum Collection {
   ORGANIZATIONS = 'organizations',
   PRODUCTS = 'products',
   CATEGORIES = 'categories',
+  PRODUCT_FIELD_DEFINITIONS = 'product_field_definitions',
   BRANDS = 'brands',
   CONTACTS = 'contacts',
   WAREHOUSES = 'warehouses',

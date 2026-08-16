@@ -10,3 +10,4 @@ export * from './payment-methods';
 export * from './payments';
 export * from './treasury';
 export * from './media';
+export * from './product-field-definitions';

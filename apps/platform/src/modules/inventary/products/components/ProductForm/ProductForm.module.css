@@ -188,6 +188,34 @@
     gap: 2.4rem;
 }
 
+.customFieldsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.6rem;
+}
+
+.fullWidthField,
+.customMultiSelect {
+    grid-column: 1 / -1;
+}
+
+.customMultiSelect {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem 2rem;
+    margin: 0;
+    border: .1rem solid #d9dee8;
+    border-radius: .5rem;
+    padding: 1.2rem;
+}
+
+.customMultiSelect legend {
+    color: #667085;
+    font-size: 1.2rem;
+    font-weight: 750;
+    padding: 0 .4rem;
+}
+
 .checkboxField {
     display: inline-flex;
     align-items: center;
@@ -357,6 +385,13 @@
     color: #98a2b3;
 }
 
+.colorSelectOverlay {
+    position: fixed;
+    z-index: 9999;
+    inset: 0;
+    background: transparent;
+}
+
 .colorOptions {
     position: absolute;
     z-index: 5;
@@ -487,6 +522,10 @@
     .tableHeader,
     .tableRow,
     .twoColumns {
+        grid-template-columns: 1fr;
+    }
+
+    .customFieldsGrid {
         grid-template-columns: 1fr;
     }
 

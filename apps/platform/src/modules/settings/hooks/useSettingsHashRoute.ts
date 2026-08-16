@@ -5,6 +5,7 @@ export const SETTINGS_PAYMENT_METHODS_HASH = 'settings:/settings/payment-methods
 export const SETTINGS_USERS_HASH = 'settings:/users';
 export const SETTINGS_USERS_ROLES_HASH = 'settings:/users/roles';
 export const SETTINGS_DEVELOPER_CREDENTIALS_HASH = 'settings:/settings/developers/credentials';
+export const SETTINGS_PRODUCT_FIELDS_HASH = 'settings:/settings/product-fields';
 
 const getCurrentHashRoute = () => decodeURIComponent(window.location.hash.replace(/^#/, ''));
 
@@ -28,6 +29,7 @@ export const useSettingsHashRoute = () => {
     closeSettings,
     isSettingsDataOpen: hashRoute === SETTINGS_DATA_HASH,
     isPaymentMethodsOpen: hashRoute === SETTINGS_PAYMENT_METHODS_HASH,
+    isProductFieldsOpen: hashRoute === SETTINGS_PRODUCT_FIELDS_HASH,
     isUsersOpen:
       hashRoute === SETTINGS_USERS_HASH ||
       hashRoute === SETTINGS_USERS_ROLES_HASH ||

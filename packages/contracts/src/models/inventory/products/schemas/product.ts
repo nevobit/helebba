@@ -3,9 +3,11 @@ import type {
   UserId,
   CategoryId,
   ProductId,
+  ProductFieldDefinitionId,
   CompanyId,
   WarehouseId,
 } from '../../../../common';
+import type { ProductFieldValue } from '../../product-field-definitions';
 
 export const ProductStockState = {
   OutOfStock: 0,
@@ -40,8 +42,9 @@ export interface ProductVariant {
 }
 
 export interface CustomField {
-  field: string;
-  value: string;
+  definitionId?: ProductFieldDefinitionId;
+  field?: string;
+  value: ProductFieldValue;
 }
 
 export interface Product extends PersistedSoftDeletableEntity<ProductId, UserId> {
@@ -61,6 +64,7 @@ export interface Product extends PersistedSoftDeletableEntity<ProductId, UserId>
   stockState: ProductStockState;
   taxes: string[];
   total: number;
+  taxRate: number;
   hasStock: boolean;
   stock: number;
   barcode: string;
@@ -79,6 +83,10 @@ export interface Product extends PersistedSoftDeletableEntity<ProductId, UserId>
   forRepair: boolean;
   forMaintenance: boolean;
   forRent: boolean;
+  manageLots: boolean;
+  manageSerials: boolean;
+  salesAccountId: string;
+  purchaseAccountId: string;
   salesChannelId: string;
   expAccountId: string;
   warehouseId: WarehouseId;

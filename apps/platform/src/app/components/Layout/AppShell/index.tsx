@@ -8,6 +8,7 @@ import { useSettingsHashRoute } from '@/modules/settings/hooks';
 import { PaymentMethodsPanel } from '@/modules/settings/payment-methods/components';
 import { UsersSettingsPanel } from '@/modules/settings/users/components';
 import { PrivateRoutes } from '@/app/router/routes/route-paths';
+import { ProductFieldsSettingsPanel } from '@/modules/settings/product-fields/components';
 
 const hasTrialExpired = (trialEndsAt?: string) => {
   if (!trialEndsAt) return false;
@@ -18,7 +19,7 @@ const hasTrialExpired = (trialEndsAt?: string) => {
 
 const AppShell = () => {
   const location = useLocation();
-  const { closeSettings, isPaymentMethodsOpen, isSettingsDataOpen, isUsersOpen, usersInitialView } =
+  const { closeSettings, isPaymentMethodsOpen, isProductFieldsOpen, isSettingsDataOpen, isUsersOpen, usersInitialView } =
     useSettingsHashRoute();
   const { data, isLoading } = useQuery({
     queryKey: ['subscription'],
@@ -47,6 +48,7 @@ const AppShell = () => {
       {isSettingsDataOpen && <SettingsDataPanel onClose={closeSettings} />}
       {isPaymentMethodsOpen && <PaymentMethodsPanel onClose={closeSettings} />}
       {isUsersOpen && <UsersSettingsPanel initialView={usersInitialView} onClose={closeSettings} />}
+      {isProductFieldsOpen && <ProductFieldsSettingsPanel onClose={closeSettings} />}
     </div>
   );
 };
