@@ -1,17 +1,32 @@
 import {
+  BrandSchemaMongo,
+  CategorySchemaMongo,
+  ContactSchemaMongo,
   ProductFieldDefinitionSchemaMongo,
   ProductSchemaMongo,
+  ProductStockState,
+  WarehouseSchemaMongo,
+  type Category,
+  type Contact,
+  type InventoryBrand,
   type Product,
   type ProductFieldDefinition,
+  type Warehouse,
 } from '@hlb/contracts';
 import { getModel, Collection } from '@hlb/constant-definitions';
+import { slugify } from '@hlb/foundation';
+import { randomUUID } from 'node:crypto';
 
 const isValidFieldValue = (definition: ProductFieldDefinition, value: unknown) => {
   if (value === null || value === undefined || value === '') return !definition.required;
   if (definition.type === 'number') return typeof value === 'number' && Number.isFinite(value);
   if (definition.type === 'boolean') return typeof value === 'boolean';
   if (definition.type === 'multi-select') {
-    return Array.isArray(value) && value.every((item) => typeof item === 'string');
+    const allowedValues = new Set(definition.options.map((option) => option.value));
+    return Array.isArray(value) && value.every((item) => typeof item === 'string' && allowedValues.has(item));
+  }
+  if (definition.type === 'select') {
+    return typeof value === 'string' && definition.options.some((option) => option.value === value);
   }
   return typeof value === 'string';
 };
@@ -60,7 +75,100 @@ const validateCustomFields = async (data: Partial<Product>) => {
 export const createProduct = async (data: Partial<Product>): Promise<Product> => {
   await validateCustomFields(data);
   const model = getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo);
-  const product = new model(data);
+  const numericValues = [data.price, data.cost, data.purchasePrice, data.weight, data.stock, data.taxRate];
+  if (numericValues.some((value) => value !== undefined && (!Number.isFinite(value) || value < 0))) {
+    throw new Error('Los precios, costes, peso, impuesto y stock deben ser números positivos.');
+  }
+  if ((data.taxRate ?? 0) > 100) throw new Error('El impuesto debe estar entre 0 y 100.');
+  if (data.variants?.length && (data.manageLots || data.manageSerials)) {
+    throw new Error('Un producto con variantes no puede gestionar lotes o números de serie.');
+  }
+  if (!data.hasStock && (data.manageLots || data.manageSerials)) {
+    throw new Error('La gestión de lotes o números de serie requiere activar el stock.');
+  }
+  if (data.hasStock && !data.warehouseId) {
+    throw new Error('Selecciona un almacén para gestionar el stock.');
+  }
+  if (data.inCatalog && !data.forSale) {
+    throw new Error('Un producto visible en catálogo debe estar disponible para venta.');
+  }
+  for (const variant of data.variants ?? []) {
+    if ([variant.price, variant.cost, variant.purchasePrice, variant.weight, variant.stock].some(
+      (value) => !Number.isFinite(value) || value < 0,
+    )) {
+      throw new Error('Los valores numéricos de las variantes deben ser iguales o mayores que cero.');
+    }
+  }
+  const hasDuplicates = (values: string[]) => {
+    const normalized = values.map((value) => value.trim()).filter(Boolean);
+    return new Set(normalized).size !== normalized.length;
+  };
+  if (hasDuplicates((data.variants ?? []).map((variant) => variant.sku))) {
+    throw new Error('Los SKU de las variantes no pueden repetirse.');
+  }
+  if (hasDuplicates((data.variants ?? []).map((variant) => variant.barcode))) {
+    throw new Error('Los códigos de barras de las variantes no pueden repetirse.');
+  }
+  const variantCombinations = (data.variants ?? []).map(
+    (variant) => `${variant.color.trim().toUpperCase()}|${variant.size.trim().toLocaleLowerCase()}`,
+  );
+  if (variantCombinations.some((combination) => combination === '|')) {
+    throw new Error('Cada variante debe tener al menos un color o un tamaño.');
+  }
+  if (new Set(variantCombinations).size !== variantCombinations.length) {
+    throw new Error('No puede haber variantes con la misma combinación de color y tamaño.');
+  }
+
+  const organizationId = data.organizationId;
+  const referenceChecks = [
+    data.categoryId
+      ? getModel<Category>(Collection.CATEGORIES, CategorySchemaMongo).exists({ _id: data.categoryId, organizationId })
+      : null,
+    data.warehouseId
+      ? getModel<Warehouse>(Collection.WAREHOUSES, WarehouseSchemaMongo).exists({ _id: data.warehouseId, organizationId })
+      : null,
+    data.contactId
+      ? getModel<Contact>(Collection.CONTACTS, ContactSchemaMongo).exists({ _id: data.contactId, organizationId })
+      : null,
+    data.brand
+      ? getModel<InventoryBrand>(Collection.BRANDS, BrandSchemaMongo).exists({ name: data.brand, organizationId })
+      : null,
+  ];
+  const referenceResults = await Promise.all(referenceChecks.map((check) => check ?? Promise.resolve(true)));
+  const referenceNames = ['categoría', 'almacén', 'proveedor', 'marca'];
+  const invalidReferenceIndex = referenceResults.findIndex((result) => !result);
+  if (invalidReferenceIndex >= 0) {
+    throw new Error(`La ${referenceNames[invalidReferenceIndex]} seleccionada no pertenece a la organización.`);
+  }
+
+  const variants = (data.variants ?? []).map((variant) => ({
+    ...variant,
+    id: variant.id ?? randomUUID(),
+    stock: data.hasStock ? variant.stock : 0,
+  }));
+  const stock = data.hasStock
+    ? variants.length > 0
+      ? variants.reduce((total, variant) => total + variant.stock, 0)
+      : (data.stock ?? 0)
+    : 0;
+  const price = data.price ?? 0;
+  const taxRate = data.taxRate ?? 0;
+  const customFields = (data.customFields ?? []).filter((field) => {
+    const value = field.value;
+    return value !== null && value !== undefined && value !== '' && (!Array.isArray(value) || value.length > 0);
+  });
+  const baseSlug = slugify(data.name ?? '') || `product-${Date.now()}`;
+  const existingSlugCount = await model.countDocuments({ organizationId, slug: baseSlug });
+  const product = new model({
+    ...data,
+    customFields,
+    slug: existingSlugCount > 0 ? `${baseSlug}-${existingSlugCount + 1}` : baseSlug,
+    variants: variants.length > 0 ? variants : undefined,
+    stock,
+    stockState: data.hasStock && stock > 0 ? ProductStockState.InStock : ProductStockState.OutOfStock,
+    total: price * (1 + taxRate / 100),
+    taxes: taxRate > 0 ? [`Impuesto ${taxRate}%`] : [],
+  });
   const createdProduct = await product.save();
   return createdProduct;
 };

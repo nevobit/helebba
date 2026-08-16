@@ -11,7 +11,7 @@ import { useProductFieldDefinitions } from '@/modules/inventary/product-field-de
 import { SETTINGS_PRODUCT_FIELDS_HASH } from '@/modules/settings/hooks';
 import { ImageUploader } from '@/modules/media/components';
 import type { CreateProductPayload } from '../../services';
-import { ProductStockState, type CategoryId, type ProductFieldValue, type WarehouseId } from '@hlb/contracts';
+import type { CategoryId, ProductFieldValue, WarehouseId } from '@hlb/contracts';
 import styles from './ProductForm.module.css';
 
 export const PRODUCT_FORM_ID = 'product-form';
@@ -114,6 +114,8 @@ const PRODUCT_COLORS = [
   { name: 'Camel', hex: '#C19A6B' },
   { name: 'Caqui', hex: '#C3B091' },
 ] as const;
+
+const PRODUCT_STOCK_STATE = { outOfStock: 0, inStock: 1 } as const;
 
 const getColorName = (hex: string) => PRODUCT_COLORS.find((color) => color.hex === hex)?.name ?? '';
 
@@ -301,6 +303,7 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
       ...(name === 'addVariants' && checked ? { manageLots: false, manageSerials: false } : {}),
       ...(name === 'manageLots' && checked ? { addVariants: false, manageSerials: false } : {}),
       ...(name === 'manageSerials' && checked ? { addVariants: false, manageLots: false } : {}),
+      ...(name === 'manageStock' && !checked ? { manageLots: false, manageSerials: false } : {}),
     }));
 
     if (name === 'addVariants' && checked && variants.length === 0) {
@@ -319,7 +322,10 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
   };
 
   const addVariant = () => {
-    setVariants((current) => [...current, createVariant(formState)]);
+    setVariants((current) => [
+      ...current,
+      { ...createVariant(formState), sku: '', barcode: '' },
+    ]);
     setVariantSearch('');
     setDirty();
   };
@@ -379,7 +385,9 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
       weight: toNumber(formState.weight),
       stock: formState.manageStock ? productStock : 0,
       hasStock: formState.manageStock,
-      stockState: formState.manageStock && productStock > 0 ? ProductStockState.InStock : ProductStockState.OutOfStock,
+      stockState: formState.manageStock && productStock > 0
+        ? PRODUCT_STOCK_STATE.inStock
+        : PRODUCT_STOCK_STATE.outOfStock,
       warehouseId: (formState.warehouse || undefined) as WarehouseId | undefined,
       taxes: taxRate > 0 ? [`Impuesto ${taxRate}%`] : [],
       forSale: formState.forSale,
@@ -428,6 +436,19 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
 
     if (formState.addVariants && variants.length === 0) {
       setError('Agrega al menos una variante al producto.');
+      return;
+    }
+    if (formState.manageStock && !formState.warehouse) {
+      setError('Selecciona un almacén para gestionar el stock.');
+      return;
+    }
+    if (formState.addVariants && variants.some((variant) => !variant.color && !variant.size.trim())) {
+      setError('Cada variante debe tener al menos un color o un tamaño.');
+      return;
+    }
+    const variantCombinations = variants.map((variant) => `${variant.color}|${variant.size.trim().toLowerCase()}`);
+    if (formState.addVariants && new Set(variantCombinations).size !== variantCombinations.length) {
+      setError('No puede haber dos variantes con la misma combinación de color y tamaño.');
       return;
     }
 
@@ -508,7 +529,7 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
                 onChange={updateField}
               />
             </label>
-            <button type="button" className={styles.linkButton}>
+            <button type="button" className={styles.linkButton} disabled title="Disponible próximamente">
               + Añadir traducción
             </button>
           </section>
@@ -642,12 +663,26 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
                   />
                   <b>COP</b>
                 </label>
-                <span className={styles.taxPill}>.salestax 20% ×</span>
                 <label className={styles.amountInput}>
-                  <input value={formState.salePrice} disabled readOnly />
+                  <input
+                    name="taxRate"
+                    inputMode="decimal"
+                    value={formState.taxRate}
+                    disabled={isCreatingProduct}
+                    aria-label="Porcentaje de impuesto"
+                    onChange={updateField}
+                  />
+                  <b>%</b>
+                </label>
+                <label className={styles.amountInput}>
+                  <input
+                    value={(toNumber(formState.salePrice) * (1 + toNumber(formState.taxRate) / 100)).toFixed(2)}
+                    disabled
+                    readOnly
+                  />
                 </label>
               </div>
-              <button type="button" className={styles.linkButton}>
+              <button type="button" className={styles.linkButton} disabled title="Disponible próximamente">
                 Gestionar tarifas
               </button>
             </div>
@@ -675,14 +710,22 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
                 <input name="cost" value={formState.cost} disabled={isCreatingProduct} onChange={updateField} />
                 <b>COP</b>
               </label>
-              <TextInput
-                label="Proveedor por defecto"
-                placeholder="Busca y selecciona proveedores"
-                name="supplier"
-                value={formState.supplier}
-                disabled={isCreatingProduct}
-                onChange={updateField}
-              />
+              <label className={styles.selectField}>
+                <span>Proveedor por defecto</span>
+                <select
+                  name="supplier"
+                  value={formState.supplier}
+                  disabled={isCreatingProduct || isLoadingSuppliers}
+                  onChange={updateField}
+                >
+                  <option value="">{isLoadingSuppliers ? 'Cargando proveedores...' : 'Selecciona un proveedor'}</option>
+                  {suppliers.map((supplier) => (
+                    <option value={String(supplier.id)} key={String(supplier.id)}>
+                      {supplier.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
             <div className={styles.priceTable}>
               <div className={styles.tableHeader}>
@@ -703,7 +746,7 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
                   />
                   <b>COP</b>
                 </label>
-                <span className={styles.taxPill}>.salestax 20% ×</span>
+                <span className={styles.taxPill}>{toNumber(formState.taxRate)}%</span>
               </div>
             </div>
           </section>
@@ -769,7 +812,12 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
               </label>
               <label className={styles.amountInput}>
                 <span>Cantidad</span>
-                <input name="stock" value={formState.stock} disabled={isCreatingProduct} onChange={updateField} />
+                <input
+                  name="stock"
+                  value={formState.stock}
+                  disabled={isCreatingProduct || !formState.manageStock || formState.addVariants}
+                  onChange={updateField}
+                />
                 <b>unidades</b>
               </label>
             </div>
@@ -791,7 +839,11 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
                   type="checkbox"
                   name={name}
                   checked={Boolean(formState[name as keyof ProductFormState])}
-                  disabled={isCreatingProduct}
+                  disabled={
+                    isCreatingProduct ||
+                    ((name === 'manageLots' || name === 'manageSerials') &&
+                      (formState.addVariants || !formState.manageStock))
+                  }
                   onChange={updateCheckbox}
                 />
                 {label}
@@ -805,10 +857,10 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
               <p>Edita la información de las variantes, precios de venta y compra.</p>
               <div className={styles.variantPanel}>
                 <div className={styles.variantToolbar}>
-                  <Button type="button" theme="optional" variant="outline" size="medium">
+                  <Button type="button" theme="optional" variant="outline" size="medium" disabled>
                     Precios de venta
                   </Button>
-                  <Button type="button" theme="optional" variant="outline" size="medium">
+                  <Button type="button" theme="optional" variant="outline" size="medium" disabled>
                     Precios de compra
                   </Button>
                   <label className={styles.variantSearch}>
@@ -834,7 +886,9 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
                         <th>Tamaño</th>
                         <th>Precio venta</th>
                         <th>Precio compra</th>
+                        <th>Coste</th>
                         <th>Peso</th>
+                        <th>Stock</th>
                         <th aria-label="Acciones" />
                       </tr>
                     </thead>
@@ -844,9 +898,9 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
 
                         return (
                           <tr key={variant.id}>
-                            <td>{formState.sku || '-'}</td>
-                            <td>{formState.barcode || '-'}</td>
-                            <td>{formState.factoryCode || '-'}</td>
+                            <td><input value={variant.sku} placeholder="SKU" disabled={isCreatingProduct} aria-label={`SKU de variante ${variantIndex + 1}`} onChange={(event) => updateVariant(variant.id, 'sku', event.target.value)} /></td>
+                            <td><input value={variant.barcode} placeholder="Código" disabled={isCreatingProduct} aria-label={`Código de barras de variante ${variantIndex + 1}`} onChange={(event) => updateVariant(variant.id, 'barcode', event.target.value)} /></td>
+                            <td><input value={variant.factoryCode} placeholder="Código" disabled={isCreatingProduct} aria-label={`Código de fabricación de variante ${variantIndex + 1}`} onChange={(event) => updateVariant(variant.id, 'factoryCode', event.target.value)} /></td>
                             <td>
                               <ColorSelect
                                 value={variant.color}
@@ -883,6 +937,15 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
                               />
                             </td>
                             <td>
+                              <input
+                                inputMode="decimal"
+                                value={variant.cost}
+                                disabled={isCreatingProduct}
+                                aria-label={`Coste de variante ${variantIndex + 1}`}
+                                onChange={(event) => updateVariant(variant.id, 'cost', event.target.value)}
+                              />
+                            </td>
+                            <td>
                               <div className={styles.variantWeightInput}>
                                 <input
                                   inputMode="decimal"
@@ -893,6 +956,15 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
                                 />
                                 <span>kg</span>
                               </div>
+                            </td>
+                            <td>
+                              <input
+                                inputMode="numeric"
+                                value={variant.stock}
+                                disabled={isCreatingProduct || !formState.manageStock}
+                                aria-label={`Stock de variante ${variantIndex + 1}`}
+                                onChange={(event) => updateVariant(variant.id, 'stock', event.target.value)}
+                              />
                             </td>
                             <td>
                               <button
@@ -927,30 +999,31 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
           )}
 
           <section className={styles.card}>
+            <h3>Disponibilidad</h3>
+            <p>Define cómo puede utilizarse este producto.</p>
+            {[
+              ['forSale', 'Disponible para venta'],
+              ['forPurchase', 'Disponible para compra'],
+              ['inCatalog', 'Mostrar en catálogo'],
+            ].map(([name, label]) => (
+              <label className={styles.checkboxField} key={name}>
+                <input
+                  type="checkbox"
+                  name={name}
+                  checked={Boolean(formState[name as keyof ProductFormState])}
+                  disabled={isCreatingProduct}
+                  onChange={updateCheckbox}
+                />
+                {label}
+              </label>
+            ))}
+          </section>
+
+          <section className={styles.card}>
             <h3>Contabilidad</h3>
             <p>Define la cuenta contable predeterminada de ventas y compras para este producto.</p>
-            <label className={styles.selectField}>
-              <span>Cuenta de Ventas</span>
-              <select
-                name="salesAccount"
-                value={formState.salesAccount}
-                disabled={isCreatingProduct}
-                onChange={updateField}
-              >
-                <option value="">Selecciona una cuenta contable</option>
-              </select>
-            </label>
-            <label className={styles.selectField}>
-              <span>Cuenta de Compras</span>
-              <select
-                name="purchaseAccount"
-                value={formState.purchaseAccount}
-                disabled={isCreatingProduct}
-                onChange={updateField}
-              >
-                <option value="">Selecciona una cuenta contable</option>
-              </select>
-            </label>
+            <TextInput label="Cuenta de Ventas" placeholder="Código o nombre de cuenta" name="salesAccount" value={formState.salesAccount} disabled={isCreatingProduct} onChange={updateField} />
+            <TextInput label="Cuenta de Compras" placeholder="Código o nombre de cuenta" name="purchaseAccount" value={formState.purchaseAccount} disabled={isCreatingProduct} onChange={updateField} />
             <button
               type="button"
               className={styles.linkButton}
