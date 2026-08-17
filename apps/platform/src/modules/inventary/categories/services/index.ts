@@ -3,6 +3,7 @@ import type { Category, OffsetPaginatedResult, Params } from '@hlb/contracts';
 
 export type CategoryListParams = Params<{
   scope?: string;
+  parentId?: string | null;
 }>;
 
 export type CreateCategoryPayload = Partial<
@@ -27,6 +28,7 @@ export const categories = async (params: CategoryListParams) => {
       page: params.page,
       limit: params.limit,
       search: params.search?.trim() || undefined,
+      parentId: params.parentId === null ? 'root' : params.parentId,
     },
   });
 

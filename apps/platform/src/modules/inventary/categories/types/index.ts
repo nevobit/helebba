@@ -8,4 +8,6 @@ export type CategoryRow = {
   showInCatalog: string;
   position: number;
   color: string;
+  depth: number;
+  parentName: string;
 };

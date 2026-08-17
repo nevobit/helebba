@@ -30,8 +30,14 @@ export const categoryColumns = ({
     header: 'Nombre',
     sortable: true,
     width: 260,
-    render: (value) => <strong className={styles.nameCell}>{String(value)}</strong>,
+    render: (value, row) => (
+      <strong className={styles.nameCell} style={{ paddingLeft: `${row.depth * 2}rem` }}>
+        {row.depth > 0 && <span aria-hidden="true">↳ </span>}
+        {String(value)}
+      </strong>
+    ),
   },
+  { key: 'parentName', header: 'Categoría padre', width: 200 },
   { key: 'type', header: 'Tipo', width: 160 },
   { key: 'options', header: 'Opciones', width: 320 },
   { key: 'showInCatalog', header: 'Catálogo', width: 130 },

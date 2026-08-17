@@ -18,7 +18,7 @@ export const CategorySchemaMongo = new Schema<Category>(
     options: [{ type: String }],
     position: { type: Number },
     showInCatalog: { type: Boolean },
-    parentId: { type: String },
+    parentId: { type: String, default: null, index: true },
   },
   { ...opts },
 );

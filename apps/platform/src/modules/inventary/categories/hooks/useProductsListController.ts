@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { toCategoryRow } from '../mappers';
+import { flattenCategories, toCategoryRow } from '../mappers';
 import { useCategories } from './useProducts';
 
 export const useCategoriesListController = () => {
@@ -13,7 +13,12 @@ export const useCategoriesListController = () => {
     search: query,
   });
 
-  const rows = useMemo(() => categories.map(toCategoryRow), [categories]);
+  const rows = useMemo(() => {
+    const names = new Map(categories.map((category) => [String(category.id), category.name]));
+    return flattenCategories(categories).map(({ category, depth }) =>
+      toCategoryRow(category, depth, category.parentId ? names.get(String(category.parentId)) : undefined),
+    );
+  }, [categories]);
   const hasCategories = rows.length > 0;
   const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
   const endItem = total > 0 ? startItem + rows.length - 1 : 0;

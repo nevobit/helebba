@@ -1,12 +1,13 @@
 import { getAllCategories } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod } from '@hlb/constant-definitions';
-import { type OrganizationId } from '@hlb/contracts';
+import { type CategoryId, type OrganizationId } from '@hlb/contracts';
 import { verifyJwt } from '@hlb/security';
 
 type CategoryListQuery = {
   page?: string;
   limit?: string;
   search?: string;
+  parentId?: string;
 };
 
 export const listCategoriesRoute = makeFastifyRoute(
@@ -21,6 +22,7 @@ export const listCategoriesRoute = makeFastifyRoute(
       page: Number(query.page ?? 1),
       limit: Number(query.limit ?? 100),
       search: query.search ?? '',
+      parentId: query.parentId === 'root' ? null : (query.parentId as CategoryId | undefined),
     });
 
     reply.status(200).send(categories);

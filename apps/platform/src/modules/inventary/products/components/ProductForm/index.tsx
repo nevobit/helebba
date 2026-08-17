@@ -1,10 +1,11 @@
-import { useRef, useState, type ChangeEvent, type CSSProperties, type FormEvent } from 'react';
+import { useMemo, useRef, useState, type ChangeEvent, type CSSProperties, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, TextInput } from '@hlb/design-system';
 import { List, Search, Trash2 } from 'lucide-react';
 import { useCreateProduct } from '../../hooks';
 import { useBrands } from '@/modules/inventary/brands/hooks';
 import { useCategories } from '@/modules/inventary/categories/hooks';
+import { flattenCategories } from '@/modules/inventary/categories/mappers';
 import { useWarehouses } from '@/modules/inventary/warehouses/hooks';
 import { useContacts } from '@/modules/contacts/hooks';
 import { useProductFieldDefinitions } from '@/modules/inventary/product-field-definitions';
@@ -274,6 +275,7 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
   const [error, setError] = useState<string | null>(null);
   const { createProduct, isCreatingProduct } = useCreateProduct();
   const { categories, isLoading: isLoadingCategories } = useCategories({ page: 1, limit: 100, search: '' });
+  const hierarchicalCategories = useMemo(() => flattenCategories(categories), [categories]);
   const { brands, isLoading: isLoadingBrands } = useBrands({ page: 1, limit: 100, search: '' });
   const { warehouses, isLoading: isLoadingWarehouses } = useWarehouses({ page: 1, limit: 100, search: '' });
   const { contacts: suppliers, isLoading: isLoadingSuppliers } = useContacts({
@@ -1059,9 +1061,9 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
                 <option value="">
                   {isLoadingCategories ? 'Cargando categorías...' : 'Selecciona una categoría'}
                 </option>
-                  {categories.map((category) => (
+                  {hierarchicalCategories.map(({ category, depth, path }) => (
                     <option key={String(category.id ?? category.slug ?? category.name)} value={String(category.id)}>
-                      {category.name}
+                      {`${'— '.repeat(depth)}${path}`}
                   </option>
                 ))}
               </select>

@@ -2,17 +2,21 @@ import { Collection, getModel } from '@hlb/constant-definitions';
 import {
   CategorySchemaMongo,
   type Category,
+  type CategoryId,
   type OffsetPaginatedResult,
   type Params,
 } from '@hlb/contracts';
 
-export const getAllCategories = async (params: Params): Promise<OffsetPaginatedResult<Category>> => {
-  const { page = 1, limit = 100, search = '', organizationId } = params;
+type CategoryListParams = Params<{ parentId?: CategoryId | null }>;
+
+export const getAllCategories = async (params: CategoryListParams): Promise<OffsetPaginatedResult<Category>> => {
+  const { page = 1, limit = 100, search = '', organizationId, parentId } = params;
   const model = getModel<Category>(Collection.CATEGORIES, CategorySchemaMongo);
   const skip = (page - 1) * limit;
   const normalizedSearch = search.trim();
   const filter = {
     organizationId,
+    ...(parentId !== undefined ? { parentId } : {}),
     ...(normalizedSearch
       ? {
           $or: [

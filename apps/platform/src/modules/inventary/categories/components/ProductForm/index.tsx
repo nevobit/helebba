@@ -1,8 +1,10 @@
-import { useState, type ChangeEvent, type FormEvent, type KeyboardEvent } from 'react';
+import { useMemo, useState, type ChangeEvent, type FormEvent, type KeyboardEvent } from 'react';
 import { Button, TextInput } from '@hlb/design-system';
 import { Upload } from 'lucide-react';
-import { useCreateCategory } from '../../hooks';
+import { useCategories, useCreateCategory } from '../../hooks';
+import { flattenCategories } from '../../mappers';
 import type { CreateCategoryPayload } from '../../services';
+import type { CategoryId } from '@hlb/contracts';
 import styles from './ProductForm.module.css';
 
 export const CATEGORY_FORM_ID = 'category-form';
@@ -20,6 +22,7 @@ type CategoryFormState = {
   options: string[];
   showInCatalog: boolean;
   color: string;
+  parentId: string;
 };
 
 const initialState: CategoryFormState = {
@@ -29,6 +32,7 @@ const initialState: CategoryFormState = {
   options: [],
   showInCatalog: false,
   color: '#ef4444',
+  parentId: '',
 };
 
 const suggestions = [
@@ -51,6 +55,8 @@ export const CategoryForm = ({ onCancel, onDirtyChange, onSuccess }: CategoryFor
   const [formState, setFormState] = useState<CategoryFormState>(initialState);
   const [error, setError] = useState<string | null>(null);
   const { createCategory, isCreatingCategory } = useCreateCategory();
+  const { categories, isLoading: isLoadingCategories } = useCategories({ page: 1, limit: 100, search: '' });
+  const hierarchicalCategories = useMemo(() => flattenCategories(categories), [categories]);
 
   const markDirty = () => onDirtyChange?.(true);
 
@@ -122,7 +128,7 @@ export const CategoryForm = ({ onCancel, onDirtyChange, onSuccess }: CategoryFor
     options: formState.type === 'options' ? formState.options : [],
     position: 0,
     showInCatalog: formState.showInCatalog,
-    parentId: null,
+    parentId: formState.parentId ? (formState.parentId as CategoryId) : null,
   });
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -157,6 +163,28 @@ export const CategoryForm = ({ onCancel, onDirtyChange, onSuccess }: CategoryFor
           onChange={updateName}
         />
       </div>
+
+      <label className={styles.selectField}>
+        <span>Categoría padre</span>
+        <select
+          value={formState.parentId}
+          disabled={isCreatingCategory || isLoadingCategories}
+          onChange={(event) => {
+            setFormState((current) => ({ ...current, parentId: event.target.value }));
+            markDirty();
+          }}
+        >
+          <option value="">
+            {isLoadingCategories ? 'Cargando categorías...' : 'Sin categoría padre (categoría principal)'}
+          </option>
+          {hierarchicalCategories.map(({ category, depth, path }) => (
+            <option key={String(category.id)} value={String(category.id)}>
+              {`${'— '.repeat(depth)}${path}`}
+            </option>
+          ))}
+        </select>
+        <small>Selecciona una categoría para crear esta como subcategoría.</small>
+      </label>
 
       <fieldset className={styles.radioGroup}>
         <legend>Tipo de categoría</legend>
