@@ -32,9 +32,9 @@ export const deleteCategory = async (
       lifecycleStatus: { $ne: LifecycleStatus.DELETED },
     }),
     getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo).exists({
-      categoryId,
       organizationId,
       lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+      $or: [{ categoryId }, { categories: categoryId }],
     }),
     getModel<ProductFieldDefinition>(
       Collection.PRODUCT_FIELD_DEFINITIONS,

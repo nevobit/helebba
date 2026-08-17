@@ -216,6 +216,42 @@
     padding: 0 .4rem;
 }
 
+.secondaryCategories {
+    display: grid;
+    gap: .6rem;
+    margin: 0;
+    border: .1rem solid #d9dee8;
+    border-radius: .5rem;
+    padding: 1rem;
+}
+
+.secondaryCategories legend {
+    color: #667085;
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 0 .4rem;
+}
+
+.secondaryCategories > p {
+    margin: 0;
+    font-size: 1.15rem;
+}
+
+.secondaryCategories > div {
+    display: grid;
+    gap: .7rem;
+    max-height: 16rem;
+    overflow-y: auto;
+}
+
+.secondaryCategories label {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    color: #344054;
+    font-size: 1.25rem;
+}
+
 .checkboxField {
     display: inline-flex;
     align-items: center;

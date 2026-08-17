@@ -3,6 +3,7 @@ import type { CategoryId, ProductFieldDefinition, ProductFieldDefinitionId } fro
 
 export type ProductFieldDefinitionListParams = {
   categoryId?: CategoryId;
+  categoryIds?: CategoryId[];
   includeInactive?: boolean;
 };
 
@@ -24,7 +25,9 @@ export type ProductFieldDefinitionPayload = Partial<
 >;
 
 export const productFieldDefinitions = async (params: ProductFieldDefinitionListParams = {}) => {
-  const { data } = await api.get<ProductFieldDefinition[]>('/product-field-definitions', { params });
+  const { data } = await api.get<ProductFieldDefinition[]>('/product-field-definitions', {
+    params: { ...params, categoryIds: params.categoryIds?.join(',') || undefined },
+  });
   return data;
 };
 

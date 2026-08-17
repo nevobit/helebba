@@ -30,6 +30,7 @@ type ProductFormState = {
   description: string;
   tags: string;
   category: string;
+  secondaryCategories: string[];
   brand: string;
   salePrice: string;
   taxRate: string;
@@ -215,6 +216,7 @@ const initialState: ProductFormState = {
   description: '',
   tags: '',
   category: '',
+  secondaryCategories: [],
   brand: '',
   salePrice: '0',
   taxRate: '0',
@@ -244,6 +246,7 @@ const productToFormState = (product?: Product): ProductFormState => product ? {
   description: product.description ?? '',
   tags: product.tags?.join(', ') ?? '',
   category: product.categoryId ? String(product.categoryId) : '',
+  secondaryCategories: (product.categories ?? []).map(String),
   brand: product.brand ?? '',
   salePrice: String(product.price ?? 0),
   taxRate: String(product.taxRate ?? 0),
@@ -329,6 +332,13 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
   const isCreatingProduct = isCreating || isUpdatingProduct;
   const { categories, isLoading: isLoadingCategories } = useCategories({ page: 1, limit: 100, search: '' });
   const hierarchicalCategories = useMemo(() => flattenCategories(categories), [categories]);
+  const secondaryCategoryIds = useMemo(() => {
+    const resolved = formState.secondaryCategories.flatMap((value) => {
+      const category = categories.find((item) => String(item.id) === value || item.name === value);
+      return category?.id ? [String(category.id)] : [];
+    });
+    return [...new Set(resolved)].filter((categoryId) => categoryId !== formState.category);
+  }, [categories, formState.category, formState.secondaryCategories]);
   const { brands, isLoading: isLoadingBrands } = useBrands({ page: 1, limit: 100, search: '' });
   const { warehouses, isLoading: isLoadingWarehouses } = useWarehouses({ page: 1, limit: 100, search: '' });
   const defaultWarehouseId = !initialProduct
@@ -343,13 +353,20 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
   });
   const { definitions: customFieldDefinitions, isLoadingDefinitions } = useProductFieldDefinitions({
     categoryId: (formState.category || undefined) as CategoryId | undefined,
+    categoryIds: secondaryCategoryIds as CategoryId[],
   });
 
   const setDirty = () => onDirtyChange?.(true);
 
   const updateField = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
-    setFormState((current) => ({ ...current, [name]: value }));
+    setFormState((current) => ({
+      ...current,
+      [name]: value,
+      ...(name === 'category'
+        ? { secondaryCategories: current.secondaryCategories.filter((categoryId) => categoryId !== value) }
+        : {}),
+    }));
     setError(null);
     setDirty();
   };
@@ -400,6 +417,16 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
     setDirty();
   };
 
+  const toggleSecondaryCategory = (categoryId: string) => {
+    setFormState((current) => ({
+      ...current,
+      secondaryCategories: current.secondaryCategories.includes(categoryId)
+        ? current.secondaryCategories.filter((item) => item !== categoryId)
+        : [...current.secondaryCategories, categoryId],
+    }));
+    setDirty();
+  };
+
   const visibleVariants = variants.filter((variant) => {
     const search = variantSearch.trim().toLocaleLowerCase();
     if (!search) return true;
@@ -412,7 +439,6 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
   const buildPayload = (): CreateProductPayload => {
     const price = toNumber(formState.salePrice);
     const tags = splitList(formState.tags);
-    const selectedCategory = categories.find((category) => String(category.id) === formState.category);
     const selectedSupplier = suppliers.find((supplier) => String(supplier.id) === formState.supplier);
     const taxRate = toNumber(formState.taxRate);
     const productStock = formState.addVariants
@@ -431,7 +457,7 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
       tags,
       brand: formState.brand || undefined,
       categoryId: (formState.category || undefined) as CategoryId | undefined,
-      categories: selectedCategory ? [selectedCategory.name] : undefined,
+      categories: secondaryCategoryIds as CategoryId[],
       customFields,
       price,
       total: price * (1 + taxRate / 100),
@@ -1115,7 +1141,7 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
               onChange={updateField}
             />
             <label className={styles.selectField}>
-              <span>Categorías</span>
+              <span>Categoría principal</span>
               <select
                 name="category"
                 value={formState.category}
@@ -1132,6 +1158,28 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                 ))}
               </select>
             </label>
+            <fieldset className={styles.secondaryCategories}>
+              <legend>Categorías secundarias</legend>
+              <p>Opcional. El producto también aparecerá dentro de estas categorías.</p>
+              <div>
+                {hierarchicalCategories
+                  .filter(({ category }) => String(category.id) !== formState.category)
+                  .map(({ category, depth, path }) => {
+                    const categoryId = String(category.id);
+                    return (
+                      <label key={categoryId} style={{ paddingLeft: `${depth * 1.2}rem` }}>
+                        <input
+                          type="checkbox"
+                          checked={secondaryCategoryIds.includes(categoryId)}
+                          disabled={isCreatingProduct}
+                          onChange={() => toggleSecondaryCategory(categoryId)}
+                        />
+                        {`${'— '.repeat(depth)}${path}`}
+                      </label>
+                    );
+                  })}
+              </div>
+            </fieldset>
             <label className={styles.selectField}>
               <span>Marca</span>
               <select

@@ -5,6 +5,7 @@ import { verifyJwt } from '@hlb/security';
 
 type ListQuery = {
   categoryId?: string;
+  categoryIds?: string;
   includeInactive?: string;
   target?: 'product' | 'variant';
 };
@@ -19,6 +20,7 @@ export const listProductFieldDefinitionsRoute = makeFastifyRoute(
     const definitions = await listProductFieldDefinitions({
       organizationId: req.organization?.organizationId as OrganizationId,
       categoryId: query.categoryId as CategoryId | undefined,
+      categoryIds: query.categoryIds?.split(',').filter(Boolean) as CategoryId[] | undefined,
       includeInactive: query.includeInactive === 'true',
       target: query.target,
     });

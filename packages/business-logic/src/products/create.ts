@@ -5,6 +5,7 @@ import {
   ProductFieldDefinitionSchemaMongo,
   ProductSchemaMongo,
   ProductStockState,
+  LifecycleStatus,
   WarehouseSchemaMongo,
   type Category,
   type Contact,
@@ -40,13 +41,14 @@ const validateCustomFields = async (data: Partial<Product>) => {
     Collection.PRODUCT_FIELD_DEFINITIONS,
     ProductFieldDefinitionSchemaMongo,
   );
+  const applicableCategoryIds = [data.categoryId, ...(data.categories ?? [])].filter(Boolean);
   const definitions = await definitionModel.find({
     organizationId: data.organizationId,
     active: true,
     target: 'product',
     $or: [
       { appliesTo: 'all' },
-      ...(data.categoryId ? [{ appliesTo: 'categories', categoryIds: data.categoryId }] : []),
+      ...(applicableCategoryIds.length ? [{ appliesTo: 'categories', categoryIds: { $in: applicableCategoryIds } }] : []),
     ],
   });
   const byId = new Map(definitions.map((definition) => [String(definition.id), definition]));
@@ -74,6 +76,28 @@ const validateCustomFields = async (data: Partial<Product>) => {
 };
 
 export const prepareProductData = async (data: Partial<Product>, productId?: ProductId): Promise<Partial<Product>> => {
+  const organizationId = data.organizationId;
+  const categoryModel = getModel<Category>(Collection.CATEGORIES, CategorySchemaMongo);
+  const rawSecondaryCategories = (data.categories ?? []).map(String).filter(Boolean);
+  const secondaryCategoryDocuments = rawSecondaryCategories.length
+    ? await categoryModel.find({
+        organizationId,
+        lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+        $or: [{ _id: { $in: rawSecondaryCategories } }, { name: { $in: rawSecondaryCategories } }],
+      }).select({ name: 1 })
+    : [];
+  const resolvedSecondaryCategories = rawSecondaryCategories.map((value) => {
+    const category = secondaryCategoryDocuments.find(
+      (item) => String(item.id) === value || item.name === value,
+    );
+    return category?.id;
+  });
+  if (resolvedSecondaryCategories.some((categoryId) => !categoryId)) {
+    throw new Error('Una o más categorías secundarias no existen o no pertenecen a la organización.');
+  }
+  const secondaryCategoryIds = [...new Set(resolvedSecondaryCategories.map(String))]
+    .filter((categoryId) => categoryId !== String(data.categoryId));
+  data = { ...data, categories: secondaryCategoryIds as Product['categories'] };
   await validateCustomFields(data);
   const model = getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo);
   const numericValues = [data.price, data.cost, data.purchasePrice, data.weight, data.stock, data.taxRate];
@@ -136,10 +160,9 @@ export const prepareProductData = async (data: Partial<Product>, productId?: Pro
     throw new Error('No puede haber variantes con la misma combinación de color y tamaño.');
   }
 
-  const organizationId = data.organizationId;
   const referenceChecks = [
     data.categoryId
-      ? getModel<Category>(Collection.CATEGORIES, CategorySchemaMongo).exists({ _id: data.categoryId, organizationId })
+      ? categoryModel.exists({ _id: data.categoryId, organizationId, lifecycleStatus: { $ne: LifecycleStatus.DELETED } })
       : null,
     data.warehouseId
       ? getModel<Warehouse>(Collection.WAREHOUSES, WarehouseSchemaMongo).exists({ _id: data.warehouseId, organizationId })

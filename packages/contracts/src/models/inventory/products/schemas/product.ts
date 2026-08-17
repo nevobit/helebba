@@ -78,7 +78,7 @@ export interface Product extends PersistedSoftDeletableEntity<ProductId, UserId>
   weight: number;
   tags: string[];
   categoryId: CategoryId;
-  categories: string[];
+  categories: CategoryId[];
   categoryOptions: string;
   factoryCode: string;
   forSale: boolean;
