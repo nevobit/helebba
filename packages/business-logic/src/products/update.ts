@@ -1,6 +1,7 @@
 import { Collection, getModel } from '@hlb/constant-definitions';
 import {
   ProductSchemaMongo,
+  LifecycleStatus,
   type OrganizationId,
   type Product,
   type ProductId,
@@ -13,7 +14,11 @@ export const updateProduct = async (
   data: Partial<Product>,
 ) => {
   const model = getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo);
-  const existingProduct = await model.findOne({ _id: productId, organizationId });
+  const existingProduct = await model.findOne({
+    _id: productId,
+    organizationId,
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+  });
   if (!existingProduct) throw new Error('El producto no existe o no pertenece a la organización.');
 
   const mergedData = {

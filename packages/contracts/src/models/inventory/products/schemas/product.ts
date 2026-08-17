@@ -25,6 +25,11 @@ export const ProductStockState = {
 
 export type ProductStockState = (typeof ProductStockState)[keyof typeof ProductStockState];
 
+export interface ProductColor {
+  name: string;
+  hex: string;
+}
+
 export interface ProductVariant {
   id?: string;
   barcode: string;
@@ -32,7 +37,7 @@ export interface ProductVariant {
   sku: string;
   factoryCode: string;
   price: number;
-  color: string;
+  color: ProductColor;
   size: string;
   cost: number;
   weight: number;

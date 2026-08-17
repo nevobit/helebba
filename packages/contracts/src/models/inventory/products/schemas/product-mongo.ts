@@ -69,7 +69,8 @@ export const ProductSchemaMongo = new Schema<Product>(
           sku: { type: String },
           factoryCode: { type: String },
           price: { type: Number, min: 0 },
-          color: { type: String },
+          // Mixed keeps legacy HEX strings readable while new writes persist { name, hex }.
+          color: { type: Schema.Types.Mixed },
           size: { type: String },
           cost: { type: Number, min: 0 },
           weight: { type: Number, min: 0 },

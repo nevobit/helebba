@@ -1,4 +1,4 @@
-import { Button, Menus } from '@hlb/design-system';
+import { Button, Menus, useModal } from '@hlb/design-system';
 import {
   ArrowLeft,
   Bell,
@@ -11,9 +11,9 @@ import {
   Plus,
   TrendingUp,
 } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { PrivateRoutes } from '@/app/router/routes';
-import { useCreateProductModal, useProduct } from '../../hooks';
+import { useCreateProductModal, useDeleteProduct, useProduct } from '../../hooks';
 import styles from './ProductDetails.module.css';
 
 const moneyFormatter = new Intl.NumberFormat('es-CO', {
@@ -29,6 +29,21 @@ const ProductDetails = () => {
   const { productId } = useParams();
   const { error, isLoading, product, refetch } = useProduct(productId);
   const { openEditProductModal } = useCreateProductModal();
+  const { deleteProduct, isDeletingProduct } = useDeleteProduct();
+  const { requestCloseModal } = useModal();
+  const navigate = useNavigate();
+
+  const confirmDelete = () => {
+    if (!productId || isDeletingProduct) return;
+    requestCloseModal({
+      confirm: true,
+      title: 'Eliminar producto',
+      description: `El producto “${product?.name ?? 'Producto'}” dejará de estar disponible. ¿Deseas continuar?`,
+      confirmLabel: 'Eliminar producto',
+      cancelLabel: 'Cancelar',
+      onConfirm: () => deleteProduct(productId, { onSuccess: () => navigate(PrivateRoutes.PRODUCTS) }),
+    });
+  };
 
   const productName = product?.name ?? 'Producto';
   const initials =
@@ -104,7 +119,7 @@ const ProductDetails = () => {
                 >
                   Editar
                 </Menus.Item>
-                <Menus.Item id="delete-product" danger>
+                <Menus.Item id="delete-product" danger onClick={confirmDelete}>
                   Eliminar
                 </Menus.Item>
               </Menus.List>

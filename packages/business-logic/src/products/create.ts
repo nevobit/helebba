@@ -93,7 +93,23 @@ export const prepareProductData = async (data: Partial<Product>, productId?: Pro
   if (data.inCatalog && !data.forSale) {
     throw new Error('Un producto visible en catálogo debe estar disponible para venta.');
   }
-  for (const variant of data.variants ?? []) {
+  const variantsWithNormalizedColors = (data.variants ?? []).map((variant) => {
+    const legacyColor = variant.color as unknown;
+    const color = typeof legacyColor === 'string'
+      ? { name: '', hex: legacyColor.trim().toUpperCase() }
+      : legacyColor;
+    if (
+      !color ||
+      typeof color !== 'object' ||
+      typeof (color as { name?: unknown }).name !== 'string' ||
+      typeof (color as { hex?: unknown }).hex !== 'string' ||
+      !/^#[0-9A-F]{6}$/i.test((color as { hex: string }).hex)
+    ) {
+      throw new Error('El color de cada variante debe incluir un nombre y un código HEX válido.');
+    }
+    return { ...variant, color: color as Product['variants'][number]['color'] };
+  });
+  for (const variant of variantsWithNormalizedColors) {
     if ([variant.price, variant.cost, variant.purchasePrice, variant.weight, variant.stock].some(
       (value) => !Number.isFinite(value) || value < 0,
     )) {
@@ -104,14 +120,14 @@ export const prepareProductData = async (data: Partial<Product>, productId?: Pro
     const normalized = values.map((value) => value.trim()).filter(Boolean);
     return new Set(normalized).size !== normalized.length;
   };
-  if (hasDuplicates((data.variants ?? []).map((variant) => variant.sku))) {
+  if (hasDuplicates(variantsWithNormalizedColors.map((variant) => variant.sku))) {
     throw new Error('Los SKU de las variantes no pueden repetirse.');
   }
-  if (hasDuplicates((data.variants ?? []).map((variant) => variant.barcode))) {
+  if (hasDuplicates(variantsWithNormalizedColors.map((variant) => variant.barcode))) {
     throw new Error('Los códigos de barras de las variantes no pueden repetirse.');
   }
-  const variantCombinations = (data.variants ?? []).map(
-    (variant) => `${variant.color.trim().toUpperCase()}|${variant.size.trim().toLocaleLowerCase()}`,
+  const variantCombinations = variantsWithNormalizedColors.map(
+    (variant) => `${variant.color.hex.trim().toUpperCase()}|${variant.size.trim().toLocaleLowerCase()}`,
   );
   if (variantCombinations.some((combination) => combination === '|')) {
     throw new Error('Cada variante debe tener al menos un color o un tamaño.');
@@ -142,7 +158,7 @@ export const prepareProductData = async (data: Partial<Product>, productId?: Pro
     throw new Error(`La ${referenceNames[invalidReferenceIndex]} seleccionada no pertenece a la organización.`);
   }
 
-  const variants = (data.variants ?? []).map((variant) => ({
+  const variants = variantsWithNormalizedColors.map((variant) => ({
     ...variant,
     id: variant.id ?? randomUUID(),
     stock: data.hasStock ? variant.stock : 0,

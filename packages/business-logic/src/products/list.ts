@@ -4,6 +4,7 @@ import {
   type Params,
   type Product,
   ProductSchemaMongo,
+  LifecycleStatus,
   type Warehouse,
   WarehouseSchemaMongo,
 } from '@hlb/contracts';
@@ -23,7 +24,7 @@ export const getAllProducts = async (params: Params): Promise<PaginatedResult<Pr
         ],
       }
     : {};
-  const filter = { organizationId, ...searchFilter };
+  const filter = { organizationId, lifecycleStatus: { $ne: LifecycleStatus.DELETED }, ...searchFilter };
 
   const products = await model.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
   const warehouseIds = [...new Set(products.flatMap((product) => product.warehouseId ? [String(product.warehouseId)] : []))];

@@ -68,6 +68,11 @@ export const updateProduct = async (productId: string, payload: CreateProductPay
   return data;
 };
 
+export const deleteProduct = async (productId: string) => {
+  const { data } = await api.delete<boolean>(`/products/${productId}`);
+  return data;
+};
+
 export const product = async (productId: string) => {
   const { data } = await api.get<Product>(`/products/${productId}`);
 

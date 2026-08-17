@@ -1,8 +1,8 @@
-import { Menus } from '@hlb/design-system';
+import { Menus, useModal } from '@hlb/design-system';
 import { useNavigate } from 'react-router-dom';
 import styles from '../screens/ProductsList/ProductsList.module.css';
 import type { ProductRow } from '../types';
-import { useCreateProductModal } from '../hooks';
+import { useCreateProductModal, useDeleteProduct } from '../hooks';
 
 type ProductActionsProps = {
   product: ProductRow;
@@ -11,6 +11,20 @@ type ProductActionsProps = {
 export const ProductActions = ({ product }: ProductActionsProps) => {
   const navigate = useNavigate();
   const { openEditProductModal } = useCreateProductModal();
+  const { requestCloseModal } = useModal();
+  const { deleteProduct, isDeletingProduct } = useDeleteProduct();
+
+  const confirmDelete = () => {
+    if (isDeletingProduct) return;
+    requestCloseModal({
+      confirm: true,
+      title: 'Eliminar producto',
+      description: `El producto “${product.name}” dejará de estar disponible. ¿Deseas continuar?`,
+      confirmLabel: 'Eliminar producto',
+      cancelLabel: 'Cancelar',
+      onConfirm: () => deleteProduct(product.id),
+    });
+  };
 
   return (
     <div className={styles.rowActions} onClick={(event) => event.stopPropagation()}>
@@ -29,7 +43,7 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
             <Menus.Item id={`edit-${product.id}`} onClick={() => openEditProductModal(product.id)}>
               Editar
             </Menus.Item>
-            <Menus.Item id={`delete-${product.id}`} closeOnSelect={false}>
+            <Menus.Item id={`delete-${product.id}`} danger onClick={confirmDelete}>
               Eliminar
             </Menus.Item>
           </Menus.List>

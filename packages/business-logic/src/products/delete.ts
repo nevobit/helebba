@@ -1,9 +1,31 @@
 import { Collection, getModel } from '@hlb/constant-definitions';
-import { type ProductId, ProductSchemaMongo } from '@hlb/contracts';
+import {
+  LifecycleStatus,
+  ProductSchemaMongo,
+  type OrganizationId,
+  type Product,
+  type ProductId,
+  type UserId,
+} from '@hlb/contracts';
 
-export const deleteProduct = async (productId: ProductId) => {
-  const model = getModel(Collection.PRODUCTS, ProductSchemaMongo);
-  const result = await model.deleteOne(productId);
-  if (!result.acknowledged) throw new Error('Could not delete product');
-  return result.deletedCount > 0;
+export const deleteProduct = async (
+  productId: ProductId,
+  organizationId: OrganizationId,
+  deletedBy: UserId,
+) => {
+  const model = getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo);
+  const product = await model.findOneAndUpdate(
+    { _id: productId, organizationId, lifecycleStatus: { $ne: LifecycleStatus.DELETED } },
+    {
+      $set: {
+        lifecycleStatus: LifecycleStatus.DELETED,
+        deletedAt: new Date(),
+        deletedBy,
+        updatedBy: deletedBy,
+      },
+    },
+    { new: true },
+  );
+  if (!product) throw new Error('El producto no existe o ya fue eliminado.');
+  return true;
 };

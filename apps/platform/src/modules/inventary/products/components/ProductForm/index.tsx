@@ -121,6 +121,8 @@ const PRODUCT_COLORS = [
 const PRODUCT_STOCK_STATE = { outOfStock: 0, inStock: 1 } as const;
 
 const getColorName = (hex: string) => PRODUCT_COLORS.find((color) => color.hex === hex)?.name ?? '';
+const getVariantColorHex = (color: unknown) =>
+  typeof color === 'string' ? color : (color as { hex?: string } | null)?.hex ?? '';
 
 type ColorSelectProps = {
   value: string;
@@ -268,7 +270,7 @@ const productToFormState = (product?: Product): ProductFormState => product ? {
 
 const productToVariants = (product?: Product): VariantFormState[] => (product?.variants ?? []).map((variant) => ({
   id: variant.id ?? crypto.randomUUID(),
-  color: variant.color ?? '',
+  color: getVariantColorHex(variant.color),
   size: variant.size ?? '',
   price: String(variant.price ?? 0),
   purchasePrice: String(variant.purchasePrice ?? 0),
@@ -462,7 +464,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
         ? variants.map((variant, index) => ({
             id: variant.id,
             name:
-              [formState.name.trim(), variant.color.trim(), variant.size.trim()].filter(Boolean).join(' - ') ||
+              [formState.name.trim(), getColorName(variant.color) || variant.color.trim(), variant.size.trim()]
+                .filter(Boolean)
+                .join(' - ') ||
               `Variante ${index + 1}`,
             sku: variant.sku.trim(),
             barcode: variant.barcode.trim(),
@@ -472,7 +476,10 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
             purchasePrice: toNumber(variant.purchasePrice),
             weight: toNumber(variant.weight),
             stock: formState.manageStock ? toNumber(variant.stock) : 0,
-            color: variant.color.trim(),
+            color: {
+              name: getColorName(variant.color) || variant.color,
+              hex: variant.color.trim().toUpperCase(),
+            },
             size: variant.size.trim(),
           }))
         : [],
