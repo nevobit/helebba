@@ -1,7 +1,7 @@
 import { updateProduct } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod } from '@hlb/constant-definitions';
-import { Product, ProductId } from '@hlb/contracts';
-import { verifyJwt, verifyJwt } from '@hlb/security';
+import { type OrganizationId, type Product, type ProductId, type UserId } from '@hlb/contracts';
+import { verifyJwt } from '@hlb/security';
 
 export const updateProductRoute = makeFastifyRoute(
   RouteMethod.PATCH,
@@ -11,7 +11,12 @@ export const updateProductRoute = makeFastifyRoute(
   async (req, reply) => {
     const body = req.body as Partial<Product>;
     const { productId } = req.params as { productId: ProductId };
-    const updatedProduct = await updateProduct(productId, body);
+    const { userId } = req.auth as unknown as { userId: UserId };
+    const updatedProduct = await updateProduct(
+      productId,
+      req.organization?.organizationId as OrganizationId,
+      { ...body, updatedBy: userId },
+    );
     reply.status(200).send(updatedProduct);
   },
 );

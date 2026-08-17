@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Modal } from '@hlb/design-system';
 import { ProductForm } from '../ProductForm';
 import styles from './CreateProductModal.module.css';
+import { useProduct } from '../../hooks';
 
 type CreateProductModalProps = {
   closeModal: () => void;
@@ -14,14 +15,18 @@ type CreateProductModalProps = {
     onConfirm: () => void;
   }) => void;
   onSuccess?: () => void;
+  productId?: string;
 };
 
 export const CreateProductModal = ({
   closeModal,
   requestCloseModal,
   onSuccess,
+  productId,
 }: CreateProductModalProps) => {
   const dirtyRef = useRef(false);
+  const { product, error, isLoading } = useProduct(productId);
+  const isEditing = Boolean(productId);
 
   const resetState = () => {
     dirtyRef.current = false;
@@ -41,7 +46,7 @@ export const CreateProductModal = ({
   return (
     <Modal.Window
       isOpen
-      ariaLabel="Nuevo producto"
+      ariaLabel={isEditing ? 'Editar producto' : 'Nuevo producto'}
       className={styles.modal}
       overlayClassName={styles.overlay}
       closeStrategy="manual"
@@ -52,22 +57,29 @@ export const CreateProductModal = ({
       size={{ width: '128rem', maxWidth: 'calc(100vw - 4.8rem)' }}
     >
       <Modal.Header className={styles.header}>
-        <h2>Nuevo producto</h2>
+        <h2>{isEditing ? 'Editar producto' : 'Nuevo producto'}</h2>
         <Modal.CloseButton onClick={handleClose} />
       </Modal.Header>
 
       <Modal.Body className={styles.body}>
-        <ProductForm
-          onCancel={handleClose}
-          onDirtyChange={(dirty) => {
-            dirtyRef.current = dirty;
-          }}
-          onSuccess={() => {
-            resetState();
-            closeModal();
-            onSuccess?.();
-          }}
-        />
+        {isEditing && isLoading ? (
+          <p>Cargando producto...</p>
+        ) : isEditing && (error || !product) ? (
+          <p role="alert">No pudimos cargar el producto.</p>
+        ) : (
+          <ProductForm
+            initialProduct={product}
+            onCancel={handleClose}
+            onDirtyChange={(dirty) => {
+              dirtyRef.current = dirty;
+            }}
+            onSuccess={() => {
+              resetState();
+              closeModal();
+              onSuccess?.();
+            }}
+          />
+        )}
       </Modal.Body>
     </Modal.Window>
   );

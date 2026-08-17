@@ -1,19 +1,38 @@
 import { Collection, getModel } from '@hlb/constant-definitions';
-import { type Product, type ProductId, ProductSchemaMongo } from '@hlb/contracts';
+import {
+  ProductSchemaMongo,
+  type OrganizationId,
+  type Product,
+  type ProductId,
+} from '@hlb/contracts';
+import { prepareProductData } from './create';
 
-export const updateProduct = async (productId: ProductId, data: Partial<Product>) => {
+export const updateProduct = async (
+  productId: ProductId,
+  organizationId: OrganizationId,
+  data: Partial<Product>,
+) => {
   const model = getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo);
+  const existingProduct = await model.findOne({ _id: productId, organizationId });
+  if (!existingProduct) throw new Error('El producto no existe o no pertenece a la organización.');
 
-  const dataToUpdate = {
+  const mergedData = {
+    ...existingProduct.toObject(),
     ...data,
-    updatedAt: new Date().toISOString(),
-  };
+    organizationId,
+  } as Partial<Product>;
+  const editableData = { ...(await prepareProductData(mergedData, productId)) } as Record<string, unknown>;
+  delete editableData._id;
+  delete editableData.id;
+  delete editableData.__v;
+  delete editableData.createdAt;
+  delete editableData.createdBy;
 
-  const result = await model.updateOne({ _id: productId }, { $set: dataToUpdate });
-
-  if (!result.acknowledged && result.matchedCount < 1) throw new Error('Could not update product');
-
-  const product = await model.findById(productId);
-
+  const product = await model.findOneAndUpdate(
+    { _id: productId, organizationId },
+    { $set: { ...editableData, updatedAt: new Date() } },
+    { new: true, runValidators: true },
+  );
+  if (!product) throw new Error('No pudimos actualizar el producto.');
   return product;
 };

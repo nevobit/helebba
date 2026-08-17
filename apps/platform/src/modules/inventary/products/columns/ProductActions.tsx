@@ -2,6 +2,7 @@ import { Menus } from '@hlb/design-system';
 import { useNavigate } from 'react-router-dom';
 import styles from '../screens/ProductsList/ProductsList.module.css';
 import type { ProductRow } from '../types';
+import { useCreateProductModal } from '../hooks';
 
 type ProductActionsProps = {
   product: ProductRow;
@@ -9,6 +10,7 @@ type ProductActionsProps = {
 
 export const ProductActions = ({ product }: ProductActionsProps) => {
   const navigate = useNavigate();
+  const { openEditProductModal } = useCreateProductModal();
 
   return (
     <div className={styles.rowActions} onClick={(event) => event.stopPropagation()}>
@@ -24,7 +26,7 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
             <Menus.Item id={`view-${product.id}`} onClick={() => navigate(`/products/${product.id}`)}>
               Ver
             </Menus.Item>
-            <Menus.Item id={`edit-${product.id}`} closeOnSelect={false}>
+            <Menus.Item id={`edit-${product.id}`} onClick={() => openEditProductModal(product.id)}>
               Editar
             </Menus.Item>
             <Menus.Item id={`delete-${product.id}`} closeOnSelect={false}>

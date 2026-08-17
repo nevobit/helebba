@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { PrivateRoutes } from '@/app/router/routes';
-import { useProduct } from '../../hooks';
+import { useCreateProductModal, useProduct } from '../../hooks';
 import styles from './ProductDetails.module.css';
 
 const moneyFormatter = new Intl.NumberFormat('es-CO', {
@@ -28,6 +28,7 @@ const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', '
 const ProductDetails = () => {
   const { productId } = useParams();
   const { error, isLoading, product, refetch } = useProduct(productId);
+  const { openEditProductModal } = useCreateProductModal();
 
   const productName = product?.name ?? 'Producto';
   const initials =
@@ -96,7 +97,13 @@ const ProductDetails = () => {
                 aria-label="Más acciones"
               />
               <Menus.List id="product-detail-actions" placement="bottom-end">
-                <Menus.Item id="edit-product">Editar</Menus.Item>
+                <Menus.Item
+                  id="edit-product"
+                  disabled={!productId}
+                  onClick={() => productId && openEditProductModal(productId, { onSuccess: refetch })}
+                >
+                  Editar
+                </Menus.Item>
                 <Menus.Item id="delete-product" danger>
                   Eliminar
                 </Menus.Item>

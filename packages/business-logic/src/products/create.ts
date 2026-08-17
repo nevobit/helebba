@@ -10,6 +10,7 @@ import {
   type Contact,
   type InventoryBrand,
   type Product,
+  type ProductId,
   type ProductFieldDefinition,
   type Warehouse,
 } from '@hlb/contracts';
@@ -72,7 +73,7 @@ const validateCustomFields = async (data: Partial<Product>) => {
   }
 };
 
-export const createProduct = async (data: Partial<Product>): Promise<Product> => {
+export const prepareProductData = async (data: Partial<Product>, productId?: ProductId): Promise<Partial<Product>> => {
   await validateCustomFields(data);
   const model = getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo);
   const numericValues = [data.price, data.cost, data.purchasePrice, data.weight, data.stock, data.taxRate];
@@ -158,8 +159,12 @@ export const createProduct = async (data: Partial<Product>): Promise<Product> =>
     return value !== null && value !== undefined && value !== '' && (!Array.isArray(value) || value.length > 0);
   });
   const baseSlug = slugify(data.name ?? '') || `product-${Date.now()}`;
-  const existingSlugCount = await model.countDocuments({ organizationId, slug: baseSlug });
-  const product = new model({
+  const existingSlugCount = await model.countDocuments({
+    organizationId,
+    slug: baseSlug,
+    ...(productId ? { _id: { $ne: productId } } : {}),
+  });
+  return {
     ...data,
     customFields,
     slug: existingSlugCount > 0 ? `${baseSlug}-${existingSlugCount + 1}` : baseSlug,
@@ -168,7 +173,12 @@ export const createProduct = async (data: Partial<Product>): Promise<Product> =>
     stockState: data.hasStock && stock > 0 ? ProductStockState.InStock : ProductStockState.OutOfStock,
     total: price * (1 + taxRate / 100),
     taxes: taxRate > 0 ? [`Impuesto ${taxRate}%`] : [],
-  });
+  };
+};
+
+export const createProduct = async (data: Partial<Product>): Promise<Product> => {
+  const model = getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo);
+  const product = new model(await prepareProductData(data));
   const createdProduct = await product.save();
   return createdProduct;
 };

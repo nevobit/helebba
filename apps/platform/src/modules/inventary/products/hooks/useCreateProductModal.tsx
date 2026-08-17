@@ -15,5 +15,17 @@ export const useCreateProductModal = () => {
     );
   };
 
-  return { openCreateProductModal };
+  const openEditProductModal = (productId: string, options?: { onSuccess?: () => void }) => {
+    openModal(
+      <CreateProductModal
+        productId={productId}
+        closeModal={closeModal}
+        requestCloseModal={requestCloseModal}
+        onSuccess={options?.onSuccess}
+      />,
+      { id: `edit-product-${productId}` },
+    );
+  };
+
+  return { openCreateProductModal, openEditProductModal };
 };

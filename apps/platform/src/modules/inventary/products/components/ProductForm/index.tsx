@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { Button, TextInput } from '@hlb/design-system';
 import { List, Search, Trash2 } from 'lucide-react';
 import { useCreateProduct } from '../../hooks';
+import { useUpdateProduct } from '../../hooks';
 import { useBrands } from '@/modules/inventary/brands/hooks';
 import { useCategories } from '@/modules/inventary/categories/hooks';
 import { flattenCategories } from '@/modules/inventary/categories/mappers';
@@ -12,7 +13,7 @@ import { useProductFieldDefinitions } from '@/modules/inventary/product-field-de
 import { SETTINGS_PRODUCT_FIELDS_HASH } from '@/modules/settings/hooks';
 import { ImageUploader } from '@/modules/media/components';
 import type { CreateProductPayload } from '../../services';
-import type { CategoryId, ProductFieldValue, WarehouseId } from '@hlb/contracts';
+import type { CategoryId, Product, ProductFieldValue, WarehouseId } from '@hlb/contracts';
 import styles from './ProductForm.module.css';
 
 export const PRODUCT_FORM_ID = 'product-form';
@@ -21,6 +22,7 @@ type ProductFormProps = {
   onDirtyChange?: (dirty: boolean) => void;
   onCancel: () => void;
   onSuccess?: () => void;
+  initialProduct?: Product;
 };
 
 type ProductFormState = {
@@ -235,6 +237,49 @@ const initialState: ProductFormState = {
   inCatalog: false,
 };
 
+const productToFormState = (product?: Product): ProductFormState => product ? {
+  name: product.name ?? '',
+  description: product.description ?? '',
+  tags: product.tags?.join(', ') ?? '',
+  category: product.categoryId ? String(product.categoryId) : '',
+  brand: product.brand ?? '',
+  salePrice: String(product.price ?? 0),
+  taxRate: String(product.taxRate ?? 0),
+  purchasePrice: String(product.purchasePrice ?? 0),
+  cost: String(product.cost ?? 0),
+  supplier: product.contactId ? String(product.contactId) : '',
+  sku: product.sku ?? '',
+  barcode: product.barcode ?? '',
+  factoryCode: product.factoryCode ?? '',
+  weight: String(product.weight ?? 0),
+  warehouse: product.warehouseId ? String(product.warehouseId) : '',
+  stock: String(product.stock ?? 0),
+  salesAccount: product.salesAccountId ?? '',
+  purchaseAccount: product.purchaseAccountId ?? '',
+  addVariants: Boolean(product.variants?.length),
+  manageLots: Boolean(product.manageLots),
+  manageSerials: Boolean(product.manageSerials),
+  manageStock: Boolean(product.hasStock),
+  manufactured: Boolean(product.forProduction),
+  forSale: Boolean(product.forSale),
+  forPurchase: Boolean(product.forPurchase),
+  inCatalog: Boolean(product.inCatalog),
+} : initialState;
+
+const productToVariants = (product?: Product): VariantFormState[] => (product?.variants ?? []).map((variant) => ({
+  id: variant.id ?? crypto.randomUUID(),
+  color: variant.color ?? '',
+  size: variant.size ?? '',
+  price: String(variant.price ?? 0),
+  purchasePrice: String(variant.purchasePrice ?? 0),
+  weight: String(variant.weight ?? 0),
+  sku: variant.sku ?? '',
+  barcode: variant.barcode ?? '',
+  factoryCode: variant.factoryCode ?? '',
+  cost: String(variant.cost ?? 0),
+  stock: String(variant.stock ?? 0),
+}));
+
 const toNumber = (value: string) => {
   const parsed = Number(value.replace(',', '.'));
   return Number.isFinite(parsed) ? parsed : 0;
@@ -265,15 +310,21 @@ const createVariant = (form: ProductFormState): VariantFormState => ({
   stock: form.stock,
 });
 
-export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormProps) => {
-  const [formState, setFormState] = useState<ProductFormState>(initialState);
-  const [variants, setVariants] = useState<VariantFormState[]>([]);
+export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess }: ProductFormProps) => {
+  const [formState, setFormState] = useState<ProductFormState>(() => productToFormState(initialProduct));
+  const [variants, setVariants] = useState<VariantFormState[]>(() => productToVariants(initialProduct));
   const [variantSearch, setVariantSearch] = useState('');
-  const [customFieldValues, setCustomFieldValues] = useState<Record<string, ProductFieldValue>>({});
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, ProductFieldValue>>(() =>
+    Object.fromEntries((initialProduct?.customFields ?? []).flatMap((field) =>
+      field.definitionId ? [[String(field.definitionId), field.value]] : [],
+    )),
+  );
+  const [imageUrls, setImageUrls] = useState<string[]>(() => [...(initialProduct?.images ?? [])]);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { createProduct, isCreatingProduct } = useCreateProduct();
+  const { createProduct, isCreatingProduct: isCreating } = useCreateProduct();
+  const { updateProduct, isUpdatingProduct } = useUpdateProduct(initialProduct?.id ? String(initialProduct.id) : undefined);
+  const isCreatingProduct = isCreating || isUpdatingProduct;
   const { categories, isLoading: isLoadingCategories } = useCategories({ page: 1, limit: 100, search: '' });
   const hierarchicalCategories = useMemo(() => flattenCategories(categories), [categories]);
   const { brands, isLoading: isLoadingBrands } = useBrands({ page: 1, limit: 100, search: '' });
@@ -405,6 +456,7 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
       kind: 'physical',
       variants: formState.addVariants
         ? variants.map((variant, index) => ({
+            id: variant.id,
             name:
               [formState.name.trim(), variant.color.trim(), variant.size.trim()].filter(Boolean).join(' - ') ||
               `Variante ${index + 1}`,
@@ -419,7 +471,7 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
             color: variant.color.trim(),
             size: variant.size.trim(),
           }))
-        : undefined,
+        : [],
     };
   };
 
@@ -493,13 +545,14 @@ export const ProductForm = ({ onCancel, onDirtyChange, onSuccess }: ProductFormP
       return;
     }
 
-    createProduct(buildPayload(), {
+    const saveProduct = initialProduct ? updateProduct : createProduct;
+    saveProduct(buildPayload(), {
       onSuccess: () => {
         onDirtyChange?.(false);
         onSuccess?.();
       },
       onError: (err) => {
-        setError(err instanceof Error ? err.message : 'No pudimos crear el producto.');
+        setError(err instanceof Error ? err.message : `No pudimos ${initialProduct ? 'actualizar' : 'crear'} el producto.`);
       },
     });
   };

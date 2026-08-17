@@ -63,6 +63,11 @@ export const createProduct = async (payload: CreateProductPayload) => {
   return data;
 };
 
+export const updateProduct = async (productId: string, payload: CreateProductPayload) => {
+  const { data } = await api.patch<Product>(`/products/${productId}`, payload);
+  return data;
+};
+
 export const product = async (productId: string) => {
   const { data } = await api.get<Product>(`/products/${productId}`);
 

@@ -3,3 +3,4 @@ export * from './useProduct';
 export * from './useProductsListController';
 export * from './useCreateProduct';
 export * from './useCreateProductModal';
+export * from './useUpdateProduct';
