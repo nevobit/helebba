@@ -4,3 +4,4 @@ export * from './warehouses';
 export * from './products';
 export * from './price-lists';
 export * from './product-field-definitions';
+export * from './catalogs';

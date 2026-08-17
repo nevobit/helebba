@@ -17,6 +17,7 @@ import { paymentRoutes } from './accounting/payments';
 import { mediaRoutes } from './media';
 import { sdkRoutes } from './sdk';
 import { productFieldDefinitionRoutes } from './inventory/product-field-definitions';
+import { catalogRoutes } from './inventory/catalogs';
 
 const routes: RouteOptions[] = [
   ...opsRoutes,
@@ -39,6 +40,7 @@ const routes: RouteOptions[] = [
   ...mediaRoutes,
   ...sdkRoutes,
   ...productFieldDefinitionRoutes,
+  ...catalogRoutes,
 ];
 
 export const registerRoutes = (app: FastifyInstance) => {

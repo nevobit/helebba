@@ -35,6 +35,7 @@ type StackItem = { id: string; node: React.ReactNode };
 function Provider({ children, portalRootId = "ds-portal-root" }: ProviderProps) {
     const [stack, setStack] = React.useState<StackItem[]>([]);
     const [confirmNode, setConfirmNode] = React.useState<React.ReactNode | null>(null);
+    const hasAnyModal = stack.length > 0 || Boolean(confirmNode);
 
     React.useEffect(() => {
         let root = document.getElementById(portalRootId);
@@ -46,11 +47,10 @@ function Provider({ children, portalRootId = "ds-portal-root" }: ProviderProps) 
     }, [portalRootId]);
 
     React.useEffect(() => {
-        const hasAny = stack.length > 0 || !!confirmNode;
-        if (!hasAny) return;
+        if (!hasAnyModal) return;
 
-        // const originalOverflow = document.body.style.overflow;
-        // const originalPaddingRight = document.body.style.paddingRight;
+        const originalOverflow = document.body.style.overflow;
+        const originalPaddingRight = document.body.style.paddingRight;
         const scrollBarW = window.innerWidth - document.documentElement.clientWidth;
         document.body.style.overflow = "hidden";
         if (scrollBarW > 0) document.body.style.paddingRight = `${scrollBarW}px`;
@@ -78,6 +78,8 @@ function Provider({ children, portalRootId = "ds-portal-root" }: ProviderProps) 
         });
 
         return () => {
+            document.body.style.overflow = originalOverflow;
+            document.body.style.paddingRight = originalPaddingRight;
             restored.forEach(({ el, ariaHidden, inert }) => {
                 if (ariaHidden == null) el.removeAttribute("aria-hidden");
                 else el.setAttribute("aria-hidden", ariaHidden);
@@ -89,7 +91,7 @@ function Provider({ children, portalRootId = "ds-portal-root" }: ProviderProps) 
             });
         };
 
-    }, [stack.length, confirmNode]);
+    }, [hasAnyModal]);
 
     const openModal = React.useCallback((node: React.ReactNode, opts?: { id?: string }) => {
         setStack((prev) => [...prev, { id: opts?.id ?? crypto.randomUUID(), node }]);

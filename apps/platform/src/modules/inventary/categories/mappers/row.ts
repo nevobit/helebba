@@ -74,4 +74,8 @@ export const toCategoryRow = (category: Category, depth = 0, parentName?: string
   color: category.color ?? '#6b7280',
   depth,
   parentName: parentName ?? '-',
+  parentId: category.parentId ? String(category.parentId) : '',
+  rawType: category.type === 'text' ? 'text' : 'options',
+  optionValues: [...(category.options ?? [])],
+  isShownInCatalog: Boolean(category.showInCatalog),
 });

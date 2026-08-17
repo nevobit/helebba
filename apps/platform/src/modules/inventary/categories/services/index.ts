@@ -40,3 +40,13 @@ export const createCategory = async (payload: CreateCategoryPayload) => {
 
   return data;
 };
+
+export const deleteCategory = async (categoryId: string) => {
+  const { data } = await api.delete<boolean>(`/categories/${categoryId}`);
+  return data;
+};
+
+export const updateCategory = async (categoryId: string, payload: CreateCategoryPayload) => {
+  const { data } = await api.patch<Category>(`/categories/${categoryId}`, payload);
+  return data;
+};

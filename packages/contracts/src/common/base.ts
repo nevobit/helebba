@@ -26,6 +26,7 @@ export type ServiceId = Brand<string, 'ServiceId'>;
 export type DocumentId = Brand<string, 'DocumentId'>;
 export type ApiKeyId = Brand<string, 'ApiKeyId'>;
 export type ProductFieldDefinitionId = Brand<string, 'ProductFieldDefinitionId'>;
+export type CatalogId = Brand<string, 'CatalogId'>;
 
 export interface BaseEntity<TId = EntityId> {
   readonly id: TId;

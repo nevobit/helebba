@@ -12,6 +12,8 @@ type CategoriesTableProps = {
   hasCategories: boolean;
   refetch: () => void;
   onCreateCategory?: () => void;
+  onDeleteCategory?: (category: CategoryRow) => void;
+  onEditCategory?: (category: CategoryRow) => void;
 };
 
 export const CategoriesTable = ({
@@ -21,6 +23,8 @@ export const CategoriesTable = ({
   hasCategories,
   refetch,
   onCreateCategory,
+  onDeleteCategory,
+  onEditCategory,
 }: CategoriesTableProps) => {
   if (error) {
     return (
@@ -42,7 +46,7 @@ export const CategoriesTable = ({
     <div className={styles.tableWrap}>
       <Table
         ariaLabel="Categorías"
-        columns={categoryColumns()}
+        columns={categoryColumns({ onDelete: onDeleteCategory, onEdit: onEditCategory })}
         rows={rows}
         pageSize={rows.length}
         selectionMode="multi"

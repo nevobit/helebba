@@ -10,4 +10,8 @@ export type CategoryRow = {
   color: string;
   depth: number;
   parentName: string;
+  parentId: string;
+  rawType: 'text' | 'options';
+  optionValues: string[];
+  isShownInCatalog: boolean;
 };

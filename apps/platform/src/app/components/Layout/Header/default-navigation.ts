@@ -159,6 +159,15 @@ export const defaultNavigation: NavigationItem[] = [
         parentId: 'inventory',
       },
       {
+        id: 'inventory.catalog',
+        name: 'Catálogo B2B',
+        path: PrivateRoutes.CATALOG,
+        position: 6,
+        isVisible: true,
+        isSystem: true,
+        parentId: 'inventory',
+      },
+      {
         id: 'inventory.movements',
         name: 'Movimientos',
         path: '/inventory/movements',

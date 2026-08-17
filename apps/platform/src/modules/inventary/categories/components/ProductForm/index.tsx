@@ -1,10 +1,11 @@
 import { useMemo, useState, type ChangeEvent, type FormEvent, type KeyboardEvent } from 'react';
 import { Button, TextInput } from '@hlb/design-system';
 import { Upload } from 'lucide-react';
-import { useCategories, useCreateCategory } from '../../hooks';
+import { useCategories, useCreateCategory, useUpdateCategory } from '../../hooks';
 import { flattenCategories } from '../../mappers';
 import type { CreateCategoryPayload } from '../../services';
 import type { CategoryId } from '@hlb/contracts';
+import type { CategoryRow } from '../../types';
 import styles from './ProductForm.module.css';
 
 export const CATEGORY_FORM_ID = 'category-form';
@@ -13,6 +14,7 @@ type CategoryFormProps = {
   onDirtyChange?: (dirty: boolean) => void;
   onCancel: () => void;
   onSuccess?: () => void;
+  initialCategory?: CategoryRow;
 };
 
 type CategoryFormState = {
@@ -35,6 +37,16 @@ const initialState: CategoryFormState = {
   parentId: '',
 };
 
+const categoryToFormState = (category?: CategoryRow): CategoryFormState => category ? {
+  name: category.name,
+  type: category.rawType,
+  optionDraft: '',
+  options: [...category.optionValues],
+  showInCatalog: category.isShownInCatalog,
+  color: category.color,
+  parentId: category.parentId,
+} : initialState;
+
 const suggestions = [
   { name: 'Ropa', color: '#ef4444' },
   { name: 'Zapatos', color: '#f59e0b' },
@@ -51,12 +63,32 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 
-export const CategoryForm = ({ onCancel, onDirtyChange, onSuccess }: CategoryFormProps) => {
-  const [formState, setFormState] = useState<CategoryFormState>(initialState);
+export const CategoryForm = ({ initialCategory, onCancel, onDirtyChange, onSuccess }: CategoryFormProps) => {
+  const [formState, setFormState] = useState<CategoryFormState>(() => categoryToFormState(initialCategory));
   const [error, setError] = useState<string | null>(null);
-  const { createCategory, isCreatingCategory } = useCreateCategory();
+  const { createCategory, isCreatingCategory: isCreating } = useCreateCategory();
+  const { updateCategory, isUpdatingCategory } = useUpdateCategory(initialCategory?.id);
+  const isCreatingCategory = isCreating || isUpdatingCategory;
   const { categories, isLoading: isLoadingCategories } = useCategories({ page: 1, limit: 100, search: '' });
   const hierarchicalCategories = useMemo(() => flattenCategories(categories), [categories]);
+  const allowedParentCategories = useMemo(() => {
+    if (!initialCategory) return hierarchicalCategories;
+    const byId = new Map(categories.map((category) => [String(category.id), category]));
+    return hierarchicalCategories.filter(({ category }) => {
+      let current = category;
+      const visited = new Set<string>();
+      while (current) {
+        const id = String(current.id);
+        if (id === initialCategory.id) return false;
+        if (visited.has(id) || !current.parentId) return true;
+        visited.add(id);
+        const parent = byId.get(String(current.parentId));
+        if (!parent) return true;
+        current = parent;
+      }
+      return true;
+    });
+  }, [categories, hierarchicalCategories, initialCategory]);
 
   const markDirty = () => onDirtyChange?.(true);
 
@@ -139,13 +171,14 @@ export const CategoryForm = ({ onCancel, onDirtyChange, onSuccess }: CategoryFor
       return;
     }
 
-    createCategory(buildPayload(), {
+    const saveCategory = initialCategory ? updateCategory : createCategory;
+    saveCategory(buildPayload(), {
       onSuccess: () => {
         onDirtyChange?.(false);
         onSuccess?.();
       },
       onError: (err) => {
-        setError(err instanceof Error ? err.message : 'No pudimos crear la categoría.');
+        setError(err instanceof Error ? err.message : `No pudimos ${initialCategory ? 'actualizar' : 'crear'} la categoría.`);
       },
     });
   };
@@ -177,7 +210,7 @@ export const CategoryForm = ({ onCancel, onDirtyChange, onSuccess }: CategoryFor
           <option value="">
             {isLoadingCategories ? 'Cargando categorías...' : 'Sin categoría padre (categoría principal)'}
           </option>
-          {hierarchicalCategories.map(({ category, depth, path }) => (
+          {allowedParentCategories.map(({ category, depth, path }) => (
             <option key={String(category.id)} value={String(category.id)}>
               {`${'— '.repeat(depth)}${path}`}
             </option>

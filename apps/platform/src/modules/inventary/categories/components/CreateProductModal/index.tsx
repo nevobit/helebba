@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Modal } from '@hlb/design-system';
 import { CategoryForm } from '../ProductForm';
 import styles from './CreateProductModal.module.css';
+import type { CategoryRow } from '../../types';
 
 type CreateCategoryModalProps = {
   closeModal: () => void;
@@ -14,12 +15,14 @@ type CreateCategoryModalProps = {
     onConfirm: () => void;
   }) => void;
   onSuccess?: () => void;
+  initialCategory?: CategoryRow;
 };
 
 export const CreateCategoryModal = ({
   closeModal,
   requestCloseModal,
   onSuccess,
+  initialCategory,
 }: CreateCategoryModalProps) => {
   const dirtyRef = useRef(false);
 
@@ -41,7 +44,7 @@ export const CreateCategoryModal = ({
   return (
     <Modal.Window
       isOpen
-      ariaLabel="Nueva categoría"
+      ariaLabel={initialCategory ? 'Editar categoría' : 'Nueva categoría'}
       className={styles.modal}
       overlayClassName={styles.overlay}
       closeStrategy="manual"
@@ -52,12 +55,13 @@ export const CreateCategoryModal = ({
       size={{ width: '60rem', maxWidth: 'calc(100vw - 3.2rem)' }}
     >
       <Modal.Header className={styles.header}>
-        <h2>Nueva Categoría</h2>
+        <h2>{initialCategory ? 'Editar categoría' : 'Nueva categoría'}</h2>
         <Modal.CloseButton onClick={handleClose} label="Cerrar" />
       </Modal.Header>
 
       <Modal.Body className={styles.body}>
         <CategoryForm
+          initialCategory={initialCategory}
           onCancel={handleClose}
           onDirtyChange={(dirty) => {
             dirtyRef.current = dirty;

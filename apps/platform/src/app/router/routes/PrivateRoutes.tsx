@@ -16,6 +16,7 @@ import { paymentRoutes } from '@/modules/accounting/payments/routes';
 import { treasuryAccountRoutes } from '@/modules/treasury/accounts/routes';
 import Summary from '@/modules/home/screens/Summary';
 import TrialExpired from '@/modules/subscriptions/screens/TrialExpired';
+import { catalogRoutes } from '@/modules/catalog/routes';
 
 export const privateRoutes: RouteObject[] = [
   {
@@ -52,6 +53,7 @@ export const privateRoutes: RouteObject[] = [
       ...warehousesRoutes,
       ...paymentRoutes,
       ...treasuryAccountRoutes,
+      ...catalogRoutes,
     ],
   },
 ];

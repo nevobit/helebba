@@ -1,6 +1,7 @@
 import { Collection, getModel } from '@hlb/constant-definitions';
 import {
   CategorySchemaMongo,
+  LifecycleStatus,
   type Category,
   type CategoryId,
   type OffsetPaginatedResult,
@@ -16,6 +17,7 @@ export const getAllCategories = async (params: CategoryListParams): Promise<Offs
   const normalizedSearch = search.trim();
   const filter = {
     organizationId,
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
     ...(parentId !== undefined ? { parentId } : {}),
     ...(normalizedSearch
       ? {
