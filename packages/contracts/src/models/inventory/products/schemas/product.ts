@@ -90,6 +90,7 @@ export interface Product extends PersistedSoftDeletableEntity<ProductId, UserId>
   salesChannelId: string;
   expAccountId: string;
   warehouseId: WarehouseId;
+  warehouseName?: string;
   companyId: CompanyId;
   // notes: Note[];
   variants: ProductVariant[];

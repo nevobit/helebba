@@ -329,6 +329,10 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
   const hierarchicalCategories = useMemo(() => flattenCategories(categories), [categories]);
   const { brands, isLoading: isLoadingBrands } = useBrands({ page: 1, limit: 100, search: '' });
   const { warehouses, isLoading: isLoadingWarehouses } = useWarehouses({ page: 1, limit: 100, search: '' });
+  const defaultWarehouseId = !initialProduct
+    ? String(warehouses.find((warehouse) => warehouse.isDefault)?.id ?? '')
+    : '';
+  const selectedWarehouseId = formState.warehouse || defaultWarehouseId;
   const { contacts: suppliers, isLoading: isLoadingSuppliers } = useContacts({
     page: 1,
     limit: 100,
@@ -441,7 +445,7 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
       stockState: formState.manageStock && productStock > 0
         ? PRODUCT_STOCK_STATE.inStock
         : PRODUCT_STOCK_STATE.outOfStock,
-      warehouseId: (formState.warehouse || undefined) as WarehouseId | undefined,
+      warehouseId: (selectedWarehouseId || undefined) as WarehouseId | undefined,
       taxes: taxRate > 0 ? [`Impuesto ${taxRate}%`] : [],
       forSale: formState.forSale,
       forPurchase: formState.forPurchase,
@@ -492,7 +496,7 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
       setError('Agrega al menos una variante al producto.');
       return;
     }
-    if (formState.manageStock && !formState.warehouse) {
+    if (formState.manageStock && !selectedWarehouseId) {
       setError('Selecciona un almacén para gestionar el stock.');
       return;
     }
@@ -851,7 +855,7 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                 <span>Almacén predeterminado</span>
                 <select
                   name="warehouse"
-                  value={formState.warehouse}
+                  value={selectedWarehouseId}
                   disabled={isCreatingProduct || isLoadingWarehouses}
                   onChange={updateField}
                 >

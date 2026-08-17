@@ -31,7 +31,7 @@ export const toProductRow = (product: Product): ProductRow => ({
   description: product.description ?? '',
   sku: product.sku ?? '',
   supply: product.forPurchase ? 'Comprado' : '',
-  warehouse: product.warehouseId ? String(product.warehouseId) : '',
+  warehouse: product.warehouseName ?? 'Sin bodega',
   channel: product.salesChannelId ? String(product.salesChannelId) : 'No asignado',
   stock: Number(product.stock ?? 0),
   purchasePrice: getMoney(product.purchasePrice),
