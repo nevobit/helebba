@@ -22,7 +22,8 @@ const stores = () => getModel<PosStore>(Collection.POS_STORES, PosStoreSchemaMon
 const receipts = () => getModel<PosReceipt>(Collection.POS_RECEIPTS, PosReceiptSchemaMongo);
 const products = () => getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo);
 const round = (value: number) => Math.round((value + Number.EPSILON) * 100) / 100;
-const embeddedId = (item: { id?: unknown; _id?: unknown }) => String(item.id ?? item._id ?? '');
+const matchesEmbeddedId = (item: { id?: unknown; _id?: unknown }, expected: unknown) =>
+  [item.id, item._id].some((value) => value != null && String(value) === String(expected));
 export const openPosSession = async (
   storeId: PosStoreId,
   registerId: PosRegisterId,
@@ -37,10 +38,11 @@ export const openPosSession = async (
     organizationId,
     lifecycleStatus: { $ne: LifecycleStatus.DELETED },
   });
-  const register = store?.registers.find(
-    (item) => embeddedId(item as typeof item & { _id?: unknown }) === String(registerId),
+  const register = store?.registers.find((item) =>
+    matchesEmbeddedId(item as typeof item & { _id?: unknown }, registerId),
   );
-  if (!store || !register) throw new Error('Tienda o caja registradora no encontrada.');
+  if (!store) throw new Error('Tienda POS no encontrada para la organización actual.');
+  if (!register) throw new Error('Caja registradora no encontrada dentro de la tienda.');
   if (
     register.status === 'open' ||
     store.sessions.some(
@@ -83,8 +85,8 @@ export const closePosSession = async (
   const session = store?.sessions.find(
     (item) => String(item.registerId) === String(registerId) && item.status === 'open',
   );
-  const register = store?.registers.find(
-    (item) => embeddedId(item as typeof item & { _id?: unknown }) === String(registerId),
+  const register = store?.registers.find((item) =>
+    matchesEmbeddedId(item as typeof item & { _id?: unknown }, registerId),
   );
   if (!store || !register || !session) throw new Error('No hay una sesión abierta para esta caja.');
   const completed = await receipts().find({
@@ -138,8 +140,8 @@ export const createPosSale = async (
           lifecycleStatus: { $ne: LifecycleStatus.DELETED },
         })
         .session(dbSession);
-      const register = store?.registers.find(
-        (item) => embeddedId(item as typeof item & { _id?: unknown }) === String(registerId),
+      const register = store?.registers.find((item) =>
+        matchesEmbeddedId(item as typeof item & { _id?: unknown }, registerId),
       );
       const posSession = store?.sessions.find(
         (item) => String(item.registerId) === String(registerId) && item.status === 'open',
