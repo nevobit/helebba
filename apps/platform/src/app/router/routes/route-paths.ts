@@ -14,6 +14,7 @@ export const PrivateRoutes = {
   PRODUCTS: '/products',
   CATALOG: '/catalog',
   POS: '/pos',
+  CRM_FUNNELS: '/crm/funnels',
   CATEGORIES: '/categories',
   BRANDS: '/brands',
   WAREHOUSES: '/inventory/warehouses',

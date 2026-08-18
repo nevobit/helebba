@@ -19,6 +19,7 @@ import { sdkRoutes } from './sdk';
 import { productFieldDefinitionRoutes } from './inventory/product-field-definitions';
 import { catalogRoutes } from './inventory/catalogs';
 import { posRoutes } from './sales/pos';
+import { crmFunnelRoutes } from './crm/funnels';
 
 const routes: RouteOptions[] = [
   ...opsRoutes,
@@ -43,6 +44,7 @@ const routes: RouteOptions[] = [
   ...productFieldDefinitionRoutes,
   ...catalogRoutes,
   ...posRoutes,
+  ...crmFunnelRoutes,
 ];
 
 export const registerRoutes = (app: FastifyInstance) => {

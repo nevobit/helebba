@@ -13,3 +13,4 @@ export * from './media';
 export * from './product-field-definitions';
 export * from './catalogs';
 export * from './pos';
+export * from './crm';

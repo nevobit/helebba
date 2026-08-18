@@ -21,6 +21,26 @@ export const defaultNavigation: NavigationItem[] = [
   },
 
   {
+    id: 'crm',
+    name: 'CRM',
+    path: PrivateRoutes.CRM_FUNNELS,
+    position: 3,
+    isVisible: true,
+    isSystem: true,
+    children: [
+      {
+        id: 'crm.funnels',
+        name: 'Embudo de ventas',
+        path: PrivateRoutes.CRM_FUNNELS,
+        position: 1,
+        isVisible: true,
+        isSystem: true,
+        parentId: 'crm',
+      },
+    ],
+  },
+
+  {
     id: 'sales',
     name: 'Ventas',
     path: '/sales/revenue',

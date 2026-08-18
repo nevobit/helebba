@@ -24,6 +24,15 @@ const products = () => getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo
 const round = (value: number) => Math.round((value + Number.EPSILON) * 100) / 100;
 const matchesEmbeddedId = (item: { id?: unknown; _id?: unknown }, expected: unknown) =>
   [item.id, item._id].some((value) => value != null && String(value) === String(expected));
+const variantIdentity = (
+  variant: { id?: unknown; _id?: unknown; variantId?: unknown },
+  requestedId: string,
+) => {
+  const field = (['_id', 'id', 'variantId'] as const).find(
+    (candidate) => variant[candidate] != null && String(variant[candidate]) === String(requestedId),
+  );
+  return field ? { field, value: variant[field] } : undefined;
+};
 export const openPosSession = async (
   storeId: PosStoreId,
   registerId: PosRegisterId,
@@ -163,8 +172,11 @@ export const createPosSale = async (
           .session(dbSession);
         if (!product) throw new Error('Uno de los productos no está disponible en POS.');
         const variant = requested.variantId
-          ? product.variants?.find(
-              (item) => item.id === requested.variantId || item.variantId === requested.variantId,
+          ? product.variants?.find((item) =>
+              variantIdentity(
+                item as typeof item & { _id?: unknown },
+                requested.variantId as string,
+              ),
             )
           : undefined;
         if (requested.variantId && !variant)
@@ -189,13 +201,19 @@ export const createPosSale = async (
           total,
         });
         if (product.hasStock) {
+          const identity =
+            variant && requested.variantId
+              ? variantIdentity(variant as typeof variant & { _id?: unknown }, requested.variantId)
+              : undefined;
+          if (variant && !identity)
+            throw new Error(`No pudimos identificar la variante de “${product.name}”.`);
           const update = variant
             ? await products().updateOne(
                 {
                   _id: product.id,
                   organizationId,
                   stock: { $gte: requested.quantity },
-                  'variants.id': variant.id,
+                  [`variants.${identity!.field}`]: identity!.value,
                 },
                 {
                   $inc: {
@@ -203,7 +221,15 @@ export const createPosSale = async (
                     'variants.$[variant].stock': -requested.quantity,
                   },
                 },
-                { arrayFilters: [{ 'variant.id': variant.id }], session: dbSession },
+                {
+                  arrayFilters: [
+                    {
+                      [`variant.${identity!.field}`]: identity!.value,
+                      'variant.stock': { $gte: requested.quantity },
+                    },
+                  ],
+                  session: dbSession,
+                },
               )
             : await products().updateOne(
                 { _id: product.id, organizationId, stock: { $gte: requested.quantity } },

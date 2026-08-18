@@ -6,5 +6,6 @@ export * from './access/auth';
 export * from './access/rbac';
 export * from './inventory';
 export * from './sales';
+export * from './crm';
 export * from './treasury';
 export * from './accounting';

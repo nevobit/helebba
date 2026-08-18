@@ -10,6 +10,8 @@ export enum Collection {
   CATALOGS = 'catalogs',
   POS_STORES = 'pos_stores',
   POS_RECEIPTS = 'pos_receipts',
+  CRM_FUNNELS = 'crm_funnels',
+  CRM_OPPORTUNITIES = 'crm_opportunities',
   BRANDS = 'brands',
   CONTACTS = 'contacts',
   WAREHOUSES = 'warehouses',

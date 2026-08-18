@@ -1,0 +1,22 @@
+.body {
+  display: grid;
+  gap: 1.4rem;
+  font-size: var(--ds-font-size-14);
+}
+.body label {
+  display: grid;
+  gap: 0.5rem;
+  color: #475467;
+  font-size: var(--ds-font-size-12);
+  font-weight: var(--ds-font-weight-semibold);
+}
+.body select {
+  min-height: 4rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.6rem;
+  background: #fff;
+  padding: 0.8rem;
+}
+.body p {
+  color: #b42318;
+}

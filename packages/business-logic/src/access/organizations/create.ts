@@ -16,6 +16,7 @@ import { getOwnerRole, seedDefaultRoles } from '../roles';
 import { createOrganizationSubscription } from '../subscriptions';
 import { createWarehouse } from '../../warehouses';
 import { seedDefaultPaymentMethods } from '../../payment-methods';
+import { seedDefaultCrmFunnel } from '../../crm';
 
 export type CreateOrganizationInput = {
   userId: UserId;
@@ -106,6 +107,7 @@ export const createOrganization = async ({ organization, userId }: CreateOrganiz
     deletedAt: null,
   });
   await seedDefaultPaymentMethods({ organizationId, userId });
+  await seedDefaultCrmFunnel({ organizationId, userId });
 
   await seedDefaultRoles({ createdBy: userId, organizationId });
   const ownerRole = await getOwnerRole(organizationId);

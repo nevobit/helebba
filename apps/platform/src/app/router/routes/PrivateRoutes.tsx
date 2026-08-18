@@ -18,6 +18,7 @@ import Summary from '@/modules/home/screens/Summary';
 import TrialExpired from '@/modules/subscriptions/screens/TrialExpired';
 import { catalogRoutes } from '@/modules/catalog/routes';
 import { posRoutes } from '@/modules/sales/pos/routes';
+import { crmFunnelRoutes } from '@/modules/crm/funnels/routes';
 
 export const privateRoutes: RouteObject[] = [
   {
@@ -56,6 +57,7 @@ export const privateRoutes: RouteObject[] = [
       ...treasuryAccountRoutes,
       ...catalogRoutes,
       ...posRoutes,
+      ...crmFunnelRoutes,
     ],
   },
 ];

@@ -1,0 +1,48 @@
+import { Schema } from 'mongoose';
+import { baseFields, opts } from '../../../common';
+import type { CrmFunnel, CrmOpportunity } from './funnel';
+
+export const CrmFunnelSchemaMongo = new Schema<CrmFunnel>(
+  {
+    ...baseFields,
+    organizationId: { type: String, required: true, index: true },
+    createdBy: { type: String },
+    updatedBy: { type: String },
+    deletedBy: { type: String },
+    name: { type: String, required: true },
+    description: { type: String },
+    isDefault: { type: Boolean, default: false },
+    stages: [
+      {
+        _id: false,
+        id: { type: String, required: true },
+        name: { type: String, required: true },
+        color: { type: String },
+        order: { type: Number },
+        probability: { type: Number, min: 0, max: 100 },
+      },
+    ],
+  },
+  { ...opts },
+);
+export const CrmOpportunitySchemaMongo = new Schema<CrmOpportunity>(
+  {
+    ...baseFields,
+    organizationId: { type: String, required: true, index: true },
+    createdBy: { type: String },
+    updatedBy: { type: String },
+    deletedBy: { type: String },
+    funnelId: { type: String, required: true, index: true },
+    stageId: { type: String, required: true, index: true },
+    name: { type: String, required: true },
+    contactId: { type: String },
+    contactName: { type: String },
+    value: { type: Number, min: 0 },
+    currency: { type: String },
+    expectedCloseDate: { type: Date },
+    notes: { type: String },
+    status: { type: String, enum: ['open', 'won', 'lost'], default: 'open' },
+    order: { type: Number, default: 0 },
+  },
+  { ...opts },
+);
