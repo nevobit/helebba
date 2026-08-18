@@ -10,6 +10,7 @@ import {
   type PosReceipt,
   type PosReceiptLine,
   type PosRegisterId,
+  type PosSession,
   type PosSessionId,
   type PosStore,
   type PosStoreId,
@@ -21,6 +22,7 @@ const stores = () => getModel<PosStore>(Collection.POS_STORES, PosStoreSchemaMon
 const receipts = () => getModel<PosReceipt>(Collection.POS_RECEIPTS, PosReceiptSchemaMongo);
 const products = () => getModel<Product>(Collection.PRODUCTS, ProductSchemaMongo);
 const round = (value: number) => Math.round((value + Number.EPSILON) * 100) / 100;
+const embeddedId = (item: { id?: unknown; _id?: unknown }) => String(item.id ?? item._id ?? '');
 export const openPosSession = async (
   storeId: PosStoreId,
   registerId: PosRegisterId,
@@ -35,7 +37,9 @@ export const openPosSession = async (
     organizationId,
     lifecycleStatus: { $ne: LifecycleStatus.DELETED },
   });
-  const register = store?.registers.find((item) => String(item.id) === String(registerId));
+  const register = store?.registers.find(
+    (item) => embeddedId(item as typeof item & { _id?: unknown }) === String(registerId),
+  );
   if (!store || !register) throw new Error('Tienda o caja registradora no encontrada.');
   if (
     register.status === 'open' ||
@@ -45,27 +49,22 @@ export const openPosSession = async (
   )
     throw new Error('Esta caja ya tiene una sesión abierta.');
   const sessionId = randomUUID() as PosSessionId;
-  const updated = await stores().findOneAndUpdate(
-    { _id: storeId, organizationId, 'registers.id': registerId },
-    {
-      $set: { 'registers.$[register].status': 'open', updatedBy: userId },
-      $push: {
-        sessions: {
-          id: sessionId,
-          registerId,
-          registerName: register.name,
-          openedAt: new Date(),
-          status: 'open',
-          openingBalance,
-          salesTotal: 0,
-          receiptCount: 0,
-          openedBy: userId,
-        },
-      },
-    },
-    { new: true, arrayFilters: [{ 'register.id': registerId }] },
-  );
-  return { store: updated, sessionId };
+  register.id = registerId;
+  register.status = 'open';
+  store.sessions.push({
+    id: sessionId,
+    registerId,
+    registerName: register.name,
+    openedAt: new Date(),
+    status: 'open',
+    openingBalance,
+    salesTotal: 0,
+    receiptCount: 0,
+    openedBy: userId,
+  } as PosSession);
+  store.set('updatedBy', userId);
+  await store.save();
+  return { store, sessionId };
 };
 export const closePosSession = async (
   storeId: PosStoreId,
@@ -84,7 +83,10 @@ export const closePosSession = async (
   const session = store?.sessions.find(
     (item) => String(item.registerId) === String(registerId) && item.status === 'open',
   );
-  if (!store || !session) throw new Error('No hay una sesión abierta para esta caja.');
+  const register = store?.registers.find(
+    (item) => embeddedId(item as typeof item & { _id?: unknown }) === String(registerId),
+  );
+  if (!store || !register || !session) throw new Error('No hay una sesión abierta para esta caja.');
   const completed = await receipts().find({
     organizationId,
     sessionId: session.id,
@@ -100,23 +102,17 @@ export const closePosSession = async (
   );
   const expectedBalance = round(session.openingBalance + cashSales);
   const discrepancy = round(closingBalance - expectedBalance);
-  const updated = await stores().findOneAndUpdate(
-    { _id: storeId, organizationId },
-    {
-      $set: {
-        'registers.$[register].status': 'closed',
-        'sessions.$[session].status': 'closed',
-        'sessions.$[session].closedAt': new Date(),
-        'sessions.$[session].closingBalance': closingBalance,
-        'sessions.$[session].expectedBalance': expectedBalance,
-        'sessions.$[session].discrepancy': discrepancy,
-        'sessions.$[session].closedBy': userId,
-        updatedBy: userId,
-      },
-    },
-    { new: true, arrayFilters: [{ 'register.id': registerId }, { 'session.id': session.id }] },
-  );
-  return { store: updated, expectedBalance, discrepancy };
+  register.id = registerId;
+  register.status = 'closed';
+  session.status = 'closed';
+  session.closedAt = new Date();
+  session.closingBalance = closingBalance;
+  session.expectedBalance = expectedBalance;
+  session.discrepancy = discrepancy;
+  session.closedBy = userId;
+  store.set('updatedBy', userId);
+  await store.save();
+  return { store, expectedBalance, discrepancy };
 };
 export type PosSaleInput = {
   lines: Array<{ productId: ProductId; variantId?: string; quantity: number }>;
@@ -142,7 +138,9 @@ export const createPosSale = async (
           lifecycleStatus: { $ne: LifecycleStatus.DELETED },
         })
         .session(dbSession);
-      const register = store?.registers.find((item) => String(item.id) === String(registerId));
+      const register = store?.registers.find(
+        (item) => embeddedId(item as typeof item & { _id?: unknown }) === String(registerId),
+      );
       const posSession = store?.sessions.find(
         (item) => String(item.registerId) === String(registerId) && item.status === 'open',
       );
