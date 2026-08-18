@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Modal, TextInput } from '@hlb/design-system';
 import type { WarehouseId } from '@hlb/contracts';
+import { Info, Store } from 'lucide-react';
 import { useWarehouses } from '@/modules/inventary/warehouses/hooks';
 import { usePosMutations } from '../../hooks';
 import styles from './StoreModal.module.css';
@@ -44,24 +45,35 @@ export const StoreModal = ({ closeModal }: { closeModal: () => void }) => {
       </Modal.Header>
       <Modal.Body className={styles.body}>
         <div className={styles.notice}>
-          <strong>Esta acción puede afectar tu suscripción</strong>
-          <span>La facturación del POS puede depender del número de tiendas activas.</span>
+          <Info size={17} aria-hidden />
+          <div>
+            <strong>Esta acción afectará tu suscripción</strong>
+            <span>Ten en cuenta que la suscripción al TPV se factura por tienda creada.</span>
+          </div>
         </div>
-        <p>Crea el perfil de tu tienda y selecciona una bodega para controlar el stock.</p>
+        <p className={styles.intro}>
+          Crea el perfil de tu tienda y selecciona un almacén para controlar el stock de tus
+          productos.
+        </p>
+        <div className={styles.nameRow}>
+          <div className={styles.storeIcon}>
+            <Store size={22} aria-hidden />
+          </div>
+          <TextInput
+            label="Nombre de la tienda"
+            placeholder="Escribe el nombre de tu tienda"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
         <TextInput
-          label="Nombre de la tienda *"
-          placeholder="Escribe el nombre de tu tienda"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <TextInput
-          label="Dirección de la tienda *"
+          label="Dirección de la tienda"
           placeholder="Escribe la dirección de tu tienda"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
         />
         <label className={styles.field}>
-          <span>Bodega</span>
+          <span>Almacén</span>
           <select
             value={selectedWarehouse}
             disabled={isLoading}
@@ -78,10 +90,13 @@ export const StoreModal = ({ closeModal }: { closeModal: () => void }) => {
         </label>
         <TextInput
           label="Número de teléfono (opcional)"
-          placeholder="Número que aparecerá en los recibos"
+          placeholder="Escribe el número de teléfono de la tienda"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
+        <span className={styles.helper}>
+          Este es el número que aparecerá en los recibos de tu tienda.
+        </span>
         {error && <p className={styles.error}>{error}</p>}
       </Modal.Body>
       <Modal.Footer className={styles.footer}>

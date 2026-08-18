@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Button, useModal } from '@hlb/design-system';
-import { Plus } from 'lucide-react';
+import { BarChart3, Coins, Filter, List, LockKeyhole, MoreVertical, Plus } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { OpportunityModal } from '../../components/OpportunityModal';
 import { useCrmFunnel, useCrmFunnels, useCrmMutations, useCrmOpportunities } from '../../hooks';
@@ -28,36 +28,22 @@ const FunnelBoard = () => {
       <OpportunityModal funnel={funnel} initialStageId={stageId} closeModal={closeModal} />,
       { id: 'new-crm-opportunity' },
     );
+  const totalValue = opportunities.reduce((sum, item) => sum + item.value, 0);
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <div>
-          <span>CRM</span>
-          <h1>Embudo de ventas</h1>
-        </div>
+        <h1>{funnel.name}</h1>
         <div className={styles.actions}>
-          <select
-            value={String(funnel.id)}
-            onChange={(event) => navigate(`/crm/funnels/${event.target.value}`)}
-          >
-            {funnels.map((item) => (
-              <option key={String(item.id)} value={String(item.id)}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+          <LockKeyhole size={18}/><span className={styles.avatar}>NM</span><button className={styles.addUser}>+</button>
+          <div className={styles.views}><button className={styles.selectedView}><BarChart3 size={17}/></button><button><List size={17}/></button><button><Coins size={17}/></button></div>
+          <details className={styles.funnelMenu}><summary>{funnel.name}</summary><div>{funnels.map(item=><Link key={String(item.id)} to={`/crm/funnels/${item.id}`}>{item.name}</Link>)}<Link to="/crm/funnel/new"><Plus size={16}/> Nuevo embudo</Link></div></details>
+          <button className={styles.more}><MoreVertical size={18}/></button>
           <Button icon={<Plus size={16} />} onClick={() => add(String(funnel.stages[0]?.id))}>
             Nueva oportunidad
           </Button>
         </div>
       </header>
-      <div className={styles.subheader}>
-        <div>
-          <strong>{funnel.name}</strong>
-          {funnel.isDefault && <span>Predeterminado</span>}
-        </div>
-        <Link to="/crm/funnel/new">+ Nuevo embudo</Link>
-      </div>
+      <div className={styles.summary}><strong>{money(totalValue)} · {opportunities.length} {opportunities.length===1?'Oportunidad':'Oportunidades'}</strong><button><Filter size={17}/> Filtros</button></div>
       <section className={styles.board}>
         {[...funnel.stages]
           .sort((a, b) => a.order - b.order)

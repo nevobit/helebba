@@ -13,6 +13,8 @@ export interface CrmStage {
   color: string;
   order: number;
   probability: number;
+  description?: string;
+  stagnationDays?: number;
 }
 export interface CrmFunnel extends PersistedSoftDeletableEntity<CrmFunnelId, UserId> {
   name: string;
@@ -26,10 +28,17 @@ export interface CrmOpportunity extends PersistedSoftDeletableEntity<CrmOpportun
   name: string;
   contactId?: ContactId;
   contactName: string;
+  companyId?: ContactId;
+  companyName?: string;
   value: number;
   currency: string;
   expectedCloseDate?: Date;
   notes: string;
+  assignedToName?: string;
+  tags?: string[];
+  probability?: number;
+  relatedDocumentType?: string;
+  relatedDocumentId?: string;
   status: 'open' | 'won' | 'lost';
   order: number;
 }
