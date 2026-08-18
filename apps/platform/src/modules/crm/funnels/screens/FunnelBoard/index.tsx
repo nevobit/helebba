@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Button, useModal } from '@hlb/design-system';
-import { Plus, Settings2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { OpportunityModal } from '../../components/OpportunityModal';
 import { useCrmFunnel, useCrmFunnels, useCrmMutations, useCrmOpportunities } from '../../hooks';
@@ -46,9 +46,6 @@ const FunnelBoard = () => {
               </option>
             ))}
           </select>
-          <Button variant="outline" theme="optional" icon={<Settings2 size={16} />}>
-            Configurar
-          </Button>
           <Button icon={<Plus size={16} />} onClick={() => add(String(funnel.stages[0]?.id))}>
             Nueva oportunidad
           </Button>
