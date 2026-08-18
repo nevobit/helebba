@@ -2,6 +2,8 @@
   min-height: 100%;
   background: #fff;
   padding: 2.8rem 3.2rem;
+  color: #101828;
+  font-size: var(--ds-font-size-14);
 }
 .header {
   display: flex;
@@ -10,6 +12,8 @@
 }
 .header h1 {
   margin: 0;
+  font-size: var(--ds-font-size-24);
+  line-height: 1.25;
 }
 .actions {
   display: flex;
@@ -42,9 +46,11 @@
 }
 .empty h2 {
   margin: 1.5rem 0 0.5rem;
+  font-size: var(--ds-font-size-20);
 }
 .empty p {
   color: #667085;
+  font-size: var(--ds-font-size-14);
 }
 .layout {
   display: grid;
@@ -75,6 +81,7 @@
 .sales h2,
 .store h2 {
   margin-top: 0;
+  font-size: var(--ds-font-size-18);
 }
 .sales {
   margin-top: 2rem;
@@ -103,6 +110,7 @@
 }
 .store p {
   color: #667085;
+  font-size: var(--ds-font-size-14);
 }
 .registers {
   border-top: 1px solid #eaecf0;

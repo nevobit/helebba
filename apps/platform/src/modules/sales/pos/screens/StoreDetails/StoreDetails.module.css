@@ -2,16 +2,23 @@
   min-height: 100%;
   background: #fff;
   padding: 2.5rem 3rem;
+  color: #101828;
+  font-size: var(--ds-font-size-14);
 }
 .header {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
+.header h1 {
+  margin: 0;
+  font-size: var(--ds-font-size-24);
+  line-height: 1.25;
+}
 .back {
   text-decoration: none;
   color: #344054;
-  font-size: 2.5rem;
+  font-size: var(--ds-font-size-24);
 }
 .layout {
   display: grid;
@@ -30,6 +37,7 @@
 .info p {
   color: #667085;
   margin-bottom: 0.3rem;
+  font-size: var(--ds-font-size-12);
 }
 .info strong {
   display: block;
@@ -55,6 +63,11 @@
   display: flex;
   justify-content: space-between;
 }
+.info h2,
+.registerHeader h2,
+.sessions h2 {
+  font-size: var(--ds-font-size-18);
+}
 .registers {
   display: flex;
   flex-wrap: wrap;
@@ -66,11 +79,20 @@
   border-radius: 0.7rem;
   padding: 1.6rem;
 }
+.register h3 {
+  margin-bottom: 0.4rem;
+  font-size: var(--ds-font-size-16);
+}
+.register p {
+  color: #667085;
+  font-size: var(--ds-font-size-14);
+}
 .badge {
   float: right;
   border-radius: 2rem;
   background: #f2f4f7;
   padding: 0.4rem 0.8rem;
+  font-size: var(--ds-font-size-12);
 }
 .badgeOpen {
   color: #067647;
@@ -94,6 +116,7 @@
   border-bottom: 1px solid #eaecf0;
   padding: 1.2rem;
   color: #667085;
+  font-size: var(--ds-font-size-12);
 }
 .receiptHead {
   grid-template-columns: 1.4fr 1fr 1.4fr 1fr 1fr;
