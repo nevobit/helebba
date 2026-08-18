@@ -21,6 +21,7 @@ export type CreateProductPayload = Partial<
     | 'hasStock'
     | 'images'
     | 'inCatalog'
+    | 'inPos'
     | 'name'
     | 'price'
     | 'purchasePrice'

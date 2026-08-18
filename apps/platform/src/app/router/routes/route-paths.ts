@@ -13,6 +13,7 @@ export const PrivateRoutes = {
   SERVICES: '/services',
   PRODUCTS: '/products',
   CATALOG: '/catalog',
+  POS: '/pos',
   CATEGORIES: '/categories',
   BRANDS: '/brands',
   WAREHOUSES: '/inventory/warehouses',

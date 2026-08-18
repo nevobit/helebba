@@ -16,6 +16,7 @@ export const ProductSchemaMongo = new Schema<Product>(
     description: { type: String },
     typeId: { type: String },
     inCatalog: { type: Boolean },
+    inPos: { type: Boolean, default: false },
     images: { type: [String] },
     customFields: [
       {

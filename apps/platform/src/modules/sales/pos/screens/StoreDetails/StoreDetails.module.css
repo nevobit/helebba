@@ -1,0 +1,119 @@
+.page {
+  min-height: 100%;
+  background: #fff;
+  padding: 2.5rem 3rem;
+}
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.back {
+  text-decoration: none;
+  color: #344054;
+  font-size: 2.5rem;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 32rem minmax(0, 1fr);
+  gap: 2rem;
+  margin-top: 2rem;
+}
+.info,
+.registerSection,
+.sessions {
+  border: 1px solid #e4e7ec;
+  border-radius: 0.8rem;
+  background: #fff;
+  padding: 2rem;
+}
+.info p {
+  color: #667085;
+  margin-bottom: 0.3rem;
+}
+.info strong {
+  display: block;
+  margin-bottom: 1.5rem;
+}
+.map {
+  display: grid;
+  place-items: center;
+  height: 20rem;
+  background: linear-gradient(135deg, #e8eef7, #d7e2f0);
+  color: #667085;
+}
+.notice {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #4385ff;
+  border-radius: 0.7rem;
+  background: #eef4ff;
+  padding: 1rem 1.5rem;
+}
+.registerHeader {
+  display: flex;
+  justify-content: space-between;
+}
+.registers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+}
+.register {
+  width: 30rem;
+  border: 1px solid #e4e7ec;
+  border-radius: 0.7rem;
+  padding: 1.6rem;
+}
+.badge {
+  float: right;
+  border-radius: 2rem;
+  background: #f2f4f7;
+  padding: 0.4rem 0.8rem;
+}
+.badgeOpen {
+  color: #067647;
+  background: #ecfdf3;
+}
+.actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+.sessions {
+  margin-top: 2rem;
+  min-height: 20rem;
+}
+.tableHead,
+.receiptHead {
+  display: grid;
+  grid-template-columns: 1.4fr 1.2fr 1.2fr 1.2fr 0.7fr;
+  gap: 1rem;
+  border-top: 1px solid #eaecf0;
+  border-bottom: 1px solid #eaecf0;
+  padding: 1.2rem;
+  color: #667085;
+}
+.receiptHead {
+  grid-template-columns: 1.4fr 1fr 1.4fr 1fr 1fr;
+}
+.empty {
+  display: grid;
+  place-items: center;
+  min-height: 12rem;
+  color: #667085;
+}
+@media (max-width: 850px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .page {
+    padding: 2rem 1.5rem;
+  }
+  .tableHead,
+  .receiptHead {
+    overflow: auto;
+    grid-template-columns: repeat(5, minmax(12rem, 1fr));
+  }
+}

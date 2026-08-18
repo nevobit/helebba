@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { PrivateRoutes } from '@/app/router/routes';
-import { useCreateProductModal, useDeleteProduct, useProduct } from '../../hooks';
+import { useCreateProductModal, useDeleteProduct, useProduct, useUpdateProduct } from '../../hooks';
 import styles from './ProductDetails.module.css';
 
 const moneyFormatter = new Intl.NumberFormat('es-CO', {
@@ -31,6 +31,7 @@ const ProductDetails = () => {
   const { openEditProductModal } = useCreateProductModal();
   const { deleteProduct, isDeletingProduct } = useDeleteProduct();
   const { requestCloseModal } = useModal();
+  const { updateProduct, isUpdatingProduct } = useUpdateProduct(productId);
   const navigate = useNavigate();
 
   const confirmDelete = () => {
@@ -181,7 +182,14 @@ const ProductDetails = () => {
                 <strong>Punto de venta</strong>
                 <p>Activa esta opción para mostrar este producto en tu app TPV.</p>
               </div>
-              <button type="button" className={styles.switch} aria-label="Activar punto de venta" />
+              <button
+                type="button"
+                className={`${styles.switch} ${product?.inPos ? styles.switchActive : ''}`}
+                aria-label={product?.inPos ? 'Desactivar punto de venta' : 'Activar punto de venta'}
+                aria-pressed={Boolean(product?.inPos)}
+                disabled={isUpdatingProduct || !product}
+                onClick={() => updateProduct({ inPos: !product?.inPos }, { onSuccess: () => refetch() })}
+              />
             </div>
           </section>
 

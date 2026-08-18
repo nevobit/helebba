@@ -69,7 +69,7 @@ export const defaultNavigation: NavigationItem[] = [
         name: 'Punto de venta',
         path: '/pos',
         position: 6,
-        isVisible: false,
+        isVisible: true,
         isSystem: true,
         parentId: 'sales',
       },

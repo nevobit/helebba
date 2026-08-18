@@ -1,0 +1,40 @@
+.body {
+  display: grid;
+  gap: 1.6rem;
+}
+.notice {
+  border: 1px solid #4385ff;
+  border-radius: 0.7rem;
+  background: #eef4ff;
+  color: #344054;
+  padding: 1.4rem 1.6rem;
+}
+.notice strong,
+.notice span {
+  display: block;
+}
+.notice span {
+  margin-top: 0.4rem;
+}
+.field {
+  display: grid;
+  gap: 0.5rem;
+  color: #667085;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.field select {
+  min-height: 4rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.5rem;
+  background: #fff;
+  padding: 0.8rem;
+}
+.error {
+  color: #b42318;
+}
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}

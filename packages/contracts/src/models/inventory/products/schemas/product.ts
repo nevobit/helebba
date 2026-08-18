@@ -60,6 +60,7 @@ export interface Product extends PersistedSoftDeletableEntity<ProductId, UserId>
   description: string;
   typeId: string;
   inCatalog: boolean;
+  inPos: boolean;
   images: string[];
   customFields: CustomField[];
   contactId: string;

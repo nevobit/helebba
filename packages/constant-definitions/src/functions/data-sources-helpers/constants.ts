@@ -8,6 +8,8 @@ export enum Collection {
   CATEGORIES = 'categories',
   PRODUCT_FIELD_DEFINITIONS = 'product_field_definitions',
   CATALOGS = 'catalogs',
+  POS_STORES = 'pos_stores',
+  POS_RECEIPTS = 'pos_receipts',
   BRANDS = 'brands',
   CONTACTS = 'contacts',
   WAREHOUSES = 'warehouses',

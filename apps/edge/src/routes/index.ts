@@ -18,6 +18,7 @@ import { mediaRoutes } from './media';
 import { sdkRoutes } from './sdk';
 import { productFieldDefinitionRoutes } from './inventory/product-field-definitions';
 import { catalogRoutes } from './inventory/catalogs';
+import { posRoutes } from './sales/pos';
 
 const routes: RouteOptions[] = [
   ...opsRoutes,
@@ -41,6 +42,7 @@ const routes: RouteOptions[] = [
   ...sdkRoutes,
   ...productFieldDefinitionRoutes,
   ...catalogRoutes,
+  ...posRoutes,
 ];
 
 export const registerRoutes = (app: FastifyInstance) => {

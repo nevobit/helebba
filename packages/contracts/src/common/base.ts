@@ -27,6 +27,10 @@ export type DocumentId = Brand<string, 'DocumentId'>;
 export type ApiKeyId = Brand<string, 'ApiKeyId'>;
 export type ProductFieldDefinitionId = Brand<string, 'ProductFieldDefinitionId'>;
 export type CatalogId = Brand<string, 'CatalogId'>;
+export type PosStoreId = Brand<string, 'PosStoreId'>;
+export type PosRegisterId = Brand<string, 'PosRegisterId'>;
+export type PosSessionId = Brand<string, 'PosSessionId'>;
+export type PosReceiptId = Brand<string, 'PosReceiptId'>;
 
 export interface BaseEntity<TId = EntityId> {
   readonly id: TId;

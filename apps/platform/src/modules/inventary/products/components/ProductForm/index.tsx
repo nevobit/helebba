@@ -53,6 +53,7 @@ type ProductFormState = {
   forSale: boolean;
   forPurchase: boolean;
   inCatalog: boolean;
+  inPos: boolean;
 };
 
 type VariantFormState = {
@@ -239,6 +240,7 @@ const initialState: ProductFormState = {
   forSale: true,
   forPurchase: true,
   inCatalog: false,
+  inPos: false,
 };
 
 const productToFormState = (product?: Product): ProductFormState => product ? {
@@ -269,6 +271,7 @@ const productToFormState = (product?: Product): ProductFormState => product ? {
   forSale: Boolean(product.forSale),
   forPurchase: Boolean(product.forPurchase),
   inCatalog: Boolean(product.inCatalog),
+  inPos: Boolean(product.inPos),
 } : initialState;
 
 const productToVariants = (product?: Product): VariantFormState[] => (product?.variants ?? []).map((variant) => ({
@@ -479,6 +482,7 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
       forPurchase: formState.forPurchase,
       forProduction: formState.manufactured,
       inCatalog: formState.inCatalog,
+      inPos: formState.inPos,
       contactId: selectedSupplier?.id,
       contactName: selectedSupplier?.name,
       manageLots: formState.manageLots,
@@ -1097,6 +1101,7 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
               ['forSale', 'Disponible para venta'],
               ['forPurchase', 'Disponible para compra'],
               ['inCatalog', 'Mostrar en catálogo'],
+              ['inPos', 'Disponible en punto de venta'],
             ].map(([name, label]) => (
               <label className={styles.checkboxField} key={name}>
                 <input
