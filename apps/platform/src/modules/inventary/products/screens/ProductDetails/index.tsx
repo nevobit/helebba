@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Button, Menus, useModal } from '@hlb/design-system';
 import {
   ArrowLeft,
@@ -5,7 +6,6 @@ import {
   BookOpen,
   Check,
   Grid2X2Plus,
-  ImagePlus,
   Library,
   PackageOpen,
   Plus,
@@ -13,6 +13,9 @@ import {
 } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { PrivateRoutes } from '@/app/router/routes';
+import { CatalogModal } from '@/modules/catalog/components/CatalogModal';
+import { useCatalogs } from '@/modules/catalog/hooks';
+import { ImageUploader } from '@/modules/media/components';
 import { useCreateProductModal, useDeleteProduct, useProduct, useUpdateProduct } from '../../hooks';
 import styles from './ProductDetails.module.css';
 
@@ -30,9 +33,25 @@ const ProductDetails = () => {
   const { error, isLoading, product, refetch } = useProduct(productId);
   const { openEditProductModal } = useCreateProductModal();
   const { deleteProduct, isDeletingProduct } = useDeleteProduct();
-  const { requestCloseModal } = useModal();
+  const { openModal, closeModal, requestCloseModal } = useModal();
   const { updateProduct, isUpdatingProduct } = useUpdateProduct(productId);
+  const { catalogs } = useCatalogs();
   const navigate = useNavigate();
+
+  const productCatalogs = useMemo(
+    () =>
+      catalogs.filter(
+        (catalog) =>
+          catalog.selectionMode === 'all' ||
+          catalog.productIds.map(String).includes(String(product?.id)),
+      ),
+    [catalogs, product?.id],
+  );
+
+  const openCatalogModal = () =>
+    openModal(<CatalogModal closeModal={closeModal} onSuccess={() => refetch()} />, {
+      id: 'create-catalog-from-product',
+    });
 
   const confirmDelete = () => {
     if (!productId || isDeletingProduct) return;
@@ -137,10 +156,6 @@ const ProductDetails = () => {
 
       <div className={styles.layout}>
         <aside className={styles.sidebar}>
-          <button type="button" className={styles.linkButton}>
-            <Plus size={15} /> Subir imagen
-          </button>
-
           <div className={styles.priceSummary}>
             <div>
               <span>Precio</span>
@@ -170,8 +185,23 @@ const ProductDetails = () => {
               </span>
               <strong>Catálogo B2B</strong>
             </div>
-            <button type="button" className={styles.linkButton}>
-              <Plus size={15} /> Crea tu primer catálogo
+            {productCatalogs.length > 0 ? (
+              <ul className={styles.catalogList}>
+                {productCatalogs.map((catalog) => (
+                  <li key={String(catalog.id)} className={styles.catalogItem}>
+                    <Link to={PrivateRoutes.CATALOG}>{catalog.name}</Link>
+                    <span className={catalog.active ? styles.catalogBadge : styles.catalogBadgeOff}>
+                      {catalog.active ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className={styles.catalogEmpty}>Este producto aún no pertenece a ningún catálogo.</p>
+            )}
+            <button type="button" className={styles.linkButton} onClick={openCatalogModal}>
+              <Plus size={15} />
+              {productCatalogs.length > 0 ? 'Añadir a un catálogo' : 'Crea tu primer catálogo'}
             </button>
           </section>
 
@@ -195,9 +225,12 @@ const ProductDetails = () => {
 
           <section className={styles.sidebarSection}>
             <span className={styles.sectionLabel}>Imágenes</span>
-            <button type="button" className={styles.imageUpload} aria-label="Subir imagen">
-              <ImagePlus size={27} />
-            </button>
+            <ImageUploader
+              folder="products/images"
+              value={product?.images ?? []}
+              disabled={isUpdatingProduct || !product}
+              onChange={(images) => updateProduct({ images }, { onSuccess: () => refetch() })}
+            />
           </section>
 
           <section className={styles.sidebarSection}>
@@ -222,7 +255,14 @@ const ProductDetails = () => {
               'Proveedores del producto',
               'Precio de compra histórico',
             ].map((label) => (
-              <Button key={label} type="button" theme="optional" variant="outline" size="medium">
+              <Button
+                key={label}
+                type="button"
+                theme="optional"
+                variant="outline"
+                size="medium"
+                className={styles.reportButton}
+              >
                 {label}
               </Button>
             ))}
