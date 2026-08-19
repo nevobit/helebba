@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto';
+import { jwtVerify } from 'jose';
 import type { RefreshTokenPayload } from '@hlb/contracts';
 
 export interface RefreshTokenResult {
@@ -22,6 +23,22 @@ export const buildRefreshTokenPayload = (payload: RefreshTokenPayload): RefreshT
     ...payload,
     type: 'refresh',
   };
+};
+
+export const verifyRefreshToken = async (token: string): Promise<RefreshTokenPayload> => {
+  const secret = new TextEncoder().encode(process.env.JWT_REFRESH_SECRET);
+  const result = await jwtVerify(token, secret, {
+    issuer: 'helebba.auth',
+    audience: 'helebba.api',
+  });
+
+  const payload = result.payload as unknown as RefreshTokenPayload;
+
+  if (payload.type !== 'refresh' || !payload.sessionId || !payload.userId) {
+    throw new Error('Invalid refresh token');
+  }
+
+  return payload;
 };
 
 const sha256 = (value: string): string => {

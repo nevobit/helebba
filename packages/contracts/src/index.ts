@@ -6,4 +6,6 @@ export type {
   Session as AccessSession,
   SessionDevice,
   UpdateSessionDto,
+  RefreshTokenKind,
+  RefreshTokenPayload,
 } from './models/access/sessions';

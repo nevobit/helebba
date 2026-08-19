@@ -24,6 +24,12 @@ type SessionState = {
     refreshToken: string;
   }) => void;
 
+  setSessionTokens: (p: {
+    token: string;
+    refreshToken?: string;
+    accessExp?: string;
+  }) => void;
+
   signOut: () => void;
   changeAccount: () => void;
 
@@ -55,6 +61,14 @@ export const useSession = create<SessionState>()(
           accessExp,
           refreshToken,
           status: 'auth',
+        });
+      },
+
+      setSessionTokens: ({ token, refreshToken, accessExp }) => {
+        set({
+          token,
+          refreshToken: refreshToken ?? get().refreshToken,
+          accessExp: accessExp ?? get().accessExp,
         });
       },
 

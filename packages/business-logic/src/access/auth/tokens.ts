@@ -51,9 +51,12 @@ export async function issueTokens(input: IssueTokensInput) {
     secretOrPrivateKey: process.env.JWT_REFRESH_SECRET!,
     payload: {
       typ: 'refresh',
-      kind: 'global',
+      kind,
       userId,
       sessionId,
+      organizationId: kind === 'organization' ? organizationId : undefined,
+      membershipId: kind === 'organization' ? membershipId : undefined,
+      roleId: kind === 'organization' ? roleId : undefined,
       jti: crypto.randomUUID(),
     },
     issuer: 'helebba.auth',

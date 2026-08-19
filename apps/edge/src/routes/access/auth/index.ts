@@ -7,6 +7,8 @@ import { otpSignupRoute } from './otp-signup';
 import { otpVerifyRoute } from './otp-verify';
 import { sendEmailCodeRoute } from './send-email-code';
 import { loginGoogleRoute } from './login-google';
+import { refreshRoute } from './refresh';
+import { logoutRoute } from './logout';
 
 export const authRoutes: RouteOptions[] = withPrefix('/auth', [
   otpLoginRoute,
@@ -16,4 +18,6 @@ export const authRoutes: RouteOptions[] = withPrefix('/auth', [
   loginRoute,
   switchOrganizationRoute,
   loginGoogleRoute,
+  refreshRoute,
+  logoutRoute,
 ]);

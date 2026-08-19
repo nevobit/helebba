@@ -44,3 +44,21 @@ export const signup = async (email: string) => {
 
   return data;
 };
+
+export const refreshSession = async (refreshToken: string) => {
+  const { data } = await api.post<{
+    token: string;
+    refreshToken: string;
+    expiresAt?: string;
+  }>('/auth/refresh', { refreshToken });
+
+  return data;
+};
+
+export const logoutSession = async (all = false) => {
+  const { data } = await api.post<{ ok: boolean; revokedCount?: number }>('/auth/logout', {
+    all,
+  });
+
+  return data;
+};

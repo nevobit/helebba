@@ -104,7 +104,8 @@ export const Menus: React.FC<MenusProps> & {
     if (openId == null) return;
     const onDocClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target.closest("[data-ds-menu-root='true']")) return; // inside menus
+      if (target.closest("[data-ds-menu-root='true']")) return; // clic dentro de la lista abierta
+      if (lastToggleRef.current?.contains(target)) return; // el toggle maneja su propio toggle
       closeAll();
     };
     const onEsc = (e: KeyboardEvent) => {
@@ -123,7 +124,7 @@ export const Menus: React.FC<MenusProps> & {
 
   return (
     <MenusContext.Provider value={value}>
-      <div data-ds-menu-root="true" className={styles.scope}>
+      <div className={styles.scope}>
         {React.Children.map(children, (child) =>
           React.isValidElement(child)
             ? React.cloneElement(

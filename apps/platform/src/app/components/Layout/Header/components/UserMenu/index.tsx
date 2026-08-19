@@ -4,6 +4,8 @@ import styles from './UserMenu.module.css';
 import { Code2, LogOut, Settings, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google';
+import { PublicRoutes } from '@/app/router/routes/route-paths';
+import { useLogout } from '@/modules/auth/hooks';
 import {
   SETTINGS_DATA_HASH,
   SETTINGS_DEVELOPER_CREDENTIALS_HASH,
@@ -15,6 +17,7 @@ export const UserMenu = () => {
   const user = useSession((state) => state.user);
   const organization = useSession((state) => state.organization);
   const signOut = useSession((state) => state.signOut);
+  const { logout, isLoggingOut } = useLogout();
 
   const navigate = useNavigate();
 
@@ -22,10 +25,14 @@ export const UserMenu = () => {
     window.location.hash = route;
   };
 
-  const logout = () => {
-    googleLogout();
-    signOut();
-    navigate('/login', { replace: true });
+  const handleLogout = () => {
+    logout(undefined, {
+      onSettled: () => {
+        googleLogout();
+        signOut();
+        navigate(PublicRoutes.LOGIN, { replace: true });
+      },
+    });
   };
 
   return (
@@ -69,8 +76,8 @@ export const UserMenu = () => {
             <Code2 size={16} /> <span> API Tokens</span>
           </Menus.Item>
 
-          <Menus.Item className={styles.btn} id="logout" onClick={logout}>
-            <LogOut size={16} /> <span> Cerrar sesión</span>
+          <Menus.Item className={styles.btn} id="logout" onClick={handleLogout}>
+            <LogOut size={16} /> <span>{isLoggingOut ? 'Cerrando sesión...' : 'Cerrar sesión'}</span>
           </Menus.Item>
         </span>
       </Menus.List>

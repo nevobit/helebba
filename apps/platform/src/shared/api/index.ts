@@ -1,4 +1,4 @@
-import type { AxiosError, AxiosInstance } from 'axios';
+import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import SHA256 from 'crypto-js/sha256';
 import HmacSHA256 from 'crypto-js/hmac-sha256';
@@ -52,20 +52,85 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+type RetriableRequest = InternalAxiosRequestConfig & { _retry?: boolean };
+
+let isRefreshing = false;
+let pendingQueue: Array<(token: string | null) => void> = [];
+
+const flushQueue = (token: string | null) => {
+  pendingQueue.forEach((resolve) => resolve(token));
+  pendingQueue = [];
+};
+
+const tryRefreshToken = async (): Promise<string | null> => {
+  const { refreshToken } = useSession.getState();
+  if (!refreshToken) return null;
+
+  const { data } = await api.post<{ token: string; refreshToken: string; expiresAt?: string }>(
+    '/auth/refresh',
+    { refreshToken },
+  );
+
+  useSession.getState().setSessionTokens({
+    token: data.token,
+    refreshToken: data.refreshToken,
+    accessExp: data.expiresAt,
+  });
+
+  return data.token;
+};
+
 api.interceptors.response.use(
   (res) => res,
-  (err: AxiosError<unknown>) => {
-    if (err.response?.status === 401) {
+  async (error: AxiosError<unknown>) => {
+    const original = error.config as RetriableRequest | undefined;
+    const status = error.response?.status;
+
+    if (status === 401 && original && !original._retry && original.url !== '/auth/refresh') {
+      original._retry = true;
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          pendingQueue.push((token) => {
+            if (!token) {
+              reject(new Error('Sesión expirada'));
+              return;
+            }
+            original.headers.set('Authorization', `Bearer ${token}`);
+            resolve(api(original));
+          });
+        });
+      }
+
+      isRefreshing = true;
       try {
+        const token = await tryRefreshToken();
+        flushQueue(token);
+
+        if (!token) {
+          useSession.getState().signOut();
+          return Promise.reject(new Error('Sesión expirada'));
+        }
+
+        original.headers.set('Authorization', `Bearer ${token}`);
+        return api(original);
+      } catch (refreshError) {
+        flushQueue(null);
         useSession.getState().signOut();
-      } catch {
-        throw new Error('Error');
+        return Promise.reject(refreshError instanceof Error ? refreshError : new Error('Sesión expirada'));
+      } finally {
+        isRefreshing = false;
       }
     }
+
+    if (status === 401) {
+      useSession.getState().signOut();
+    }
+
     const msg =
-      (err.response?.data as Record<string, unknown>)?.message ||
-      err.message ||
-      `HTTP ${err.response?.status ?? 'ERR'}`;
+      (error.response?.data as Record<string, unknown>)?.message ||
+      error.message ||
+      `HTTP ${error.response?.status ?? 'ERR'}`;
     return Promise.reject(new Error(msg as string));
   },
 );

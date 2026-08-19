@@ -15,7 +15,7 @@ export const logout = async (input: LogoutInput) => {
 
   if (input.all) {
     const res = await model.updateMany(
-      { userId: input.userId, lifecicleStatus: LifecycleStatus.ACTIVE },
+      { userId: input.userId, lifecycleStatus: LifecycleStatus.ACTIVE },
       { $set: { status: 'revoked', revokedAt: now, revokeReason: 'logout_all' } },
     );
     return { ok: true, revokedCount: res.modifiedCount ?? 0 };
