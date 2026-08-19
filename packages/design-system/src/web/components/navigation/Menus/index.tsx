@@ -105,7 +105,7 @@ export const Menus: React.FC<MenusProps> & {
     const onDocClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (target.closest("[data-ds-menu-root='true']")) return; // clic dentro de la lista abierta
-      if (lastToggleRef.current?.contains(target)) return; // el toggle maneja su propio toggle
+      if (target.closest("[aria-haspopup='menu']")) return; // el toggle maneja su propio toggle
       closeAll();
     };
     const onEsc = (e: KeyboardEvent) => {
