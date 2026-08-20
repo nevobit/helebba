@@ -5,5 +5,5 @@ import { listStockMovementsRoute } from './list';
 
 export const stockMovementRoutes: RouteOptions[] = withPrefix('/products', [
   createStockMovementRoute,
-  listStockMovementRoutes,
+  listStockMovementsRoute,
 ]);
