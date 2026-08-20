@@ -1,18 +1,10 @@
 import { useMemo } from 'react';
 import { Button, Menus, useModal } from '@hlb/design-system';
-import {
-  ArrowLeft,
-  Check,
-  Library,
-  PackageOpen,
-  Plus,
-  X,
-} from 'lucide-react';
+import { ArrowLeft, Check, Library, PackageOpen, Plus, UploadIcon, X, XIcon } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { PrivateRoutes } from '@/app/router/routes';
 import { CatalogModal } from '@/modules/catalog/components/CatalogModal';
 import { useCatalogs } from '@/modules/catalog/hooks';
-import { ImageUploader } from '@/modules/media/components';
 import { useCreateProductModal, useDeleteProduct, useProduct, useUpdateProduct } from '../../hooks';
 import styles from './ProductDetails.module.css';
 
@@ -56,7 +48,8 @@ const ProductDetails = () => {
       description: `El producto “${product?.name ?? 'Producto'}” dejará de estar disponible. ¿Deseas continuar?`,
       confirmLabel: 'Eliminar producto',
       cancelLabel: 'Cancelar',
-      onConfirm: () => deleteProduct(productId, { onSuccess: () => navigate(PrivateRoutes.PRODUCTS) }),
+      onConfirm: () =>
+        deleteProduct(productId, { onSuccess: () => navigate(PrivateRoutes.PRODUCTS) }),
     });
   };
 
@@ -89,7 +82,11 @@ const ProductDetails = () => {
   if (error) {
     return (
       <main className={styles.page}>
-        <Link to={PrivateRoutes.PRODUCTS} className={styles.backIcon} aria-label="Volver a productos">
+        <Link
+          to={PrivateRoutes.PRODUCTS}
+          className={styles.backIcon}
+          aria-label="Volver a productos"
+        >
           <ArrowLeft size={17} />
         </Link>
         <section className={styles.feedback}>
@@ -106,7 +103,11 @@ const ProductDetails = () => {
     <main className={styles.page}>
       <header className={styles.header}>
         <div className={styles.titleArea}>
-          <Link to={PrivateRoutes.PRODUCTS} className={styles.backIcon} aria-label="Volver a productos">
+          <Link
+            to={PrivateRoutes.PRODUCTS}
+            className={styles.backIcon}
+            aria-label="Volver a productos"
+          >
             <ArrowLeft size={17} />
           </Link>
           <span className={styles.avatar}>{initials}</span>
@@ -126,7 +127,9 @@ const ProductDetails = () => {
                 <Menus.Item
                   id="edit-product"
                   disabled={!productId}
-                  onClick={() => productId && openEditProductModal(productId, { onSuccess: refetch })}
+                  onClick={() =>
+                    productId && openEditProductModal(productId, { onSuccess: refetch })
+                  }
                 >
                   Editar
                 </Menus.Item>
@@ -192,7 +195,9 @@ const ProductDetails = () => {
                 ))}
               </ul>
             ) : (
-              <p className={styles.catalogEmpty}>Este producto aún no pertenece a ningún catálogo.</p>
+              <p className={styles.catalogEmpty}>
+                Este producto aún no pertenece a ningún catálogo.
+              </p>
             )}
             <button type="button" className={styles.linkButton} onClick={openCatalogModal}>
               <Plus size={15} />
@@ -213,19 +218,39 @@ const ProductDetails = () => {
                 aria-label={product?.inPos ? 'Desactivar punto de venta' : 'Activar punto de venta'}
                 aria-pressed={Boolean(product?.inPos)}
                 disabled={isUpdatingProduct || !product}
-                onClick={() => updateProduct({ inPos: !product?.inPos }, { onSuccess: () => refetch() })}
+                onClick={() =>
+                  updateProduct({ inPos: !product?.inPos }, { onSuccess: () => refetch() })
+                }
               />
             </div>
           </section>
 
           <section className={styles.sidebarSection}>
             <span className={styles.sectionLabel}>Imágenes</span>
-            <ImageUploader
-              folder="products/images"
-              value={product?.images ?? []}
-              disabled={isUpdatingProduct || !product}
-              onChange={(images) => updateProduct({ images }, { onSuccess: () => refetch() })}
-            />
+
+            <div className={styles.thumbnails}>
+              {product?.images.slice(1).map((image, index) => (
+                <div className={styles.thumbnail} key={`${image}-${index}`}>
+                  <img src={image} alt={`Imagen adicional ${index + 1} del producto`} />
+                  <button
+                    className={styles.removeButton}
+                    type="button"
+                    aria-label={`Quitar imagen adicional ${index + 1}`}
+                  >
+                    <XIcon size={14} />
+                  </button>
+                </div>
+              ))}
+
+              <button
+                className={`${styles.addButton}`}
+                type="button"
+                onDragOver={(event) => event.preventDefault()}
+                aria-label="Agregar imágenes"
+              >
+                <UploadIcon size={25} />
+              </button>
+            </div>
           </section>
         </aside>
 
@@ -252,7 +277,10 @@ const ProductDetails = () => {
                 <strong>{variants.length}</strong>
                 <p>
                   {variants.length > 0
-                    ? variants.map((variant) => variant.name).slice(0, 3).join(', ')
+                    ? variants
+                        .map((variant) => variant.name)
+                        .slice(0, 3)
+                        .join(', ')
                     : 'Sin variantes definidas'}
                 </p>
               </div>
@@ -283,7 +311,9 @@ const ProductDetails = () => {
                   return (
                     <div className={styles.variantBarRow} key={variant.id ?? index}>
                       <span className={styles.variantName}>
-                        {variant.name || `${variant.color?.name ?? ''} ${variant.size ?? ''}`.trim() || `Variante ${index + 1}`}
+                        {variant.name ||
+                          `${variant.color?.name ?? ''} ${variant.size ?? ''}`.trim() ||
+                          `Variante ${index + 1}`}
                       </span>
                       <div className={styles.variantTrack}>
                         <div className={styles.variantFill} style={{ width: `${width}%` }} />
