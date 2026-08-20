@@ -28,4 +28,5 @@ export enum Collection {
   TREASURY_MOVEMENTS = 'treasury_movements',
   PRODUCT_NOTES = 'product_notes',
   STOCK_MOVEMENTS = 'stock_movements',
+  PRICE_LISTS = 'price_lists',
 }

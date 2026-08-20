@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState, type ChangeEvent, type CSSProperties, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
-import { Button, TextInput } from '@hlb/design-system';
+import { Button, TextInput, useModal } from '@hlb/design-system';
 import { List, Search, Trash2 } from 'lucide-react';
 import { useCreateProduct } from '../../hooks';
 import { useUpdateProduct } from '../../hooks';
@@ -12,6 +12,7 @@ import { useContacts } from '@/modules/contacts/hooks';
 import { useProductFieldDefinitions } from '@/modules/inventary/product-field-definitions';
 import { SETTINGS_PRODUCT_FIELDS_HASH } from '@/modules/settings/hooks';
 import { ImageUploader } from '@/modules/media/components';
+import { TariffManagerModal } from '@/modules/inventary/price-lists/components/TariffManagerModal';
 import type { CreateProductPayload } from '../../services';
 import type { CategoryId, Product, ProductFieldValue, WarehouseId } from '@hlb/contracts';
 import styles from './ProductForm.module.css';
@@ -330,6 +331,7 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
   const [imageUrls, setImageUrls] = useState<string[]>(() => [...(initialProduct?.images ?? [])]);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { openModal, closeModal } = useModal();
   const { createProduct, isCreatingProduct: isCreating } = useCreateProduct();
   const { updateProduct, isUpdatingProduct } = useUpdateProduct(initialProduct?.id ? String(initialProduct.id) : undefined);
   const isCreatingProduct = isCreating || isUpdatingProduct;
@@ -778,7 +780,11 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                   />
                 </label>
               </div>
-              <button type="button" className={styles.linkButton} disabled title="Disponible próximamente">
+              <button
+                type="button"
+                className={styles.linkButton}
+                onClick={() => openModal(<TariffManagerModal closeModal={closeModal} />, { id: 'tariff-manager' })}
+              >
                 Gestionar tarifas
               </button>
             </div>

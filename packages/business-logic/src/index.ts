@@ -14,5 +14,6 @@ export * from './product-field-definitions';
 export * from './catalogs';
 export * from './pos';
 export * from './crm';
+export * from './price-lists';
 export * from './product-notes';
 export * from './stock-movements';

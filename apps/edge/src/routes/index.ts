@@ -22,6 +22,7 @@ import { posRoutes } from './sales/pos';
 import { crmFunnelRoutes } from './crm/funnels';
 import { productNoteRoutes } from './inventory/product-notes';
 import { stockMovementRoutes } from './inventory/stock-movements';
+import { priceListRoutes } from './inventory/price-lists';
 
 const routes: RouteOptions[] = [
   ...opsRoutes,
@@ -50,6 +51,7 @@ const routes: RouteOptions[] = [
   ...crmFunnelRoutes,
   ...productNoteRoutes,
   ...stockMovementRoutes,
+  ...priceListRoutes,
 ];
 
 export const registerRoutes = (app: FastifyInstance) => {
