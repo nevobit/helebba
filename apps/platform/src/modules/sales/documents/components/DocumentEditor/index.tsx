@@ -140,7 +140,8 @@ const splitList = (value: string) =>
     .filter(Boolean);
 
 const nextDocumentNumber = (kind: DocumentConfig['kind']) => {
-  const prefix = kind === 'invoice' ? 'F' : kind === 'purchase' ? 'C' : 'P';
+  const prefix =
+    kind === 'invoice' ? 'F' : kind === 'purchase' ? 'C' : kind === 'purchase-order' ? 'O' : 'P';
   return `${prefix}${new Date().getFullYear().toString().slice(-2)}0001`;
 };
 
@@ -192,7 +193,7 @@ const documentToLines = (document: SalesDocument): DocumentLineForm[] => {
 
 export const DocumentEditor = ({ config, documentId }: DocumentEditorProps) => {
   const navigate = useNavigate();
-  const isPurchase = config.kind === 'purchase';
+  const isPurchase = config.kind === 'purchase' || config.kind === 'purchase-order';
   const isEditing = Boolean(documentId);
   const [formState, setFormState] = useState<DocumentFormState>(() =>
     getInitialFormState(config.kind),

@@ -10,7 +10,7 @@ import { accessRoutes } from './access';
 import { roleRoutes } from './roles';
 import { subscriptionRoutes } from './subscriptions';
 import { serviceRoutes } from './sales/services';
-import { estimateRoutes, invoiceRoutes, purchaseRoutes } from './sales/documents';
+import { estimateRoutes, invoiceRoutes, purchaseOrderRoutes, purchaseRoutes } from './sales/documents';
 import { paymentMethodRoutes } from './treasury/payment-methods';
 import { treasuryAccountRoutes } from './treasury/accounts';
 import { paymentRoutes } from './accounting/payments';
@@ -38,6 +38,7 @@ const routes: RouteOptions[] = [
   ...invoiceRoutes,
   ...estimateRoutes,
   ...purchaseRoutes,
+  ...purchaseOrderRoutes,
   ...paymentMethodRoutes,
   ...treasuryAccountRoutes,
   ...paymentRoutes,

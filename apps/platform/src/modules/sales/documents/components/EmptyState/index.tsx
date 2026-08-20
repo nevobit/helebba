@@ -21,7 +21,13 @@ const EmptyStateContent = ({ config }: EmptyStateProps) => {
           'Digitaliza tus compras fácilmente con Escáner',
           'Contabiliza tus gastos automáticamente y sin esfuerzo',
         ]
-      : [
+      : config.kind === 'purchase-order'
+        ? [
+            'Crea pedidos de compra para tus proveedores en unos clics',
+            'Convierte tus pedidos en facturas de compra cuando lleguen',
+            'Lleva el control de lo ordenado, recibido y pendiente',
+          ]
+        : [
           'Crea facturas profesionales en tan solo unos clics.',
           'Envía tus documentos por email y haz seguimiento de su estado.',
           'Cobra en línea de forma segura o conecta tus bancos.',

@@ -24,6 +24,7 @@ export const PrivateRoutes = {
   INVOICES: '/sales/revenue',
   ESTIMATES: '/sales/estimates',
   PURCHASES: '/purchases',
+  PURCHASE_ORDERS: '/inventory/purchase-orders',
   SETUP: '/setup',
   TRIAL_EXPIRED: '/trial/expired',
 } as const;

@@ -144,7 +144,12 @@ export const createDocumentRoutes = (prefix: string, docType: DocumentType): Rou
         const body = (req.body ?? {}) as ConvertDocumentBody;
         const { userId } = req.auth as unknown as { userId: UserId };
         const targetDocType =
-          body.docType ?? (docType === DocumentType.INVOICE ? DocumentType.ESTIMATE : DocumentType.INVOICE);
+          body.docType ??
+          (docType === DocumentType.INVOICE
+            ? DocumentType.ESTIMATE
+            : docType === DocumentType.PURCHASE_ORDER
+              ? DocumentType.PURCHASE
+              : DocumentType.INVOICE);
         const document = await convertDocument({
           documentId,
           organizationId: req.organization?.organizationId as OrganizationId,

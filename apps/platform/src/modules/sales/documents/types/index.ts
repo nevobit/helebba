@@ -1,6 +1,6 @@
 import type { Document, OffsetPageInfo, OffsetPaginatedResult, ProductDocument } from '@hlb/contracts';
 
-export type DocumentKind = 'invoice' | 'estimate' | 'purchase';
+export type DocumentKind = 'invoice' | 'estimate' | 'purchase' | 'purchase-order';
 
 export type DocumentListParams = {
   page: number;

@@ -44,6 +44,20 @@ export const DOCUMENT_CONFIG: Record<DocumentKind, DocumentConfig> = {
     endpoint: '/purchases',
     nextConvertLabel: 'Convertir en factura',
   },
+  'purchase-order': {
+    kind: 'purchase-order',
+    title: 'Pedidos',
+    singularTitle: 'Pedido',
+    newLabel: 'Nuevo pedido',
+    importLabel: 'Importar pedidos',
+    emptyTitle: 'Pedidos',
+    emptyButton: 'Nuevo pedido',
+    emptyArticle: 'Crea y gestiona los pedidos de compra a tus proveedores.',
+    listPath: PrivateRoutes.PURCHASE_ORDERS,
+    newPath: `${PrivateRoutes.PURCHASE_ORDERS}/new`,
+    endpoint: '/purchase-orders',
+    nextConvertLabel: 'Convertir en compra',
+  },
 };
 
 export const getDocumentConfig = (kind: DocumentKind) => DOCUMENT_CONFIG[kind];

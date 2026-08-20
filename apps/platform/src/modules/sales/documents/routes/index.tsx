@@ -52,4 +52,19 @@ export const documentRoutes: RouteObject[] = [
     loader: authLoader,
     element: withSuspense(<DocumentEdit kind="purchase" />),
   },
+  {
+    path: PrivateRoutes.PURCHASE_ORDERS,
+    loader: authLoader,
+    element: withSuspense(<DocumentList kind="purchase-order" />),
+  },
+  {
+    path: `${PrivateRoutes.PURCHASE_ORDERS}/new`,
+    loader: authLoader,
+    element: withSuspense(<DocumentNew kind="purchase-order" />),
+  },
+  {
+    path: `${PrivateRoutes.PURCHASE_ORDERS}/:documentId/edit`,
+    loader: authLoader,
+    element: withSuspense(<DocumentEdit kind="purchase-order" />),
+  },
 ];

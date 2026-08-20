@@ -467,7 +467,9 @@ export const DocumentDetail = ({ config, documentId, fallback, onClose, onDelete
             contactName: current.contactName ?? '',
             description: `${config.singularTitle} ${current.docNumber}`,
             direction:
-              current.docType === 'purchase' || current.docType === 'expenses'
+              current.docType === 'purchase' ||
+              current.docType === 'expenses' ||
+              current.docType === 'purchase-order'
                 ? 'outflow'
                 : 'inflow',
             documentId: String(current.id ?? documentId ?? ''),

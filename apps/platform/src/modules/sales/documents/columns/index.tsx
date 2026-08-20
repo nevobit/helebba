@@ -16,6 +16,7 @@ const money = (value: unknown) => formatCurrency(Number(value ?? 0));
 const documentTypeLabel = (docType?: string) => {
   if (docType === 'estimate') return 'Presupuesto';
   if (docType === 'purchase') return 'Compra';
+  if (docType === 'purchase-order') return 'Pedido';
 
   return 'Factura';
 };
