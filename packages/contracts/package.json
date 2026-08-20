@@ -11,6 +11,12 @@
       "development": "./src/index.ts",
       "import": "./dist/index.mjs",
       "default": "./dist/index.mjs"
+    },
+    "./constants": {
+      "types": "./src/constants.ts",
+      "development": "./src/constants.ts",
+      "import": "./dist/constants.mjs",
+      "default": "./dist/constants.mjs"
     }
   },
   "scripts": {

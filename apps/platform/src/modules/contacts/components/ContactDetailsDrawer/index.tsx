@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { Menus } from '@hlb/design-system';
 import type { Document } from '@hlb/contracts';
-import { StatusDocument } from '@hlb/contracts';
+import { StatusDocument } from '@hlb/contracts/constants';
 import {
   ArrowRight,
   Building2,
