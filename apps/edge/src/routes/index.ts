@@ -20,6 +20,8 @@ import { productFieldDefinitionRoutes } from './inventory/product-field-definiti
 import { catalogRoutes } from './inventory/catalogs';
 import { posRoutes } from './sales/pos';
 import { crmFunnelRoutes } from './crm/funnels';
+import { productNoteRoutes } from './inventory/product-notes';
+import { stockMovementRoutes } from './inventory/stock-movements';
 
 const routes: RouteOptions[] = [
   ...opsRoutes,
@@ -45,6 +47,8 @@ const routes: RouteOptions[] = [
   ...catalogRoutes,
   ...posRoutes,
   ...crmFunnelRoutes,
+  ...productNoteRoutes,
+  ...stockMovementRoutes,
 ];
 
 export const registerRoutes = (app: FastifyInstance) => {

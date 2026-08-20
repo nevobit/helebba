@@ -6,6 +6,7 @@ import { updateProductRoute } from './update';
 import { getProductByIdRoute } from './get-by-id';
 import { getBySlugRoute } from './get-by-slug';
 import { getAllProductsRoute } from './list';
+import { getProductStatsRoute } from './stats';
 
 export const productRoutes: RouteOptions[] = withPrefix('/products', [
   createProductRoute,
@@ -14,4 +15,5 @@ export const productRoutes: RouteOptions[] = withPrefix('/products', [
   getProductByIdRoute,
   getBySlugRoute,
   getAllProductsRoute,
+  getProductStatsRoute,
 ]);

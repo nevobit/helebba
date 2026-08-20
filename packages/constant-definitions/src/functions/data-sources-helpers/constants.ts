@@ -26,4 +26,6 @@ export enum Collection {
   PAYMENTS = 'payments',
   BANKING_ACCOUNTS = 'banking_accounts',
   TREASURY_MOVEMENTS = 'treasury_movements',
+  PRODUCT_NOTES = 'product_notes',
+  STOCK_MOVEMENTS = 'stock_movements',
 }

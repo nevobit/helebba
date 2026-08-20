@@ -34,6 +34,8 @@ export type PosReceiptId = Brand<string, 'PosReceiptId'>;
 export type CrmFunnelId = Brand<string, 'CrmFunnelId'>;
 export type CrmStageId = Brand<string, 'CrmStageId'>;
 export type CrmOpportunityId = Brand<string, 'CrmOpportunityId'>;
+export type ProductNoteId = Brand<string, 'ProductNoteId'>;
+export type StockMovementId = Brand<string, 'StockMovementId'>;
 
 export interface BaseEntity<TId = EntityId> {
   readonly id: TId;

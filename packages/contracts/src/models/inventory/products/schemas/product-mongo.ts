@@ -18,6 +18,17 @@ export const ProductSchemaMongo = new Schema<Product>(
     inCatalog: { type: Boolean },
     inPos: { type: Boolean, default: false },
     images: { type: [String] },
+    files: [
+      {
+        _id: false,
+        id: { type: String },
+        name: { type: String },
+        url: { type: String },
+        size: { type: Number },
+        mimeType: { type: String },
+      },
+    ],
+    minStock: { type: Number, min: 0, default: 0 },
     customFields: [
       {
         _id: false,

@@ -8,6 +8,9 @@ certs*.json
 packages/business-logic/src/auth/*.json
 docker/data
 
+referal-images
+referal-images/
+
 ### ArchLinuxPackages ###
 *.tar
 *.tar.*

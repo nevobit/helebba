@@ -5,3 +5,5 @@ export * from './products';
 export * from './price-lists';
 export * from './product-field-definitions';
 export * from './catalogs';
+export * from './product-notes';
+export * from './stock-movements';

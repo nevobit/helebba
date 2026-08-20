@@ -304,10 +304,6 @@
     left: 2rem;
 }
 
-.reportButton {
-    width: 100%;
-}
-
 .content {
     display: grid;
     gap: 3.8rem;
@@ -369,17 +365,16 @@
     line-height: 1.4;
 }
 
-.summaryCard button,
-.sectionHeading button {
-    border: 0;
-    background: #dce7ff;
+.availabilityRow {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-top: .3rem;
+}
+
+.availabilityRow svg {
+    flex-shrink: 0;
     color: #2563eb;
-    cursor: pointer;
-    font: inherit;
-    font-size: 1.4rem;
-    font-weight: 650;
-    padding: .8rem 1.2rem;
-    text-align: left;
 }
 
 .chartSection {
@@ -394,58 +389,45 @@
     font-weight: 750;
 }
 
-.chart {
+.variantBars {
     display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr);
-    grid-template-rows: 19rem auto;
-    column-gap: .8rem;
+    gap: 1rem;
 }
 
-.yAxis {
+.variantBarRow {
     display: grid;
-    grid-row: 1;
-    align-content: space-between;
-    color: #b0b8c5;
-    font-size: 1.2rem;
+    grid-template-columns: 16rem minmax(0, 1fr) 8rem;
+    align-items: center;
+    gap: 1.2rem;
 }
 
-.plot {
-    position: relative;
-    grid-column: 2;
-    grid-row: 1;
+.variantName {
+    min-width: 0;
+    overflow: hidden;
+    color: #374151;
+    font-size: 1.3rem;
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.line {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: .3rem;
-    border-radius: .3rem;
+.variantTrack {
+    height: .8rem;
+    overflow: hidden;
+    border-radius: 999rem;
+    background: #eef0f4;
+}
+
+.variantFill {
+    height: 100%;
+    border-radius: 999rem;
     background: #4cb3ff;
 }
 
-.dot {
-    position: absolute;
-    bottom: -.3rem;
-    width: .6rem;
-    height: .6rem;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    background: #4cb3ff;
-}
-
-.months {
-    display: grid;
-    grid-column: 2;
-    grid-row: 2;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    color: #b0b8c5;
-    font-size: 1.2rem;
-    padding-top: .8rem;
-}
-
-.months span:last-child {
+.variantStock {
+    color: #1f2937;
+    font-size: 1.3rem;
+    font-weight: 750;
     text-align: right;
 }
 
@@ -459,11 +441,6 @@
     align-items: center;
     justify-content: space-between;
     gap: 1.6rem;
-}
-
-.sectionHeading button {
-    background: transparent;
-    padding: 0;
 }
 
 .priceList table {

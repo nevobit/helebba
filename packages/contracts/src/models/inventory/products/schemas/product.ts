@@ -52,6 +52,14 @@ export interface CustomField {
   value: ProductFieldValue;
 }
 
+export interface ProductFile {
+  id: string;
+  name: string;
+  url: string;
+  size: number;
+  mimeType: string;
+}
+
 export interface Product extends PersistedSoftDeletableEntity<ProductId, UserId> {
   kind: string;
   name: string;
@@ -62,6 +70,8 @@ export interface Product extends PersistedSoftDeletableEntity<ProductId, UserId>
   inCatalog: boolean;
   inPos: boolean;
   images: string[];
+  files: ProductFile[];
+  minStock: number;
   customFields: CustomField[];
   contactId: string;
   contactName: string;

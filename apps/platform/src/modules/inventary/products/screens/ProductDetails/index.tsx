@@ -2,14 +2,11 @@ import { useMemo } from 'react';
 import { Button, Menus, useModal } from '@hlb/design-system';
 import {
   ArrowLeft,
-  Bell,
-  BookOpen,
   Check,
-  Grid2X2Plus,
   Library,
   PackageOpen,
   Plus,
-  TrendingUp,
+  X,
 } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { PrivateRoutes } from '@/app/router/routes';
@@ -25,8 +22,6 @@ const moneyFormatter = new Intl.NumberFormat('es-CO', {
 });
 
 const money = (value: number | undefined) => `${moneyFormatter.format(Number(value ?? 0))} CO$`;
-
-const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -78,6 +73,18 @@ const ProductDetails = () => {
   const purchasePrice = Number(product?.purchasePrice ?? 0);
   const cost = Number(product?.cost ?? 0);
   const taxLabel = product?.taxes?.[0] ?? 'Impuesto sobre las ventas 20%';
+  const taxRate = Number(product?.taxRate ?? 0);
+  const saleTax = (price * taxRate) / 100;
+  const saleTotal = price + saleTax;
+  const margin = price > 0 ? ((price - cost) / price) * 100 : 0;
+  const variants = product?.variants ?? [];
+  const maxVariantStock = Math.max(1, ...variants.map((variant) => Number(variant.stock ?? 0)));
+  const availability = [
+    ['forSale', 'Disponible para venta'],
+    ['forPurchase', 'Disponible para compra'],
+    ['inPos', 'Disponible en punto de venta'],
+    ['inCatalog', 'Mostrar en catálogo'],
+  ] as const;
 
   if (error) {
     return (
@@ -107,22 +114,6 @@ const ProductDetails = () => {
         </div>
 
         <div className={styles.headerActions}>
-          <Button
-            className={styles.iconButton}
-            variant="outline"
-            theme="optional"
-            size="medium"
-            icon={<Grid2X2Plus size={16} />}
-            aria-label="Cambiar vista"
-          />
-          <Button
-            className={styles.iconButton}
-            variant="outline"
-            theme="optional"
-            size="medium"
-            icon={<BookOpen size={16} />}
-            aria-label="Documentación"
-          />
           <Menus defaultPlacement="bottom-end">
             <Menus.Menu>
               <Menus.Toggle
@@ -145,11 +136,15 @@ const ProductDetails = () => {
               </Menus.List>
             </Menus.Menu>
           </Menus>
-          <Button theme="optional" variant="outline" size="medium" icon={<PackageOpen size={16} />}>
+          <Button
+            theme="optional"
+            variant="outline"
+            size="medium"
+            icon={<PackageOpen size={16} />}
+            disabled={!productId}
+            onClick={() => productId && openEditProductModal(productId, { onSuccess: refetch })}
+          >
             Actualizar stock
-          </Button>
-          <Button theme="optional" variant="outline" size="medium" icon={<TrendingUp size={16} />}>
-            Historial de stock
           </Button>
         </div>
       </header>
@@ -232,41 +227,6 @@ const ProductDetails = () => {
               onChange={(images) => updateProduct({ images }, { onSuccess: () => refetch() })}
             />
           </section>
-
-          <section className={styles.sidebarSection}>
-            <h2>Notas</h2>
-            <button type="button" className={styles.linkButton}>
-              <Plus size={15} /> Nueva nota
-            </button>
-          </section>
-
-          <section className={styles.sidebarSection}>
-            <h2>Archivos</h2>
-            <button type="button" className={styles.linkButton}>
-              <Plus size={15} /> Subir archivo
-            </button>
-          </section>
-
-          <section className={styles.sidebarSection}>
-            <h2>Informes de producto</h2>
-            {[
-              'Compradores del producto',
-              'Presupuestado',
-              'Proveedores del producto',
-              'Precio de compra histórico',
-            ].map((label) => (
-              <Button
-                key={label}
-                type="button"
-                theme="optional"
-                variant="outline"
-                size="medium"
-                className={styles.reportButton}
-              >
-                {label}
-              </Button>
-            ))}
-          </section>
         </aside>
 
         <section className={styles.content}>
@@ -285,51 +245,64 @@ const ProductDetails = () => {
             </article>
             <article className={styles.summaryCard}>
               <span>
-                <TrendingUp size={17} />
+                <PackageOpen size={17} />
               </span>
               <div>
-                <h3>Vendido este mes</h3>
-                <strong>0 Unidades</strong>
-                <p>0%</p>
+                <h3>Variantes</h3>
+                <strong>{variants.length}</strong>
+                <p>
+                  {variants.length > 0
+                    ? variants.map((variant) => variant.name).slice(0, 3).join(', ')
+                    : 'Sin variantes definidas'}
+                </p>
               </div>
             </article>
             <article className={styles.summaryCard}>
               <span>
-                <Bell size={17} />
+                <Check size={17} />
               </span>
               <div>
-                <h3>Alarma de stock</h3>
-                <button type="button">Establecer alarma de stock</button>
+                <h3>Disponibilidad</h3>
+                {availability.map(([key, label]) => (
+                  <p key={key} className={styles.availabilityRow}>
+                    {product?.[key] ? <Check size={14} /> : <X size={14} />}
+                    <span>{label}</span>
+                  </p>
+                ))}
               </div>
             </article>
           </div>
 
           <section className={styles.chartSection}>
-            <h3>Gráfico de stock</h3>
-            <div className={styles.chart}>
-              <div className={styles.yAxis}>
-                {['1.0', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1', '0'].map((value) => (
-                  <span key={value}>{value}</span>
-                ))}
+            <h3>Stock por variante</h3>
+            {variants.length > 0 ? (
+              <div className={styles.variantBars}>
+                {variants.map((variant, index) => {
+                  const variantStock = Number(variant.stock ?? 0);
+                  const width = Math.max(2, (variantStock / maxVariantStock) * 100);
+                  return (
+                    <div className={styles.variantBarRow} key={variant.id ?? index}>
+                      <span className={styles.variantName}>
+                        {variant.name || `${variant.color?.name ?? ''} ${variant.size ?? ''}`.trim() || `Variante ${index + 1}`}
+                      </span>
+                      <div className={styles.variantTrack}>
+                        <div className={styles.variantFill} style={{ width: `${width}%` }} />
+                      </div>
+                      <strong className={styles.variantStock}>{variantStock} uds</strong>
+                    </div>
+                  );
+                })}
               </div>
-              <div className={styles.plot}>
-                <span className={styles.line} />
-                {months.map((month, index) => (
-                  <span key={month} className={styles.dot} style={{ left: `${index * 9.09}%` }} />
-                ))}
-              </div>
-              <div className={styles.months}>
-                {months.map((month) => (
-                  <span key={month}>{month}</span>
-                ))}
-              </div>
-            </div>
+            ) : (
+              <p className={styles.catalogEmpty}>
+                Este producto no tiene variantes. Stock total: {stock} unidades.
+              </p>
+            )}
           </section>
 
           <section className={styles.priceList}>
             <div className={styles.sectionHeading}>
               <h2>Lista de precios de venta</h2>
-              <button type="button">Administrar listas de precios</button>
             </div>
             <table>
               <thead>
@@ -345,9 +318,9 @@ const ProductDetails = () => {
                 <tr>
                   <td>Precio principal</td>
                   <td>{money(price)}</td>
-                  <td>{money(0)}</td>
-                  <td>{money(price)}</td>
-                  <td>100.00%</td>
+                  <td>{money(saleTax)}</td>
+                  <td>{money(saleTotal)}</td>
+                  <td>{margin.toFixed(2)}%</td>
                 </tr>
               </tbody>
             </table>
@@ -356,7 +329,6 @@ const ProductDetails = () => {
           <section className={styles.priceList}>
             <div className={styles.sectionHeading}>
               <h2>Lista de precios de compra</h2>
-              <button type="button">Administrar precios de compra</button>
             </div>
             <table>
               <thead>
