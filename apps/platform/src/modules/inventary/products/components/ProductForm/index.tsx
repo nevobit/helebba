@@ -1,8 +1,9 @@
 import { useMemo, useRef, useState, type ChangeEvent, type CSSProperties, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, TextInput, useModal } from '@hlb/design-system';
-import { List, Search, Trash2 } from 'lucide-react';
+import { List, Search, Trash2, X } from 'lucide-react';
 import { useCreateProduct } from '../../hooks';
+import { usePriceLists } from '@/modules/inventary/price-lists/hooks';
 import { useUpdateProduct } from '../../hooks';
 import { useBrands } from '@/modules/inventary/brands/hooks';
 import { useCategories } from '@/modules/inventary/categories/hooks';
@@ -336,6 +337,7 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
   const [error, setError] = useState<string | null>(null);
   const { openModal, closeModal } = useModal();
   const { createProduct, isCreatingProduct: isCreating } = useCreateProduct();
+  const { priceLists } = usePriceLists();
   const { updateProduct, isUpdatingProduct } = useUpdateProduct(initialProduct?.id ? String(initialProduct.id) : undefined);
   const isCreatingProduct = isCreating || isUpdatingProduct;
   const { categories, isLoading: isLoadingCategories } = useCategories({ page: 1, limit: 100, search: '' });
@@ -805,6 +807,29 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
               >
                 Gestionar tarifas
               </button>
+              {formState.priceListIds.length > 0 && (
+                <ul className={styles.selectedTariffs}>
+                  {priceLists
+                    .filter((priceList) => formState.priceListIds.includes(String(priceList.id)))
+                    .map((priceList) => (
+                      <li className={styles.tariffChip} key={String(priceList.id)}>
+                        <span>{priceList.name}</span>
+                        <b>{priceList.currency || 'COP'}</b>
+                        <button
+                          type="button"
+                          aria-label={`Quitar tarifa ${priceList.name}`}
+                          onClick={() =>
+                            updatePriceListIds(
+                              formState.priceListIds.filter((id) => id !== String(priceList.id)),
+                            )
+                          }
+                        >
+                          <X size={14} />
+                        </button>
+                      </li>
+                    ))}
+                </ul>
+              )}
             </div>
           </section>
 

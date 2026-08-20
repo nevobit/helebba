@@ -138,6 +138,55 @@
     padding: 1.6rem;
 }
 
+.selectedTariffs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin: 1.2rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tariffChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    border: 0.1rem solid var(--color-border-strong);
+    border-radius: var(--ds-radius-full);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 1.2rem;
+    padding: 0.4rem 0.4rem 0.4rem 1rem;
+}
+
+.tariffChip span {
+    font-weight: 600;
+}
+
+.tariffChip b {
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+.tariffChip button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: var(--ds-radius-full);
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 0;
+}
+
+.tariffChip button:hover {
+    background: var(--ds-action-danger-subtle);
+    color: var(--color-danger);
+}
+
 .amountInput {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
