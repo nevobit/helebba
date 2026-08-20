@@ -14,7 +14,8 @@
     }
   },
   "scripts": {
-    "dev": "NODE_OPTIONS='--conditions=development' tsup --config tsup.dev.config.ts --watch"
+    "dev": "NODE_OPTIONS='--conditions=development' tsup --config tsup.dev.config.ts --watch",
+    "build": "tsup"
   },
   "keywords": [],
   "author": "",
