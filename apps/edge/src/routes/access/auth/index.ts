@@ -1,6 +1,5 @@
 import { withPrefix } from '@hlb/constant-definitions';
 import { RouteOptions } from 'fastify';
-import { loginRoute } from './login';
 import { switchOrganizationRoute } from './login-organization';
 import { otpLoginRoute } from './otp-login';
 import { otpSignupRoute } from './otp-signup';
@@ -15,7 +14,6 @@ export const authRoutes: RouteOptions[] = withPrefix('/auth', [
   otpSignupRoute,
   otpVerifyRoute,
   sendEmailCodeRoute,
-  loginRoute,
   switchOrganizationRoute,
   loginGoogleRoute,
   refreshRoute,

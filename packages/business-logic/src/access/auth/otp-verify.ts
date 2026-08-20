@@ -5,6 +5,15 @@ import { createUser, findByEmail } from '../../users';
 import crypto from 'crypto';
 import { issueTokens } from './tokens';
 
+const MAX_ATTEMPTS = 5;
+const COOLDOWN_SECONDS = 15 * 60;
+
+const safeEquals = (a: string, b: string) => {
+  const hashA = crypto.createHash('sha256').update(a).digest();
+  const hashB = crypto.createHash('sha256').update(b).digest();
+  return crypto.timingSafeEqual(hashA, hashB);
+};
+
 export const otpVerify = async (user: Partial<User>, code: string) => {
   const redisRead = getRedisReadClient();
   const redisWrite = getRedisWriteClient();
@@ -13,14 +22,31 @@ export const otpVerify = async (user: Partial<User>, code: string) => {
     throw new Error('Invalid email format');
   }
 
-  const codeKey = `verification:${user.email}`;
-  const storedCode = await redisRead.get(codeKey);
+  const email = user.email!.toLowerCase();
+  const codeKey = `verification:${email}`;
+  const attemptsKey = `attempts:${email}`;
 
-  if (!storedCode || storedCode !== code) {
+  const storedCode = await redisRead.get(codeKey);
+  if (!storedCode) {
+    throw new Error('Invalid or expired verification code');
+  }
+
+  const attempts = Number((await redisRead.get(attemptsKey)) ?? '0');
+  if (attempts >= MAX_ATTEMPTS) {
+    await redisWrite.del(codeKey);
+    throw new Error('Too many attempts. Request a new code');
+  }
+
+  if (!safeEquals(storedCode, code)) {
+    const next = await redisWrite.incr(attemptsKey);
+    if (next === 1) {
+      await redisWrite.expire(attemptsKey, COOLDOWN_SECONDS);
+    }
     throw new Error('Invalid or expired verification code');
   }
 
   await redisWrite.del(codeKey);
+  await redisWrite.del(attemptsKey);
 
   let userInfo;
 

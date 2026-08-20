@@ -1,6 +1,6 @@
 import { getMailer, getRedisWriteClient } from '@hlb/constant-definitions';
 import { isEmail } from '@hlb/foundation';
-import { generateTOTP } from '@hlb/security';
+import { generateUserTOTP } from '@hlb/security';
 
 export const otpSignup = async (email: string) => {
   if (!isEmail(email)) {
@@ -20,9 +20,9 @@ export const otpSignup = async (email: string) => {
   await redisWrite.setex(`registration:${sessionId}`, 1800, JSON.stringify(session));
 
   if (!process.env.TOTP_SECRET) throw new Error('TOTP_SECRET is not set');
-  const verificationCode = await generateTOTP(process.env.TOTP_SECRET);
+  const verificationCode = await generateUserTOTP(process.env.TOTP_SECRET, email);
 
-  const codeKey = `verification:${email}`;
+  const codeKey = `verification:${email.toLowerCase()}`;
   await redisWrite.setex(codeKey, 1800, verificationCode);
 
   const mailer = getMailer();

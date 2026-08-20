@@ -53,6 +53,11 @@ export const otpVerifyRoute = makeFastifyRoute(
         return;
       }
 
+      if (error instanceof Error && error.message === 'Too many attempts. Request a new code') {
+        problem(reply, 429, error.message, 'too_many_attempts');
+        return;
+      }
+
       throw error;
     }
   },

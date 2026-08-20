@@ -2,6 +2,7 @@ import type {
   ISODateTimeString,
   PersistedSoftDeletableEntity,
   ProductId,
+  UserId,
 } from '../../../../common';
 
 interface GoogleProvider {
@@ -14,7 +15,7 @@ export interface Provider {
   apple: string;
   facebook: string;
 }
-export interface User extends PersistedSoftDeletableEntity<ProductId> {
+export interface User extends PersistedSoftDeletableEntity<UserId> {
   name: string;
   phone: string;
   newsletter: boolean;
