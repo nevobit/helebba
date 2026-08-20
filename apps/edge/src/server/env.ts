@@ -39,14 +39,7 @@ export const loadEnv = () => {
     CLOUDINARY_API_KEY: str({ default: '' }),
     CLOUDINARY_API_SECRET: str({ default: '' }),
 
-    REDIS_URL: str({ default: '' }),
-    PG_URI: str({
-      default:
-        'postgresql://neondb_owner:npg_rVXcgsUb1f6d@ep-billowing-shape-aid48ykg-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
-    }),
-    MONGODB_URI: str({
-      default:
-        'mongodb+srv://nevobit_db_user:JLrTaX5rMwOGv7Fh@nevobit-dev-us-east-1.byw9vws.mongodb.net/helebba_test?appName=nevobit-dev-us-east-1',
-    }),
+    REDIS_URL: str(),
+    MONGODB_URI: str(),
   });
 };

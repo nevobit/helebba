@@ -9,7 +9,7 @@ import {
   type Payment,
 } from '@hlb/contracts';
 
-export const reconcileDocumentPayments = async (documentId?: string) => {
+export const reconcileDocumentPayments = async (documentId?: string, organizationId?: string) => {
   if (!documentId) return null;
 
   const documentModel = getModel<SalesDocument>(Collection.DOCUMENTS, DocumentSchemaMongo);
@@ -21,6 +21,7 @@ export const reconcileDocumentPayments = async (documentId?: string) => {
   const payments = await paymentModel.find({
     documentId,
     lifecycleStatus: LifecycleStatus.ACTIVE,
+    ...(organizationId ? { organizationId } : {}),
   });
   const paymentsTotal = payments.reduce(
     (total, payment) => total + Number(payment.grossAmount ?? payment.amount ?? 0),
@@ -35,7 +36,7 @@ export const reconcileDocumentPayments = async (documentId?: string) => {
         : StatusDocument.PartiallyPaid;
 
   await documentModel.updateOne(
-    { _id: documentId as DocumentId },
+    { _id: documentId as DocumentId, ...(organizationId ? { organizationId } : {}) },
     {
       $set: {
         paymentsTotal,

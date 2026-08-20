@@ -3,7 +3,7 @@ import { PaymentSchemaMongo, type Payment } from '@hlb/contracts';
 import { resolvePaymentAmounts } from './fees';
 import { reconcileDocumentPayments } from './reconcile-document';
 
-export const createPayment = async (data: Partial<Payment>): Promise<Payment> => {
+export const createPayment = async (data: Partial<Payment>, organizationId: string): Promise<Payment> => {
   const model = getModel<Payment>(Collection.PAYMENTS, PaymentSchemaMongo);
   const hasDocument = Boolean(data.documentId);
   const amounts = await resolvePaymentAmounts(data);
@@ -18,7 +18,7 @@ export const createPayment = async (data: Partial<Payment>): Promise<Payment> =>
   });
   const createdPayment = await payment.save();
 
-  await reconcileDocumentPayments(createdPayment.documentId);
+  await reconcileDocumentPayments(createdPayment.documentId, organizationId);
 
   return createdPayment;
 };

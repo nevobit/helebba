@@ -15,7 +15,6 @@ export const verifyGatePlugin = fp<BuildAppOpts>(
     const SKIP_PREFIXES = ['/docs'];
 
     app.addHook('preValidation', async (req, reply) => {
-      console.log('URL', req.url);
       const pathname = getPathname(req.url);
 
       if (SKIP_EXACT.has(pathname)) return;
@@ -38,8 +37,6 @@ export const verifyGatePlugin = fp<BuildAppOpts>(
 
         if (result && result.type === 'error') {
           const status = mapVerifyCode(result.code);
-
-          console.log({ pathname });
           opts.logger?.warn('Verification failed', {
             requestId: req.id,
             status,

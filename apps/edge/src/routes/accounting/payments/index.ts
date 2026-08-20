@@ -49,7 +49,7 @@ export const paymentRoutes: RouteOptions[] = withPrefix('/payments', [
         organizationId: req.organization?.organizationId as OrganizationId,
         createdBy: userId,
         updatedBy: userId,
-      });
+      }, req.organization?.organizationId as OrganizationId);
 
       reply.status(201).send(payment);
     },
@@ -81,7 +81,7 @@ export const paymentRoutes: RouteOptions[] = withPrefix('/payments', [
       const payment = await updatePayment(paymentId, {
         ...body,
         updatedBy: userId,
-      });
+      }, req.organization?.organizationId as OrganizationId);
 
       reply.status(payment ? 200 : 404).send(payment ?? { message: 'Payment not found' });
     },
@@ -93,7 +93,7 @@ export const paymentRoutes: RouteOptions[] = withPrefix('/payments', [
     { organization: 'required', auth: 'required' },
     async (req, reply) => {
       const { paymentId } = req.params as { paymentId: PaymentId };
-      const payment = await softDeletePayment(paymentId);
+      const payment = await softDeletePayment(paymentId, req.organization?.organizationId as OrganizationId);
 
       reply.status(payment ? 200 : 404).send(payment ?? { message: 'Payment not found' });
     },

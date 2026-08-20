@@ -6,7 +6,7 @@ import path from 'path';
 
 declare module 'fastify' {
   interface FastifyRequest {
-    orgnanization: ReturnType<typeof resolveTenantContext> | null;
+    organization: ReturnType<typeof resolveTenantContext> | null;
   }
 
   interface FastifyInstance {
@@ -21,10 +21,10 @@ export const plugin: FastifyPluginAsync<BuildAppOpts> = async (app, opts) => {
   const tenantHeaderName = opts.tenantHeaderName ?? 'x-tenant';
   const reservedSubdomains = opts.reservedSubdomains ?? ['www', 'api', 'admin', 'docs'];
 
-  app.decorateRequest('orgnanization', null);
+  app.decorateRequest('organization', null);
 
   app.addHook('onRequest', async (req) => {
-    const orgnanization = resolveTenantContext({
+    const organization = resolveTenantContext({
       baseDomain,
       pathPrefix,
       apiPrefix,
@@ -35,13 +35,13 @@ export const plugin: FastifyPluginAsync<BuildAppOpts> = async (app, opts) => {
       reservedSubdomains,
     });
 
-    req.orgnanization = orgnanization;
+    req.organization = organization;
 
     if ((opts.environment ?? 'dev') !== 'prod') {
       opts.logger?.debug('Tenant resolved', {
         requestId: req.id,
-        source: orgnanization.source,
-        tenantSlug: orgnanization.tenantSlug,
+        source: organization.source,
+        tenantSlug: organization.tenantSlug,
         method: req.method,
         path: req.url,
         url: req.url,
@@ -51,7 +51,7 @@ export const plugin: FastifyPluginAsync<BuildAppOpts> = async (app, opts) => {
   });
 
   app.decorate('requireTenant', async (req: FastifyRequest) => {
-    assertTenantContext(req.orgnanization!, 'Tenant is required for this route');
+    assertTenantContext(req.organization!, 'Tenant is required for this route');
   });
 };
 

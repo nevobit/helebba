@@ -1,4 +1,4 @@
-import type { TenantContext } from '@keystone/contracts';
+import type { TenantContext } from '@hlb/contracts';
 
 export interface ResolveTenantOptions {
   readonly host?: string;

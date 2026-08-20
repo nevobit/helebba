@@ -1,4 +1,4 @@
-import type { AuthorizationSubject } from '@keystone/contracts';
+import type { AuthorizationSubject } from '@hlb/contracts';
 
 export interface PermissionCheckInput {
   readonly subject: AuthorizationSubject;

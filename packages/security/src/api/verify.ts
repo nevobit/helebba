@@ -229,10 +229,9 @@ const requireApiKey: Checker = async (input, ctx) => {
     return { type: 'error', code: VerifyCode.INVALID_API_KEY, message: 'Malformed API key' };
 
   ctx.apiKeyRecord = await ctxDeps.getApiKey(apiKey); // set in wrapper
-  console.log('API Key Record:', ctx.apiKeyRecord);
-  // if (!ctx.apiKeyRecord || ctx.apiKeyRecord.status !== 'active') {
-  //   return { type: 'error', code: VerifyCode.INVALID_API_KEY, message: 'Invalid API key' };
-  // }
+  if (!ctx.apiKeyRecord || ctx.apiKeyRecord.status !== 'active') {
+    return { type: 'error', code: VerifyCode.INVALID_API_KEY, message: 'Invalid API key' };
+  }
 
   return null;
 };
@@ -344,7 +343,6 @@ const verifyHmacSignature: Checker = async (input, ctx) => {
     bodyHashHex,
   });
 
-  console.log('SIGNATUE', ctx.signingSecret);
   const expected = hmacSha256Hex(payload, ctx.signingSecret);
   const ok = constantTimeEquals(cleanSig, expected);
 
@@ -416,7 +414,7 @@ export const createVerifier = (deps: VerifyDeps, opts: VerifierOptions = {}) => 
     requireUserAgent,
     requireTimestamp,
     requirePath,
-    // verifyHmacSignature,
+    verifyHmacSignature,
     checkNonceIfPresent(),
     checkRateLimit(),
   ];
@@ -427,7 +425,6 @@ export const createVerifier = (deps: VerifyDeps, opts: VerifierOptions = {}) => 
     }
 
     const apiKey = headerOptional(input.headers, API_KEY_HEADER);
-    console.log(apiKey);
     const ctx: VerifyContext = {
       apiKey: apiKey ?? '',
       apiKeyRecord: null,

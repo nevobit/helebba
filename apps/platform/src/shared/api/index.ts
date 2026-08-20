@@ -29,18 +29,19 @@ api.interceptors.request.use((config) => {
   const method = (config.method ?? 'GET').toUpperCase();
   const url = new URL(config.url ?? '', config.baseURL ?? window.location.origin);
   const path = url.pathname;
+  const fullPath = `/api/v1${path}`;
 
   const timestamp = Date.now().toString();
   const body = getBodyAsString(config.data);
   const bodyHash = SHA256(body).toString();
 
-  const signingPayload = [method, path, timestamp, bodyHash].join('\n');
+  const signingPayload = [method, fullPath, timestamp, bodyHash].join('\n');
 
   const signature = HmacSHA256(signingPayload, SIGNING_SECRET).toString();
 
   config.headers['api-key'] = API_KEY;
   config.headers.set('x-timestamp', timestamp);
-  config.headers.set('x-path', `/api/v1${path}`);
+  config.headers.set('x-path', fullPath);
   config.headers.set('x-signature', signature);
 
   config.headers.set('x-client-user-agent', 'Portal/1.0.0 (web)');

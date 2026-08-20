@@ -1,7 +1,11 @@
 import { SignJWT, errors, jwtVerify, type JWTPayload } from 'jose';
 import type { AccessTokenClaims } from '@hlb/contracts';
 
-const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+const getJwtSecret = (): Uint8Array => {
+  const raw = process.env.JWT_SECRET;
+  if (!raw) throw new Error('JWT_SECRET is not set');
+  return new TextEncoder().encode(raw);
+};
 
 interface RequestInterface {
   Body: unknown;
@@ -165,7 +169,10 @@ export const verifyJwt: AuthFunction = async (
   let payload: JwtClaims;
 
   try {
-    const result = (await jwtVerify(token, secret)) as { payload: JwtClaims };
+    const result = (await jwtVerify(token, getJwtSecret(), {
+      issuer: 'helebba.auth',
+      audience: 'helebba.api',
+    })) as { payload: JwtClaims };
     payload = result.payload;
   } catch (error) {
     if (error instanceof errors.JWTExpired) {
