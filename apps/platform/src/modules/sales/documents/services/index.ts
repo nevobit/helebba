@@ -19,6 +19,7 @@ export const documents = async (kind: DocumentKind, params: DocumentListParams) 
       limit: params.limit,
       paymentMethodId: params.paymentMethodId || undefined,
       search: params.search?.trim() || undefined,
+      contactId: params.contactId || undefined,
     },
   });
 

@@ -7,6 +7,7 @@ export type DocumentListParams = {
   limit: number;
   paymentMethodId?: string;
   search?: string;
+  contactId?: string;
 };
 
 export type DocumentsResponse = OffsetPaginatedResult<Document>;

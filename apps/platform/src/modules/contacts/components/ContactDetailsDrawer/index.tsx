@@ -1,5 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Menus } from '@hlb/design-system';
+import type { Document } from '@hlb/contracts';
+import { StatusDocument } from '@hlb/contracts';
 import {
   ArrowRight,
   Building2,
@@ -14,6 +16,7 @@ import {
   Send,
   ShoppingCart,
 } from 'lucide-react';
+import { useDocuments } from '@/modules/sales/documents/hooks';
 import type { ContactRow } from '../../types';
 import styles from './ContactDetailsDrawer.module.css';
 
@@ -50,24 +53,68 @@ const createItems = [
   { label: 'Compra', icon: ShoppingCart },
 ];
 
-const MetricGroup = ({ title, purchase = false }: { title: string; purchase?: boolean }) => (
+const moneyFormatter = new Intl.NumberFormat('es-CO', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+const money = (value: number) => `${moneyFormatter.format(Number.isFinite(value) ? value : 0)} CO$`;
+
+type Metrics = {
+  total: number;
+  count: number;
+  average: number;
+  frequency: number;
+  pending: number;
+};
+
+const computeMetrics = (documents: readonly Document[]): Metrics => {
+  const active = documents.filter((document) => Number(document.status) !== StatusDocument.Cancelled);
+  const total = active.reduce((sum, document) => sum + (Number(document.total) || 0), 0);
+  const count = active.length;
+  const average = count > 0 ? total / count : 0;
+  const pending = active.reduce((sum, document) => sum + (Number(document.paymentsPending) || 0), 0);
+  const dates = active
+    .map((document) => new Date(document.date).getTime())
+    .filter((time) => Number.isFinite(time))
+    .sort((a, b) => a - b);
+  let frequency = 0;
+  if (dates.length > 1) {
+    const diffs = dates.slice(1).map((time, index) => time - dates[index]);
+    frequency = diffs.reduce((sum, diff) => sum + diff, 0) / diffs.length / (1000 * 60 * 60 * 24);
+  }
+
+  return { total, count, average, frequency: Math.round(frequency), pending };
+};
+
+const MetricGroup = ({
+  title,
+  purchase = false,
+  metrics,
+}: {
+  title: string;
+  purchase?: boolean;
+  metrics: Metrics;
+}) => (
   <section className={styles.section}>
     <h3>{title}</h3>
     <div className={styles.metrics}>
       <div>
-        <strong>0.00 CO$</strong>
-        <button type="button">0 facturas</button>
+        <strong>{money(metrics.total)}</strong>
+        <button type="button">
+          {metrics.count} {metrics.count === 1 ? 'factura' : 'facturas'}
+        </button>
       </div>
       <div>
-        <strong>0.00 CO$</strong>
+        <strong>{money(metrics.average)}</strong>
         <span>{purchase ? 'Promedio/compra' : 'Promedio/venta'}</span>
       </div>
       <div>
-        <strong>0 días</strong>
+        <strong>{metrics.frequency} días</strong>
         <span>Frec. media</span>
       </div>
       <div>
-        <strong>0.00 CO$</strong>
+        <strong>{money(metrics.pending)}</strong>
         <span>{purchase ? 'Pend. pago' : 'Pend. cobro'}</span>
       </div>
     </div>
@@ -92,6 +139,19 @@ export const ContactDetailsDrawer = ({
 
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [contact, onClose]);
+
+  const { documents: invoices } = useDocuments('invoice', {
+    page: 1,
+    limit: 1000,
+    contactId: contact?.id ? String(contact.id) : undefined,
+  });
+  const { documents: purchases } = useDocuments('purchase', {
+    page: 1,
+    limit: 1000,
+    contactId: contact?.id ? String(contact.id) : undefined,
+  });
+  const salesMetrics = useMemo(() => computeMetrics(invoices), [invoices]);
+  const purchaseMetrics = useMemo(() => computeMetrics(purchases), [purchases]);
 
   if (!contact) return null;
 
@@ -223,8 +283,8 @@ export const ContactDetailsDrawer = ({
           </button>
         </section>
 
-        <MetricGroup title="Ventas" />
-        {hasPurchases && <MetricGroup title="Compras" purchase />}
+        <MetricGroup title="Ventas" metrics={salesMetrics} />
+        {hasPurchases && <MetricGroup title="Compras" purchase metrics={purchaseMetrics} />}
       </aside>
     </div>
   );

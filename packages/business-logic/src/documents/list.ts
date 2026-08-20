@@ -11,12 +11,13 @@ import {
 type DocumentListParams = Params<{
   docType: DocumentType;
   paymentMethodId?: string;
+  contactId?: string;
 }>;
 
 export const getAllDocuments = async (
   params: DocumentListParams,
 ): Promise<OffsetPaginatedResult<SalesDocument>> => {
-  const { page = 1, limit = 100, paymentMethodId, search = '', organizationId, docType } = params;
+  const { page = 1, limit = 100, paymentMethodId, search = '', organizationId, docType, contactId } = params;
   const model = getModel<SalesDocument>(Collection.DOCUMENTS, DocumentSchemaMongo);
   const skip = (page - 1) * limit;
   const normalizedSearch = search.trim();
@@ -25,6 +26,7 @@ export const getAllDocuments = async (
     docType,
     lifecycleStatus: LifecycleStatus.ACTIVE,
     ...(paymentMethodId ? { paymentMethodId } : {}),
+    ...(contactId ? { contactId } : {}),
     ...(normalizedSearch
       ? {
           $or: [

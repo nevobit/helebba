@@ -23,6 +23,7 @@ type DocumentListQuery = {
   limit?: string;
   paymentMethodId?: string;
   search?: string;
+  contactId?: string;
 };
 
 type ConvertDocumentBody = {
@@ -53,6 +54,7 @@ export const createDocumentRoutes = (prefix: string, docType: DocumentType): Rou
           limit: Number(query.limit ?? 100),
           paymentMethodId: query.paymentMethodId,
           search: query.search ?? '',
+          contactId: query.contactId,
         });
 
         reply.status(200).send(documents);
