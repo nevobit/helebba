@@ -348,7 +348,7 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1.6rem;
-    max-width: 38rem;
+    max-width: 28rem;
 }
 
 .thumbnail,
