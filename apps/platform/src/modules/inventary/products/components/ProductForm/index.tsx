@@ -791,6 +791,43 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                   />
                 </label>
               </div>
+              {priceLists
+                .filter((priceList) => formState.priceListIds.includes(String(priceList.id)))
+                .map((priceList) => (
+                  <div className={styles.tableRow} key={String(priceList.id)}>
+                    <span className={styles.tariffName}>
+                      {priceList.name}
+                      <b>{priceList.currency || 'COP'}</b>
+                      <button
+                        type="button"
+                        className={styles.tariffRemove}
+                        aria-label={`Quitar tarifa ${priceList.name}`}
+                        onClick={() =>
+                          updatePriceListIds(
+                            formState.priceListIds.filter((id) => id !== String(priceList.id)),
+                          )
+                        }
+                      >
+                        <X size={14} />
+                      </button>
+                    </span>
+                    <label className={styles.amountInput}>
+                      <input value={formState.salePrice} disabled readOnly />
+                      <b>{priceList.currency || 'COP'}</b>
+                    </label>
+                    <label className={styles.amountInput}>
+                      <input value={formState.taxRate} disabled readOnly />
+                      <b>%</b>
+                    </label>
+                    <label className={styles.amountInput}>
+                      <input
+                        value={(toNumber(formState.salePrice) * (1 + toNumber(formState.taxRate) / 100)).toFixed(2)}
+                        disabled
+                        readOnly
+                      />
+                    </label>
+                  </div>
+                ))}
               <button
                 type="button"
                 className={styles.linkButton}
@@ -807,29 +844,6 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
               >
                 Gestionar tarifas
               </button>
-              {formState.priceListIds.length > 0 && (
-                <ul className={styles.selectedTariffs}>
-                  {priceLists
-                    .filter((priceList) => formState.priceListIds.includes(String(priceList.id)))
-                    .map((priceList) => (
-                      <li className={styles.tariffChip} key={String(priceList.id)}>
-                        <span>{priceList.name}</span>
-                        <b>{priceList.currency || 'COP'}</b>
-                        <button
-                          type="button"
-                          aria-label={`Quitar tarifa ${priceList.name}`}
-                          onClick={() =>
-                            updatePriceListIds(
-                              formState.priceListIds.filter((id) => id !== String(priceList.id)),
-                            )
-                          }
-                        >
-                          <X size={14} />
-                        </button>
-                      </li>
-                    ))}
-                </ul>
-              )}
             </div>
           </section>
 

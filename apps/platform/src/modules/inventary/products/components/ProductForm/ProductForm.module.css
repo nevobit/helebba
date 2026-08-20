@@ -138,37 +138,23 @@
     padding: 1.6rem;
 }
 
-.selectedTariffs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    margin: 1.2rem 0 0;
-    padding: 0;
-    list-style: none;
-}
-
-.tariffChip {
+.tariffName {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    border: 0.1rem solid var(--color-border-strong);
+    gap: 0.8rem;
+    min-width: 0;
+}
+
+.tariffName b {
     border-radius: var(--ds-radius-full);
-    background: var(--color-surface);
-    color: var(--color-text);
-    font-size: 1.2rem;
-    padding: 0.4rem 0.4rem 0.4rem 1rem;
-}
-
-.tariffChip span {
+    background: var(--ds-action-primary-subtle);
+    color: var(--ds-color-primary);
+    font-size: 1rem;
     font-weight: 600;
+    padding: 0.2rem 0.8rem;
 }
 
-.tariffChip b {
-    color: var(--color-text-muted);
-    font-weight: 500;
-}
-
-.tariffChip button {
+.tariffRemove {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -182,7 +168,7 @@
     padding: 0;
 }
 
-.tariffChip button:hover {
+.tariffRemove:hover {
     background: var(--ds-action-danger-subtle);
     color: var(--color-danger);
 }
