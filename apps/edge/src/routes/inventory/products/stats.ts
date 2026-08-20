@@ -1,4 +1,3 @@
-import { getProductDocumentStats, getProductSalesStats } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod } from '@hlb/constant-definitions';
 import { type OrganizationId, type ProductId } from '@hlb/contracts';
 import { verifyJwt } from '@hlb/security';
