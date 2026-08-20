@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { PrivateRoutes } from '@/app/router/routes';
 import { CatalogModal } from '@/modules/catalog/components/CatalogModal';
 import { useCatalogs } from '@/modules/catalog/hooks';
+import { usePriceLists } from '@/modules/inventary/price-lists/hooks';
 import { useCreateProductModal, useDeleteProduct, useProduct, useUpdateProduct } from '../../hooks';
 import styles from './ProductDetails.module.css';
 
@@ -23,6 +24,7 @@ const ProductDetails = () => {
   const { openModal, closeModal, requestCloseModal } = useModal();
   const { updateProduct, isUpdatingProduct } = useUpdateProduct(productId);
   const { catalogs } = useCatalogs();
+  const { priceLists } = usePriceLists();
   const navigate = useNavigate();
 
   const productCatalogs = useMemo(
@@ -33,6 +35,14 @@ const ProductDetails = () => {
           catalog.productIds.map(String).includes(String(product?.id)),
       ),
     [catalogs, product?.id],
+  );
+
+  const productPriceLists = useMemo(
+    () =>
+      priceLists.filter((priceList) =>
+        (product?.priceListIds ?? []).map(String).includes(String(priceList.id)),
+      ),
+    [priceLists, product?.priceListIds],
   );
 
   const openCatalogModal = () =>
@@ -352,6 +362,18 @@ const ProductDetails = () => {
                   <td>{money(saleTotal)}</td>
                   <td>{margin.toFixed(2)}%</td>
                 </tr>
+                {productPriceLists.map((priceList) => (
+                  <tr key={String(priceList.id)}>
+                    <td>
+                      {priceList.name}
+                      <span className={styles.tariffBadge}>{priceList.currency || 'COP'}</span>
+                    </td>
+                    <td>{money(price)}</td>
+                    <td>{money(saleTax)}</td>
+                    <td>{money(saleTotal)}</td>
+                    <td>{margin.toFixed(2)}%</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </section>

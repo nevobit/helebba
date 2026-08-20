@@ -8,12 +8,23 @@ import styles from './TariffManagerModal.module.css';
 
 type TariffManagerModalProps = {
   closeModal: () => void;
+  selectedIds: string[];
+  onChange: (ids: string[]) => void;
 };
 
-export const TariffManagerModal = ({ closeModal }: TariffManagerModalProps) => {
+export const TariffManagerModal = ({ closeModal, selectedIds, onChange }: TariffManagerModalProps) => {
   const [view, setView] = useState<'list' | 'form'>('list');
+  const [selected, setSelected] = useState<string[]>(selectedIds);
   const { priceLists, isLoading, refetch } = usePriceLists();
   const { createPriceList, isCreatingPriceList } = useCreatePriceList();
+
+  const toggleTariff = (id: string) => {
+    const next = selected.includes(id)
+      ? selected.filter((item) => item !== id)
+      : [...selected, id];
+    setSelected(next);
+    onChange(next);
+  };
 
   const handleSaved = () => {
     void refetch();
@@ -43,7 +54,12 @@ export const TariffManagerModal = ({ closeModal }: TariffManagerModalProps) => {
             ) : priceLists.length > 0 ? (
               <ul className={styles.items}>
                 {priceLists.map((priceList) => (
-                  <TariffItem key={String(priceList.id)} priceList={priceList} />
+                  <TariffItem
+                    key={String(priceList.id)}
+                    priceList={priceList}
+                    checked={selected.includes(String(priceList.id))}
+                    onToggle={() => toggleTariff(String(priceList.id))}
+                  />
                 ))}
               </ul>
             ) : (
@@ -92,12 +108,28 @@ export const TariffManagerModal = ({ closeModal }: TariffManagerModalProps) => {
 
 const TARIFF_FORM_ID = 'tariff-form';
 
-const TariffItem = ({ priceList }: { priceList: PriceList }) => (
+const TariffItem = ({
+  priceList,
+  checked,
+  onToggle,
+}: {
+  priceList: PriceList;
+  checked: boolean;
+  onToggle: () => void;
+}) => (
   <li className={styles.item}>
-    <div className={styles.itemInfo}>
-      <strong>{priceList.name}</strong>
-      <span>{priceList.currency || 'COP'}</span>
-    </div>
+    <label className={styles.itemLabel}>
+      <input
+        type="checkbox"
+        className={styles.checkbox}
+        checked={checked}
+        onChange={onToggle}
+      />
+      <span className={styles.itemInfo}>
+        <strong>{priceList.name}</strong>
+        <span>{priceList.currency || 'COP'}</span>
+      </span>
+    </label>
     <p>{priceList.description || 'Sin descripción'}</p>
   </li>
 );

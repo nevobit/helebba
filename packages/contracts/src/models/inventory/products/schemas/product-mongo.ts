@@ -41,6 +41,7 @@ export const ProductSchemaMongo = new Schema<Product>(
     contactName: { type: String },
     price: { type: Number, min: 0 },
     cost: { type: Number, min: 0 },
+    priceListIds: { type: [String], default: [] },
     stockState: { type: Number },
     taxes: { type: [String] },
     total: { type: Number, min: 0 },

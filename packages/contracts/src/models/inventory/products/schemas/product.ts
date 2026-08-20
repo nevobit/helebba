@@ -3,6 +3,7 @@ import type {
   UserId,
   CategoryId,
   ProductId,
+  PriceListId,
   ProductFieldDefinitionId,
   CompanyId,
   WarehouseId,
@@ -77,6 +78,7 @@ export interface Product extends PersistedSoftDeletableEntity<ProductId, UserId>
   contactName: string;
   price: number;
   cost: number;
+  priceListIds: PriceListId[];
   stockState: ProductStockState;
   taxes: string[];
   total: number;

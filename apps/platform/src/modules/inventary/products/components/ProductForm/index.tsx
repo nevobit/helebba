@@ -14,7 +14,7 @@ import { SETTINGS_PRODUCT_FIELDS_HASH } from '@/modules/settings/hooks';
 import { ImageUploader } from '@/modules/media/components';
 import { TariffManagerModal } from '@/modules/inventary/price-lists/components/TariffManagerModal';
 import type { CreateProductPayload } from '../../services';
-import type { CategoryId, Product, ProductFieldValue, WarehouseId } from '@hlb/contracts';
+import type { CategoryId, PriceListId, Product, ProductFieldValue, WarehouseId } from '@hlb/contracts';
 import styles from './ProductForm.module.css';
 
 export const PRODUCT_FORM_ID = 'product-form';
@@ -33,6 +33,7 @@ type ProductFormState = {
   category: string;
   secondaryCategories: string[];
   brand: string;
+  priceListIds: string[];
   salePrice: string;
   taxRate: string;
   purchasePrice: string;
@@ -220,6 +221,7 @@ const initialState: ProductFormState = {
   category: '',
   secondaryCategories: [],
   brand: '',
+  priceListIds: [],
   salePrice: '0',
   taxRate: '0',
   purchasePrice: '0',
@@ -251,6 +253,7 @@ const productToFormState = (product?: Product): ProductFormState => product ? {
   category: product.categoryId ? String(product.categoryId) : '',
   secondaryCategories: (product.categories ?? []).map(String),
   brand: product.brand ?? '',
+  priceListIds: (product.priceListIds ?? []).map(String),
   salePrice: String(product.price ?? 0),
   taxRate: String(product.taxRate ?? 0),
   purchasePrice: String(product.purchasePrice ?? 0),
@@ -432,6 +435,11 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
     setDirty();
   };
 
+  const updatePriceListIds = (priceListIds: string[]) => {
+    setFormState((current) => ({ ...current, priceListIds }));
+    setDirty();
+  };
+
   const visibleVariants = variants.filter((variant) => {
     const search = variantSearch.trim().toLocaleLowerCase();
     if (!search) return true;
@@ -467,6 +475,7 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
       price,
       total: price * (1 + taxRate / 100),
       taxRate,
+      priceListIds: formState.priceListIds as PriceListId[],
       purchasePrice: toNumber(formState.purchasePrice),
       cost: toNumber(formState.cost),
       sku: formState.sku.trim() || undefined,
@@ -783,7 +792,16 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
               <button
                 type="button"
                 className={styles.linkButton}
-                onClick={() => openModal(<TariffManagerModal closeModal={closeModal} />, { id: 'tariff-manager' })}
+                onClick={() =>
+                  openModal(
+                    <TariffManagerModal
+                      closeModal={closeModal}
+                      selectedIds={formState.priceListIds}
+                      onChange={updatePriceListIds}
+                    />,
+                    { id: 'tariff-manager' },
+                  )
+                }
               >
                 Gestionar tarifas
               </button>

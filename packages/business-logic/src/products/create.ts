@@ -2,6 +2,7 @@ import {
   BrandSchemaMongo,
   CategorySchemaMongo,
   ContactSchemaMongo,
+  PriceListSchemaMongo,
   ProductFieldDefinitionSchemaMongo,
   ProductSchemaMongo,
   ProductStockState,
@@ -10,6 +11,7 @@ import {
   type Category,
   type Contact,
   type InventoryBrand,
+  type PriceList,
   type Product,
   type ProductId,
   type ProductFieldDefinition,
@@ -173,9 +175,18 @@ export const prepareProductData = async (data: Partial<Product>, productId?: Pro
     data.brand
       ? getModel<InventoryBrand>(Collection.BRANDS, BrandSchemaMongo).exists({ name: data.brand, organizationId })
       : null,
+    data.priceListIds?.length
+      ? getModel<PriceList>(Collection.PRICE_LISTS, PriceListSchemaMongo)
+          .countDocuments({
+            _id: { $in: data.priceListIds.map(String) },
+            organizationId,
+            lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+          })
+          .then((count) => count === data.priceListIds!.length)
+      : null,
   ];
   const referenceResults = await Promise.all(referenceChecks.map((check) => check ?? Promise.resolve(true)));
-  const referenceNames = ['categoría', 'almacén', 'proveedor', 'marca'];
+  const referenceNames = ['categoría', 'almacén', 'proveedor', 'marca', 'tarifa'];
   const invalidReferenceIndex = referenceResults.findIndex((result) => !result);
   if (invalidReferenceIndex >= 0) {
     throw new Error(`La ${referenceNames[invalidReferenceIndex]} seleccionada no pertenece a la organización.`);
