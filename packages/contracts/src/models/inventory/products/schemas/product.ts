@@ -61,6 +61,11 @@ export interface ProductFile {
   mimeType: string;
 }
 
+export interface ProductPriceList {
+  priceListId: PriceListId;
+  price: number;
+}
+
 export interface Product extends PersistedSoftDeletableEntity<ProductId, UserId> {
   kind: string;
   name: string;
@@ -78,7 +83,7 @@ export interface Product extends PersistedSoftDeletableEntity<ProductId, UserId>
   contactName: string;
   price: number;
   cost: number;
-  priceListIds: PriceListId[];
+  priceListPrices: ProductPriceList[];
   stockState: ProductStockState;
   taxes: string[];
   total: number;

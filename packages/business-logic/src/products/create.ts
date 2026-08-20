@@ -175,14 +175,14 @@ export const prepareProductData = async (data: Partial<Product>, productId?: Pro
     data.brand
       ? getModel<InventoryBrand>(Collection.BRANDS, BrandSchemaMongo).exists({ name: data.brand, organizationId })
       : null,
-    data.priceListIds?.length
+    data.priceListPrices?.length
       ? getModel<PriceList>(Collection.PRICE_LISTS, PriceListSchemaMongo)
           .countDocuments({
-            _id: { $in: data.priceListIds.map(String) },
+            _id: { $in: data.priceListPrices.map((item) => String(item.priceListId)) },
             organizationId,
             lifecycleStatus: { $ne: LifecycleStatus.DELETED },
           })
-          .then((count) => count === data.priceListIds!.length)
+          .then((count) => count === data.priceListPrices!.length)
       : null,
   ];
   const referenceResults = await Promise.all(referenceChecks.map((check) => check ?? Promise.resolve(true)));

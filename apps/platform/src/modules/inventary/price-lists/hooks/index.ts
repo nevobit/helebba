@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createPriceList, priceLists, type CreatePriceListPayload } from '../services';
+import { createPriceList, priceLists, updatePriceList, type CreatePriceListPayload } from '../services';
 
 export function usePriceLists() {
   const { data, error, isFetching, isLoading, refetch } = useQuery({
@@ -30,5 +30,22 @@ export function useCreatePriceList() {
   return {
     createPriceList: mutation.mutate,
     isCreatingPriceList: mutation.isPending,
+  };
+}
+
+export function useUpdatePriceList() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: CreatePriceListPayload }) =>
+      updatePriceList(id, payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['price-lists'] });
+    },
+  });
+
+  return {
+    updatePriceList: mutation.mutate,
+    isUpdatingPriceList: mutation.isPending,
   };
 }

@@ -1,8 +1,8 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { Button, Modal, TextInput } from '@hlb/design-system';
-import { Plus } from 'lucide-react';
+import { Pencil, Plus } from 'lucide-react';
 import type { PriceList } from '@hlb/contracts';
-import { useCreatePriceList, usePriceLists } from '../../hooks';
+import { useCreatePriceList, usePriceLists, useUpdatePriceList } from '../../hooks';
 import type { CreatePriceListPayload } from '../../services';
 import styles from './TariffManagerModal.module.css';
 
@@ -15,8 +15,10 @@ type TariffManagerModalProps = {
 export const TariffManagerModal = ({ closeModal, selectedIds, onChange }: TariffManagerModalProps) => {
   const [view, setView] = useState<'list' | 'form'>('list');
   const [selected, setSelected] = useState<string[]>(selectedIds);
+  const [editing, setEditing] = useState<PriceList | null>(null);
   const { priceLists, isLoading, refetch } = usePriceLists();
   const { createPriceList, isCreatingPriceList } = useCreatePriceList();
+  const { updatePriceList, isUpdatingPriceList } = useUpdatePriceList();
 
   const toggleTariff = (id: string) => {
     const next = selected.includes(id)
@@ -26,8 +28,19 @@ export const TariffManagerModal = ({ closeModal, selectedIds, onChange }: Tariff
     onChange(next);
   };
 
+  const openCreate = () => {
+    setEditing(null);
+    setView('form');
+  };
+
+  const openEdit = (priceList: PriceList) => {
+    setEditing(priceList);
+    setView('form');
+  };
+
   const handleSaved = () => {
     void refetch();
+    setEditing(null);
     setView('list');
   };
 
@@ -42,7 +55,7 @@ export const TariffManagerModal = ({ closeModal, selectedIds, onChange }: Tariff
       size={{ width: '60rem', maxWidth: 'calc(100vw - 3.2rem)' }}
     >
       <Modal.Header>
-        <h2>{view === 'list' ? 'Tarifas' : 'Nueva tarifa'}</h2>
+        <h2>{view === 'list' ? 'Tarifas' : editing ? 'Editar tarifa' : 'Nueva tarifa'}</h2>
         <Modal.CloseButton onClick={closeModal} label="Cerrar" />
       </Modal.Header>
 
@@ -59,6 +72,7 @@ export const TariffManagerModal = ({ closeModal, selectedIds, onChange }: Tariff
                     priceList={priceList}
                     checked={selected.includes(String(priceList.id))}
                     onToggle={() => toggleTariff(String(priceList.id))}
+                    onEdit={() => openEdit(priceList)}
                   />
                 ))}
               </ul>
@@ -71,12 +85,18 @@ export const TariffManagerModal = ({ closeModal, selectedIds, onChange }: Tariff
           </section>
         ) : (
           <TariffForm
-            isSaving={isCreatingPriceList}
-            onSave={(payload) =>
-              createPriceList(payload, {
-                onSuccess: handleSaved,
-              })
-            }
+            initial={editing ?? undefined}
+            isSaving={isCreatingPriceList || isUpdatingPriceList}
+            onSave={(payload) => {
+              if (editing) {
+                updatePriceList(
+                  { id: String(editing.id), payload },
+                  { onSuccess: handleSaved },
+                );
+              } else {
+                createPriceList(payload, { onSuccess: handleSaved });
+              }
+            }}
           />
         )}
       </Modal.Body>
@@ -87,7 +107,7 @@ export const TariffManagerModal = ({ closeModal, selectedIds, onChange }: Tariff
             <Button variant="outline" theme="optional" onClick={closeModal}>
               Cerrar
             </Button>
-            <Button icon={<Plus size={16} />} onClick={() => setView('form')}>
+            <Button icon={<Plus size={16} />} onClick={openCreate}>
               Nueva tarifa
             </Button>
           </>
@@ -96,7 +116,11 @@ export const TariffManagerModal = ({ closeModal, selectedIds, onChange }: Tariff
             <Button variant="outline" theme="optional" onClick={() => setView('list')}>
               Cancelar
             </Button>
-            <Button type="submit" form={TARIFF_FORM_ID} loading={isCreatingPriceList}>
+            <Button
+              type="submit"
+              form={TARIFF_FORM_ID}
+              loading={isCreatingPriceList || isUpdatingPriceList}
+            >
               Guardar
             </Button>
           </>
@@ -112,10 +136,12 @@ const TariffItem = ({
   priceList,
   checked,
   onToggle,
+  onEdit,
 }: {
   priceList: PriceList;
   checked: boolean;
   onToggle: () => void;
+  onEdit: () => void;
 }) => (
   <li className={styles.item}>
     <label className={styles.itemLabel}>
@@ -130,20 +156,28 @@ const TariffItem = ({
         <span>{priceList.currency || 'COP'}</span>
       </span>
     </label>
-    <p>{priceList.description || 'Sin descripción'}</p>
+    <div className={styles.itemActions}>
+      <p>{priceList.description || 'Sin descripción'}</p>
+      <button type="button" className={styles.editButton} onClick={onEdit}>
+        <Pencil size={13} />
+        Editar
+      </button>
+    </div>
   </li>
 );
 
 const TariffForm = ({
+  initial,
   isSaving,
   onSave,
 }: {
+  initial?: PriceList;
   isSaving: boolean;
   onSave: (payload: CreatePriceListPayload) => void;
 }) => {
-  const [name, setName] = useState('');
-  const [currency, setCurrency] = useState('COP');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState(initial?.name ?? '');
+  const [currency, setCurrency] = useState(initial?.currency || 'COP');
+  const [description, setDescription] = useState(initial?.description ?? '');
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {

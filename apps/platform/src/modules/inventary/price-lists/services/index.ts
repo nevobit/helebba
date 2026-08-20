@@ -24,3 +24,9 @@ export const createPriceList = async (payload: CreatePriceListPayload) => {
 
   return data;
 };
+
+export const updatePriceList = async (priceListId: string, payload: CreatePriceListPayload) => {
+  const { data } = await api.patch<PriceList>(`/price-lists/${priceListId}`, payload);
+
+  return data;
+};

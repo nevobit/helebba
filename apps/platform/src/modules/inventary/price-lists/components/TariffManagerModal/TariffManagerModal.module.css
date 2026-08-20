@@ -73,11 +73,37 @@
     padding: var(--ds-space-1) var(--ds-space-2);
 }
 
-.item p {
+.itemActions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ds-space-2);
+}
+
+.itemActions p {
     margin: 0;
     color: var(--color-text-muted);
     font-size: var(--ds-font-size-12);
     line-height: var(--ds-line-height-normal);
+}
+
+.editButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-accent);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--ds-font-size-12);
+    font-weight: var(--ds-font-weight-semibold);
+    padding: 0;
+}
+
+.editButton:hover {
+    text-decoration: underline;
 }
 
 .empty {

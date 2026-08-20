@@ -34,7 +34,7 @@ type ProductFormState = {
   category: string;
   secondaryCategories: string[];
   brand: string;
-  priceListIds: string[];
+  priceListPrices: { priceListId: string; price: string }[];
   salePrice: string;
   taxRate: string;
   purchasePrice: string;
@@ -222,7 +222,7 @@ const initialState: ProductFormState = {
   category: '',
   secondaryCategories: [],
   brand: '',
-  priceListIds: [],
+  priceListPrices: [],
   salePrice: '0',
   taxRate: '0',
   purchasePrice: '0',
@@ -254,7 +254,10 @@ const productToFormState = (product?: Product): ProductFormState => product ? {
   category: product.categoryId ? String(product.categoryId) : '',
   secondaryCategories: (product.categories ?? []).map(String),
   brand: product.brand ?? '',
-  priceListIds: (product.priceListIds ?? []).map(String),
+  priceListPrices: (product.priceListPrices ?? []).map((item) => ({
+    priceListId: String(item.priceListId),
+    price: String(item.price ?? 0),
+  })),
   salePrice: String(product.price ?? 0),
   taxRate: String(product.taxRate ?? 0),
   purchasePrice: String(product.purchasePrice ?? 0),
@@ -438,7 +441,23 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
   };
 
   const updatePriceListIds = (priceListIds: string[]) => {
-    setFormState((current) => ({ ...current, priceListIds }));
+    setFormState((current) => {
+      const next = priceListIds.map((id) => {
+        const existing = current.priceListPrices.find((item) => item.priceListId === id);
+        return existing ?? { priceListId: id, price: current.salePrice };
+      });
+      return { ...current, priceListPrices: next };
+    });
+    setDirty();
+  };
+
+  const updateTariffPrice = (priceListId: string, price: string) => {
+    setFormState((current) => ({
+      ...current,
+      priceListPrices: current.priceListPrices.map((item) =>
+        item.priceListId === priceListId ? { ...item, price } : item,
+      ),
+    }));
     setDirty();
   };
 
@@ -477,7 +496,10 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
       price,
       total: price * (1 + taxRate / 100),
       taxRate,
-      priceListIds: formState.priceListIds as PriceListId[],
+      priceListPrices: formState.priceListPrices.map((item) => ({
+        priceListId: item.priceListId as PriceListId,
+        price: toNumber(item.price),
+      })),
       purchasePrice: toNumber(formState.purchasePrice),
       cost: toNumber(formState.cost),
       sku: formState.sku.trim() || undefined,
@@ -791,10 +813,13 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                   />
                 </label>
               </div>
-              {priceLists
-                .filter((priceList) => formState.priceListIds.includes(String(priceList.id)))
-                .map((priceList) => (
-                  <div className={styles.tableRow} key={String(priceList.id)}>
+              {formState.priceListPrices.flatMap((item) => {
+                const priceList = priceLists.find((priceList) => String(priceList.id) === item.priceListId);
+                if (!priceList) return [];
+                const price = toNumber(item.price);
+                const tax = (price * toNumber(formState.taxRate)) / 100;
+                return [
+                  <div className={styles.tableRow} key={item.priceListId}>
                     <span className={styles.tariffName}>
                       {priceList.name}
                       <b>{priceList.currency || 'COP'}</b>
@@ -804,7 +829,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                         aria-label={`Quitar tarifa ${priceList.name}`}
                         onClick={() =>
                           updatePriceListIds(
-                            formState.priceListIds.filter((id) => id !== String(priceList.id)),
+                            formState.priceListPrices
+                              .map((entry) => entry.priceListId)
+                              .filter((id) => id !== item.priceListId),
                           )
                         }
                       >
@@ -812,7 +839,14 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                       </button>
                     </span>
                     <label className={styles.amountInput}>
-                      <input value={formState.salePrice} disabled readOnly />
+                      <input
+                        name={`priceListPrice-${item.priceListId}`}
+                        inputMode="decimal"
+                        value={item.price}
+                        disabled={isCreatingProduct}
+                        aria-label={`Precio de la tarifa ${priceList.name}`}
+                        onChange={(event) => updateTariffPrice(item.priceListId, event.target.value)}
+                      />
                       <b>{priceList.currency || 'COP'}</b>
                     </label>
                     <label className={styles.amountInput}>
@@ -820,14 +854,11 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                       <b>%</b>
                     </label>
                     <label className={styles.amountInput}>
-                      <input
-                        value={(toNumber(formState.salePrice) * (1 + toNumber(formState.taxRate) / 100)).toFixed(2)}
-                        disabled
-                        readOnly
-                      />
+                      <input value={(price + tax).toFixed(2)} disabled readOnly />
                     </label>
-                  </div>
-                ))}
+                  </div>,
+                ];
+              })}
               <button
                 type="button"
                 className={styles.linkButton}
@@ -835,7 +866,7 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                   openModal(
                     <TariffManagerModal
                       closeModal={closeModal}
-                      selectedIds={formState.priceListIds}
+                      selectedIds={formState.priceListPrices.map((item) => item.priceListId)}
                       onChange={updatePriceListIds}
                     />,
                     { id: 'tariff-manager' },

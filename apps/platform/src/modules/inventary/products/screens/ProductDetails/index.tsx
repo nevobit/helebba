@@ -39,10 +39,11 @@ const ProductDetails = () => {
 
   const productPriceLists = useMemo(
     () =>
-      priceLists.filter((priceList) =>
-        (product?.priceListIds ?? []).map(String).includes(String(priceList.id)),
-      ),
-    [priceLists, product?.priceListIds],
+      (product?.priceListPrices ?? []).flatMap((item) => {
+        const priceList = priceLists.find((entry) => String(entry.id) === String(item.priceListId));
+        return priceList ? [{ priceList, price: Number(item.price ?? 0) }] : [];
+      }),
+    [priceLists, product?.priceListPrices],
   );
 
   const openCatalogModal = () =>
@@ -362,18 +363,23 @@ const ProductDetails = () => {
                   <td>{money(saleTotal)}</td>
                   <td>{margin.toFixed(2)}%</td>
                 </tr>
-                {productPriceLists.map((priceList) => (
-                  <tr key={String(priceList.id)}>
-                    <td>
-                      {priceList.name}
-                      <span className={styles.tariffBadge}>{priceList.currency || 'COP'}</span>
-                    </td>
-                    <td>{money(price)}</td>
-                    <td>{money(saleTax)}</td>
-                    <td>{money(saleTotal)}</td>
-                    <td>{margin.toFixed(2)}%</td>
-                  </tr>
-                ))}
+                {productPriceLists.map(({ priceList, price: tariffPrice }) => {
+                  const tariffTax = (tariffPrice * taxRate) / 100;
+                  const tariffTotal = tariffPrice + tariffTax;
+                  const tariffMargin = tariffPrice > 0 ? ((tariffPrice - cost) / tariffPrice) * 100 : 0;
+                  return (
+                    <tr key={String(priceList.id)}>
+                      <td>
+                        {priceList.name}
+                        <span className={styles.tariffBadge}>{priceList.currency || 'COP'}</span>
+                      </td>
+                      <td>{money(tariffPrice)}</td>
+                      <td>{money(tariffTax)}</td>
+                      <td>{money(tariffTotal)}</td>
+                      <td>{tariffMargin.toFixed(2)}%</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </section>
