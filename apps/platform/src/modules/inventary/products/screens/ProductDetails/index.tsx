@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { Button, Menus, useModal } from '@hlb/design-system';
+import { Button, Menus, useModal, Modal } from '@hlb/design-system';
 import {
   ArrowLeft,
   Check,
+  Image,
   Library,
   PackageOpen,
   Plus,
@@ -47,6 +48,16 @@ const ProductDetails = () => {
     openModal(<CatalogModal closeModal={closeModal} onSuccess={() => refetch()} />, {
       id: 'create-catalog-from-product',
     });
+
+  const openImagesModal = () =>
+    openModal(
+      <ImagesModal
+        images={product?.images ?? []}
+        onSave={(images) => updateProduct({ images }, { onSuccess: () => refetch() })}
+        disabled={isUpdatingProduct || !product}
+      />,
+      { id: 'product-images-modal' },
+    );
 
   const confirmDelete = () => {
     if (!productId || isDeletingProduct) return;
@@ -219,13 +230,46 @@ const ProductDetails = () => {
           </section>
 
           <section className={styles.sidebarSection}>
-            <span className={styles.sectionLabel}>Imágenes</span>
-            <ImageUploader
-              folder="products/images"
-              value={product?.images ?? []}
-              disabled={isUpdatingProduct || !product}
-              onChange={(images) => updateProduct({ images }, { onSuccess: () => refetch() })}
-            />
+            <div className={styles.imagesHeader}>
+              <span className={styles.sectionLabel}>Imágenes</span>
+              <Button
+                size="slim"
+                variant="outline"
+                theme="optional"
+                icon={<Image size={14} />}
+                onClick={openImagesModal}
+                disabled={!product}
+              >
+                Editar
+              </Button>
+            </div>
+            <div className={styles.imagesGallery}>
+              {product?.images && product.images.length > 0 ? (
+                <>
+                  <div className={styles.mainImage}>
+                    <img src={product.images[0]} alt={product.name} />
+                  </div>
+                  {product.images.length > 1 && (
+                    <div className={styles.thumbnails}>
+                      {product.images.slice(1, 5).map((image, index) => (
+                        <img key={index} src={image} alt={`${product.name} - ${index + 2}`} />
+                      ))}
+                      {product.images.length > 5 && (
+                        <div className={styles.moreBadge}>+{product.images.length - 5}</div>
+                      )}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className={styles.emptyGallery}>
+                  <Image size={28} />
+                  <p>Sin imágenes</p>
+                  <Button size="slim" variant="outline" theme="optional" onClick={openImagesModal} disabled={!product}>
+                    Subir imágenes
+                  </Button>
+                </div>
+              )}
+            </div>
           </section>
         </aside>
 
@@ -352,6 +396,48 @@ const ProductDetails = () => {
         </section>
       </div>
     </main>
+  );
+};
+
+const ImagesModal = ({
+  images = [],
+  onSave,
+  disabled,
+}: {
+  images: string[];
+  onSave: (images: string[]) => void;
+  disabled?: boolean;
+}) => {
+  const { closeModal } = useModal();
+
+  return (
+    <Modal.Window
+      isOpen
+      ariaLabel="Gestionar imágenes del producto"
+      closeOnEsc
+      closeOnOverlay
+      onClose={closeModal}
+      size={{ width: '56rem', maxWidth: 'calc(100vw - 3.2rem)' }}
+    >
+      <Modal.Header>
+        <h2>Imágenes del producto</h2>
+        <Modal.CloseButton onClick={closeModal} />
+      </Modal.Header>
+      <Modal.Body>
+        <ImageUploader
+          folder="products/images"
+          value={images}
+          disabled={disabled}
+          onChange={onSave}
+          onUploadingChange={() => {}}
+        />
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="outline" theme="optional" onClick={closeModal}>
+          Cerrar
+        </Button>
+      </Modal.Footer>
+    </Modal.Window>
   );
 };
 
