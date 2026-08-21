@@ -8,7 +8,7 @@ export const OrganizationSchemaMongo = new Schema<Organization>(
     name: { type: String, required: true },
     legalName: { type: String },
     taxId: { type: String },
-    email: { type: String, unique: true },
+    email: { type: String },
     phone: { type: String },
     country: { type: String },
     currency: { type: String },
