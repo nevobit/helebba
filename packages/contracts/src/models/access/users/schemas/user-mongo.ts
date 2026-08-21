@@ -10,8 +10,8 @@ export const UserSchemaMongo = new Schema<User>(
     newsletter: { type: Boolean },
     photo: { type: String },
     provider: {
-      google: { type: String },
-      apple: { type: String },
+      google: { sub: { type: String }, email: { type: String } },
+      apple: { sub: { type: String }, email: { type: String } },
       facebook: { type: String },
     },
     username: { type: String },

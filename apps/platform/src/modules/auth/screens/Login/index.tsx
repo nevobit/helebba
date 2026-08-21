@@ -25,8 +25,32 @@ const Login = () => {
     },
   });
 
+  const handleAppleLogin = () => {
+    const clientId = import.meta.env.VITE_APPLE_CLIENT_ID;
+    const redirectUri = `${window.location.origin}/auth/oauth/apple/callback`;
+    const scope = 'name email';
+    const responseType = 'code';
+    const responseMode = 'form_post';
+    const state = crypto.randomUUID();
+
+    sessionStorage.setItem('apple_oauth_state', state);
+
+    const authUrl = `https://appleid.apple.com/auth/authorize?` +
+      new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        scope,
+        response_type: responseType,
+        response_mode: responseMode,
+        state,
+      }).toString();
+
+    window.location.href = authUrl;
+  };
+
   const { formState, handleChange } = useForm({ email: '' });
   const [error, setError] = useState<string | null>(null);
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,9 +62,9 @@ const Login = () => {
     }
 
     setError(null);
-    login(email, {
+    login({ email, rememberMe }, {
       onSuccess: () => {
-        navigate(PublicRoutes.LOGIN_VERIFY, { state: { email } });
+        navigate(PublicRoutes.LOGIN_VERIFY, { state: { email, rememberMe } });
       },
       onError: (err) => {
         setError(err instanceof Error ? err.message : 'No pudimos enviar el código.');
@@ -94,7 +118,7 @@ const Login = () => {
               </span>
               Continuar con Google
             </button>
-            <button className={styles.iconButton} type="button" aria-label="Continuar con Apple">
+            <button className={styles.iconButton} type="button" aria-label="Continuar con Apple" onClick={handleAppleLogin}>
               <span className={styles.appleMark} aria-hidden="true">
                 
               </span>
@@ -120,7 +144,11 @@ const Login = () => {
 
           <div className={styles.formMeta}>
             <label className={styles.checkbox}>
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
               <span>Mantener sesión</span>
             </label>
           </div>

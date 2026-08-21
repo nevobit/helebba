@@ -20,6 +20,7 @@ import { productFieldDefinitionRoutes } from './inventory/product-field-definiti
 import { catalogRoutes } from './inventory/catalogs';
 import { posRoutes } from './sales/pos';
 import { crmFunnelRoutes } from './crm/funnels';
+import { leadRoutes } from './crm/leads';
 import { productNoteRoutes } from './inventory/product-notes';
 import { stockMovementRoutes } from './inventory/stock-movements';
 import { priceListRoutes } from './inventory/price-lists';
@@ -49,6 +50,7 @@ const routes: RouteOptions[] = [
   ...catalogRoutes,
   ...posRoutes,
   ...crmFunnelRoutes,
+  ...leadRoutes,
   ...productNoteRoutes,
   ...stockMovementRoutes,
   ...priceListRoutes,

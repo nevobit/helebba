@@ -8,6 +8,29 @@ import { useSignup } from '@/modules/auth/hooks';
 const Signup = () => {
   const navigate = useNavigate();
   const { signup, isSigningUp } = useSignup();
+
+  const handleAppleLogin = () => {
+    const clientId = import.meta.env.VITE_APPLE_CLIENT_ID;
+    const redirectUri = `${window.location.origin}/auth/oauth/apple/callback`;
+    const scope = 'name email';
+    const responseType = 'code';
+    const responseMode = 'form_post';
+    const state = crypto.randomUUID();
+
+    sessionStorage.setItem('apple_oauth_state', state);
+
+    const authUrl = `https://appleid.apple.com/auth/authorize?` +
+      new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        scope,
+        response_type: responseType,
+        response_mode: responseMode,
+        state,
+      }).toString();
+
+    window.location.href = authUrl;
+  };
   const { formState, handleChange } = useForm({
     name: '',
     email: '',
@@ -32,7 +55,7 @@ const Signup = () => {
     }
 
     setErrors({});
-    signup(email, {
+    signup({ email }, {
       onSuccess: () => {
         navigate(PublicRoutes.SIGNUP_VERIFY, {
           state: {
@@ -81,7 +104,7 @@ const Signup = () => {
               </span>
               Registrarme con Google
             </button>
-            <button className={styles.iconButton} type="button" aria-label="Registrarme con Apple">
+            <button className={styles.iconButton} type="button" aria-label="Registrarme con Apple" onClick={handleAppleLogin}>
               <span className={styles.appleMark} aria-hidden="true">
                 
               </span>

@@ -40,6 +40,9 @@ const appendQuery = (url: URL, query: ListParams | undefined) => {
 
 export type HttpClient = {
   get: <T>(path: string, options?: RequestOptions) => Promise<T>;
+  post: <T>(path: string, body?: unknown) => Promise<T>;
+  patch: <T>(path: string, body?: unknown) => Promise<T>;
+  delete: <T>(path: string) => Promise<T>;
 };
 
 const readBody = async (response: Response) => {
@@ -115,6 +118,70 @@ export const createHttpClient = (options: HelebbaClientOptions): HttpClient => {
 
       const response = await fetcher(url, {
         method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'api-key': apiKey,
+          'x-timestamp': timestamp,
+          'x-path': url.pathname,
+          'x-client-user-agent': 'GSDK/0.1.0 (node)',
+          Accept: 'application/json',
+        },
+      });
+
+      return (await assertOk(response)) as T;
+    },
+
+    post: async <T>(path: string, body?: unknown): Promise<T> => {
+      const url = new URL(`${baseUrl}${path}`);
+      const accessToken = await requestAccessToken();
+      const timestamp = Date.now().toString();
+
+      const response = await fetcher(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'api-key': apiKey,
+          'x-timestamp': timestamp,
+          'x-path': url.pathname,
+          'x-client-user-agent': 'GSDK/0.1.0 (node)',
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: body != null ? JSON.stringify(body) : undefined,
+      });
+
+      return (await assertOk(response)) as T;
+    },
+
+    patch: async <T>(path: string, body?: unknown): Promise<T> => {
+      const url = new URL(`${baseUrl}${path}`);
+      const accessToken = await requestAccessToken();
+      const timestamp = Date.now().toString();
+
+      const response = await fetcher(url, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'api-key': apiKey,
+          'x-timestamp': timestamp,
+          'x-path': url.pathname,
+          'x-client-user-agent': 'GSDK/0.1.0 (node)',
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: body != null ? JSON.stringify(body) : undefined,
+      });
+
+      return (await assertOk(response)) as T;
+    },
+
+    delete: async <T>(path: string): Promise<T> => {
+      const url = new URL(`${baseUrl}${path}`);
+      const accessToken = await requestAccessToken();
+      const timestamp = Date.now().toString();
+
+      const response = await fetcher(url, {
+        method: 'DELETE',
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'api-key': apiKey,

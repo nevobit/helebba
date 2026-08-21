@@ -21,10 +21,15 @@ type IssueTokensInput = {
   organizationId?: string;
   membershipId?: string;
   roleId?: string;
+  rememberMe?: boolean;
 };
 
 export async function issueTokens(input: IssueTokensInput) {
-  const { kind, userId, sessionId, organizationId, membershipId, roleId } = input;
+  const { kind, userId, sessionId, organizationId, membershipId, roleId, rememberMe } = input;
+
+  const isRememberMe = rememberMe ?? false;
+  const accessExpiry = isRememberMe ? '30d' : '1d';
+  const refreshExpiry = isRememberMe ? '30d' : '7d';
 
   const accessToken = await issueJwt({
     secretOrPrivateKey: process.env.JWT_SECRET!,
@@ -42,7 +47,7 @@ export async function issueTokens(input: IssueTokensInput) {
     audience: 'helebba.api',
     subject: userId,
     algorithm: 'HS256',
-    expiresIn: '1d',
+    expiresIn: accessExpiry,
     notBefore: '0s',
     keyid: 'access-hs256-v1',
   });
@@ -62,7 +67,7 @@ export async function issueTokens(input: IssueTokensInput) {
     issuer: 'helebba.auth',
     audience: 'helebba.api',
     subject: userId,
-    expiresIn: '7d',
+    expiresIn: refreshExpiry,
     notBefore: '0s',
     keyid: 'refresh-hs256-v1',
   });

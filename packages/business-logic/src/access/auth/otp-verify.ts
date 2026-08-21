@@ -14,7 +14,7 @@ const safeEquals = (a: string, b: string) => {
   return crypto.timingSafeEqual(hashA, hashB);
 };
 
-export const otpVerify = async (user: Partial<User>, code: string) => {
+export const otpVerify = async (user: Partial<User>, code: string, rememberMe?: boolean) => {
   const redisRead = getRedisReadClient();
   const redisWrite = getRedisWriteClient();
 
@@ -26,9 +26,20 @@ export const otpVerify = async (user: Partial<User>, code: string) => {
   const codeKey = `verification:${email}`;
   const attemptsKey = `attempts:${email}`;
 
-  const storedCode = await redisRead.get(codeKey);
-  if (!storedCode) {
+  const storedData = await redisRead.get(codeKey);
+  if (!storedData) {
     throw new Error('Invalid or expired verification code');
+  }
+
+  let storedCode: string;
+  try {
+    const parsed = JSON.parse(storedData);
+    storedCode = parsed.code;
+    // Use rememberMe from stored data if not explicitly provided
+    rememberMe = parsed.rememberMe ?? rememberMe ?? false;
+  } catch {
+    // Fallback for old format (just the code string)
+    storedCode = storedData;
   }
 
   const attempts = Number((await redisRead.get(attemptsKey)) ?? '0');
@@ -71,6 +82,7 @@ export const otpVerify = async (user: Partial<User>, code: string) => {
     kind: 'global',
     userId: userInfo.id,
     sessionId: sessionId,
+    rememberMe: rememberMe ?? false,
   });
 
   return {

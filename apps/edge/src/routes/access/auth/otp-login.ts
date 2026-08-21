@@ -4,6 +4,7 @@ import { problem } from './responses';
 
 type OtpLoginBody = {
   email?: string;
+  rememberMe?: boolean;
 };
 
 export const otpLoginRoute = makeFastifyRoute(
@@ -20,7 +21,7 @@ export const otpLoginRoute = makeFastifyRoute(
     }
 
     try {
-      const out = await otpLogin(body.email);
+      const out = await otpLogin(body.email, body.rememberMe);
 
       reply.status(202).send({
         email: out.email,

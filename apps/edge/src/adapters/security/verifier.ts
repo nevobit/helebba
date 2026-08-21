@@ -29,7 +29,9 @@ export const buildVerifier = async () => {
     // getBodyHashHex: (body) => sha256HexFromRawBody(body)
   };
 
-  const opts = {};
+  const opts = {
+    shouldVerify: (input) => {},
+  };
 
   const verify = createVerifier(deps, opts);
 

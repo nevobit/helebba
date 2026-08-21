@@ -6,6 +6,7 @@ import { problem } from './responses';
 type OtpVerifyBody = Partial<User> & {
   code?: string;
   user?: Partial<User>;
+  rememberMe?: boolean;
 };
 
 const buildUserInput = (body: OtpVerifyBody): Partial<User> => {
@@ -40,7 +41,7 @@ export const otpVerifyRoute = makeFastifyRoute(
     }
 
     try {
-      const out = await otpVerify(user, body.code);
+      const out = await otpVerify(user, body.code, body.rememberMe);
       reply.status(200).send(out);
     } catch (error) {
       if (error instanceof Error && error.message === 'Invalid email format') {

@@ -26,6 +26,7 @@ type ContactDetailsDrawerProps = {
   onClose: () => void;
   onDelete?: (contact: ContactRow) => void;
   onEdit?: (contact: ContactRow) => void;
+  onViewDetail?: (contact: ContactRow) => void;
 };
 
 type InfoRow = {
@@ -127,6 +128,7 @@ export const ContactDetailsDrawer = ({
   onClose,
   onDelete,
   onEdit,
+  onViewDetail,
 }: ContactDetailsDrawerProps) => {
   useEffect(() => {
     if (!contact) return undefined;
@@ -227,7 +229,7 @@ export const ContactDetailsDrawer = ({
               {label}
             </button>
           ))}
-          <button type="button" className={styles.moreAction} onClick={onClose}>
+          <button type="button" className={styles.moreAction} onClick={() => onViewDetail?.(contact)}>
             <span>
               <ArrowRight size={26} strokeWidth="1.5px" />
             </span>

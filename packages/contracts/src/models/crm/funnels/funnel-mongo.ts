@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 import { baseFields, opts } from '../../../common';
-import type { CrmFunnel, CrmOpportunity } from './funnel';
+import type { CrmFunnel, CrmOpportunity, CrmLead, CrmNote, CrmTask } from './funnel';
 
 export const CrmFunnelSchemaMongo = new Schema<CrmFunnel>(
   {
@@ -52,6 +52,69 @@ export const CrmOpportunitySchemaMongo = new Schema<CrmOpportunity>(
     relatedDocumentId: { type: String },
     status: { type: String, enum: ['open', 'won', 'lost'], default: 'open' },
     order: { type: Number, default: 0 },
+  },
+  { ...opts },
+);
+export const CrmLeadSchemaMongo = new Schema<CrmLead>(
+  {
+    ...baseFields,
+    organizationId: { type: String, required: true, index: true },
+    createdBy: { type: String },
+    updatedBy: { type: String },
+    deletedBy: { type: String },
+    funnelId: { type: String, required: true, index: true },
+    stageId: { type: String, required: true, index: true },
+    name: { type: String, required: true },
+    contactId: { type: String, required: true, index: true },
+    contactName: { type: String, required: true },
+    companyId: { type: String, index: true },
+    companyName: { type: String },
+    value: { type: Number, min: 0, default: 0 },
+    currency: { type: String, default: 'COP' },
+    expectedCloseDate: { type: Date },
+    dueDate: { type: Date },
+    potential: { type: Number, min: 0, max: 100 },
+    notes: { type: String, default: '' },
+    assignedToName: { type: String },
+    assignedTo: { type: String, index: true },
+    tags: [{ type: String }],
+    probability: { type: Number, min: 0, max: 100 },
+    relatedDocumentType: { type: String },
+    relatedDocumentId: { type: String },
+    status: { type: String, enum: ['open', 'won', 'lost'], default: 'open' },
+    order: { type: Number, default: 0 },
+    customFields: [
+      {
+        _id: false,
+        fieldId: { type: String, required: true },
+        value: { type: Schema.Types.Mixed },
+      },
+    ],
+    stagnationDays: { type: Number, min: 0 },
+  },
+  { ...opts },
+);
+export const CrmNoteSchemaMongo = new Schema<CrmNote>(
+  {
+    ...baseFields,
+    leadId: { type: String, required: true, index: true },
+    content: { type: String, required: true },
+    createdBy: { type: String, required: true },
+    createdAt: { type: Date, required: true },
+  },
+  { ...opts },
+);
+export const CrmTaskSchemaMongo = new Schema<CrmTask>(
+  {
+    ...baseFields,
+    leadId: { type: String, required: true, index: true },
+    title: { type: String, required: true },
+    description: { type: String },
+    dueDate: { type: Date },
+    completed: { type: Boolean, default: false },
+    assignedTo: { type: String },
+    createdBy: { type: String, required: true },
+    createdAt: { type: Date, required: true },
   },
   { ...opts },
 );

@@ -25,6 +25,7 @@ type VerifyCodeProps = {
 type VerifyLocationState = {
   email?: string;
   user?: Partial<User> & { email?: string };
+  rememberMe?: boolean;
 };
 
 const contentByMode = {
@@ -67,6 +68,7 @@ const VerifyCode = ({ mode }: VerifyCodeProps) => {
   const content = contentByMode[mode];
   const locationState = location.state as VerifyLocationState | null;
   const email = locationState?.email ?? locationState?.user?.email ?? '';
+  const rememberMe = locationState?.rememberMe ?? false;
   const user = useMemo(
     () => ({
       ...(locationState?.user ?? {}),
@@ -151,7 +153,7 @@ const VerifyCode = ({ mode }: VerifyCodeProps) => {
     setNotice(null);
 
     const resend = mode === 'login' ? login : signup;
-    resend(email, {
+    resend({ email, rememberMe }, {
       onSuccess: () => {
         setDigits(emptyCode);
         setNotice('Te enviamos un nuevo código.');
@@ -183,6 +185,7 @@ const VerifyCode = ({ mode }: VerifyCodeProps) => {
       {
         code,
         user,
+        rememberMe,
       },
       {
         onSuccess: ({ refreshToken, token, user }) => {

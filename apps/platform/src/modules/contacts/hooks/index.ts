@@ -1,4 +1,5 @@
 export * from './useContacts';
+export * from './useContact';
 export * from './useContactsListController';
 export * from './useCreateContactModal';
 export * from './useCreateContact';

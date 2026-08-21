@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './ContactsList.module.css';
 import { ContactDetailsDrawer, ContactsTable, Header, Pagination, Toolbar } from '../../components';
 import { useContactsListController, useCreateContactModal, useDeleteContact } from '../../hooks';
@@ -8,6 +9,7 @@ import { useModal } from '@hlb/design-system';
 const PAGE_TITLE = 'Contactos - Helebba';
 
 const ContactsList = () => {
+  const navigate = useNavigate();
   const controller = useContactsListController();
   const { openCreateContactModal } = useCreateContactModal();
   const { deleteContact, isDeletingContact } = useDeleteContact();
@@ -33,6 +35,11 @@ const ContactsList = () => {
   const closeDetailsDrawer = useCallback(() => {
     setSelectedContact(null);
   }, []);
+
+  const viewContactDetail = (contact: ContactRow) => {
+    setSelectedContact(null);
+    navigate(`/contacts/${contact.id}`);
+  };
 
   const removeContact = useCallback(
     (contact: ContactRow) => {
@@ -102,6 +109,7 @@ const ContactsList = () => {
         onClose={() => setSelectedContact(null)}
         onDelete={removeContact}
         onEdit={editContact}
+        onViewDetail={viewContactDetail}
       />
     </main>
   );

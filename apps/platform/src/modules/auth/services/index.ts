@@ -4,6 +4,7 @@ import type { User } from '@hlb/contracts';
 export type VerifyCodeInput = {
   code: string;
   user: Partial<User> & { email: string };
+  rememberMe?: boolean;
 };
 
 export type VerifyCodeResponse = {
@@ -12,9 +13,10 @@ export type VerifyCodeResponse = {
   user: User;
 };
 
-export const login = async (email: string) => {
+export const login = async (input: { email: string; rememberMe?: boolean }) => {
   const { data } = await api.post('/auth/otp/login', {
-    email,
+    email: input.email,
+    rememberMe: input.rememberMe ?? false,
   });
 
   return data;
@@ -28,18 +30,28 @@ export const loginGoogle = async (code: string) => {
   return data;
 };
 
-export const verifyCode = async ({ code, user }: VerifyCodeInput) => {
-  const { data } = await api.post<VerifyCodeResponse>('/auth/otp/verify', {
+export const loginApple = async (code: string) => {
+  const { data } = await api.post('/auth/oauth/apple', {
     code,
-    user,
   });
 
   return data;
 };
 
-export const signup = async (email: string) => {
+export const verifyCode = async ({ code, user, rememberMe }: VerifyCodeInput) => {
+  const { data } = await api.post<VerifyCodeResponse>('/auth/otp/verify', {
+    code,
+    user,
+    rememberMe: rememberMe ?? false,
+  });
+
+  return data;
+};
+
+export const signup = async (input: { email: string; rememberMe?: boolean }) => {
   const { data } = await api.post('/auth/otp/signup', {
-    email,
+    email: input.email,
+    rememberMe: input.rememberMe ?? false,
   });
 
   return data;

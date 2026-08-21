@@ -90,6 +90,11 @@ export const companyContacts = async () => {
   return data;
 };
 
+export const getContact = async (contactId: string) => {
+  const { data } = await api.get<Contact>(`/contacts/${contactId}`);
+  return data;
+};
+
 export const organizationUsers = async () => {
   const { data } = await api.get<OrganizationUsersResponse>('/me/users');
 

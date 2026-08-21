@@ -3,7 +3,7 @@ import { isEmail } from '@hlb/foundation';
 import { findByEmail } from '../../users';
 import { generateUserTOTP } from '@hlb/security';
 
-export const otpLogin = async (email: string) => {
+export const otpLogin = async (email: string, rememberMe?: boolean) => {
   if (!isEmail(email)) {
     throw new Error('Invalid email format');
   }
@@ -14,8 +14,13 @@ export const otpLogin = async (email: string) => {
 
   const codeKey = `verification:${email.toLowerCase()}`;
 
+  const codeData = {
+    code: verificationCode,
+    rememberMe: rememberMe ?? false,
+  };
+
   const redisWrite = getRedisWriteClient();
-  await redisWrite.setex(codeKey, 1800, verificationCode);
+  await redisWrite.setex(codeKey, 1800, JSON.stringify(codeData));
 
   const mailer = getMailer();
   await mailer.sendTemplate({
