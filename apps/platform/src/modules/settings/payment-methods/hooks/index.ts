@@ -8,7 +8,10 @@ import {
   type UpdatePaymentMethodPayload,
 } from '../services';
 
-export const paymentMethodsQueryKey = (params?: PaymentMethodListParams) => ['payment-methods', params];
+export const paymentMethodsQueryKey = (params?: PaymentMethodListParams) => [
+  'payment-methods',
+  params,
+];
 
 export const usePaymentMethods = (params: PaymentMethodListParams = {}) => {
   const { data, error, isFetching, isLoading, refetch } = useQuery({

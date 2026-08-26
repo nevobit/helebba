@@ -1,0 +1,247 @@
+.overlay {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  background: rgb(17 24 39 / 36%);
+}
+.panel {
+  width: clamp(62rem, 45vw, 88rem);
+  height: 100dvh;
+  overflow: auto;
+  background: #f7f8fa;
+  color: #1f2937;
+  font-size: 1.4rem;
+}
+.header {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 7.6rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 3rem;
+  background: #fff;
+}
+.header > div:first-child {
+  display: grid;
+  gap: 0.35rem;
+}
+.header span {
+  color: #4b83f3;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.header strong {
+  font-size: 1.8rem;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.actions > button:last-child {
+  display: grid;
+  place-items: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  border: 0;
+  background: transparent;
+}
+.content {
+  display: grid;
+  gap: 2.4rem;
+  padding: 2.8rem 3rem;
+}
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.breadcrumb button {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: #3678dd;
+  font: inherit;
+  cursor: pointer;
+}
+.card {
+  overflow: hidden;
+  border: 1px solid #e2e6ec;
+  border-radius: 1.2rem;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+}
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2.6rem;
+}
+.cardHeader h2 {
+  margin: 0 0 1.2rem;
+  font-size: 2rem;
+}
+.cardHeader p {
+  margin: 0;
+  color: #778196;
+}
+.teams {
+  display: flex;
+  gap: 1.6rem;
+  padding: 0 2.6rem 2.6rem;
+}
+.teams article {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 20rem;
+  border: 1px solid #e1e5eb;
+  border-radius: 0.6rem;
+  padding: 3rem 2rem;
+}
+.teamDelete {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #8b95a7;
+  cursor: pointer;
+}
+.teamDelete:hover {
+  background: #fff1f2;
+  color: #dc2626;
+}
+.teams article span {
+  display: grid;
+  place-items: center;
+  width: 4.2rem;
+  height: 4.2rem;
+  margin-bottom: 1.2rem;
+  border-radius: 0.8rem;
+  background: #edf3ff;
+  color: #4b83f3;
+}
+.teams small {
+  margin-top: 0.8rem;
+  color: #778196;
+}
+.tableHeader,
+.row {
+  display: grid;
+  grid-template-columns: minmax(18rem, 1fr) 12rem 8rem 4.4rem;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.2rem 1.8rem;
+}
+.tableHeader {
+  background: #f4f5f7;
+  color: #778196;
+  font-weight: 600;
+}
+.row {
+  border-top: 1px solid #eceef2;
+}
+.row > input,
+.color,
+.iconButton,
+.delete {
+  height: 4rem;
+  border: 1px solid #d6dbe3;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+.row > input {
+  min-width: 0;
+  padding: 0 1rem;
+  font: inherit;
+}
+.color {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.color input {
+  width: 4rem;
+  height: 100%;
+  border: 0;
+  padding: 0.6rem;
+  background: #f4f5f7;
+}
+.color span {
+  padding: 0 0.8rem;
+  color: #374151;
+  font-size: 1.2rem;
+}
+.iconButton,
+.delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #374151;
+  cursor: pointer;
+}
+.delete:hover {
+  color: #dc2626;
+}
+.loading {
+  padding: 2rem;
+  color: #778196;
+}
+.error {
+  margin: 0;
+  color: #dc2626;
+}
+.modalBody {
+  display: grid;
+  grid-template-columns: 1fr 15rem;
+  gap: 2rem;
+}
+.modalBody label {
+  display: grid;
+  gap: 0.8rem;
+  color: #667085;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+.modalBody input,
+.modalBody select,
+.modalBody label > button {
+  height: 4.2rem;
+  border: 1px solid #d5dae2;
+  border-radius: 0.5rem;
+  background: #fff;
+  padding: 0 1rem;
+  font: inherit;
+}
+.modalBody label > button {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+@media (max-width: 760px) {
+  .panel {
+    width: 100vw;
+  }
+  .header,
+  .content {
+    padding-inline: 1.6rem;
+  }
+  .tableHeader,
+  .row {
+    grid-template-columns: minmax(14rem, 1fr) 10rem 6rem 4rem;
+  }
+}

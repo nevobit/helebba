@@ -1,15 +1,16 @@
 import { useSession } from '@/shared';
 import { Avatar, Menus } from '@hlb/design-system';
 import styles from './UserMenu.module.css';
-import { Code2, LogOut, Settings, Users } from 'lucide-react';
+import { Code2, LogOut, Menu, Settings, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google';
 import { PublicRoutes } from '@/app/router/routes/route-paths';
 import { useLogout } from '@/modules/auth/hooks';
 import {
-  SETTINGS_DATA_HASH,
+  SETTINGS_HOME_HASH,
   SETTINGS_DEVELOPER_CREDENTIALS_HASH,
   SETTINGS_PAYMENT_METHODS_HASH,
+  SETTINGS_NAVIGATION_HASH,
   SETTINGS_USERS_HASH,
 } from '@/modules/settings/hooks';
 
@@ -49,8 +50,15 @@ export const UserMenu = () => {
         <span className={styles.userOptions}>
           <Menus.Item
             className={styles.btn}
+            id="navigation-settings"
+            onClick={() => navigateHash(SETTINGS_NAVIGATION_HASH)}
+          >
+            <Menu size={16} /> <span> Menú principal</span>
+          </Menus.Item>
+          <Menus.Item
+            className={styles.btn}
             id="settings"
-            onClick={() => navigateHash(SETTINGS_DATA_HASH)}
+            onClick={() => navigateHash(SETTINGS_HOME_HASH)}
           >
             <Settings size={16} /> <span> Configuración</span>
           </Menus.Item>
@@ -77,7 +85,8 @@ export const UserMenu = () => {
           </Menus.Item>
 
           <Menus.Item className={styles.btn} id="logout" onClick={handleLogout}>
-            <LogOut size={16} /> <span>{isLoggingOut ? 'Cerrando sesión...' : 'Cerrar sesión'}</span>
+            <LogOut size={16} />{' '}
+            <span>{isLoggingOut ? 'Cerrando sesión...' : 'Cerrar sesión'}</span>
           </Menus.Item>
         </span>
       </Menus.List>

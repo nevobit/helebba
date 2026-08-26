@@ -1,0 +1,132 @@
+.overlay {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  background: rgb(17 24 39 / 36%);
+}
+.panel {
+  width: clamp(56rem, 45vw, 82rem);
+  height: 100dvh;
+  border-left: 1px solid #d9dee7;
+  background: #fff;
+  box-shadow: -1.6rem 0 3.2rem rgb(15 23 42 / 12%);
+  color: #1f2937;
+  font-size: var(--ds-font-size-14);
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 7.6rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 3rem;
+}
+.header div {
+  display: grid;
+  gap: 0.35rem;
+}
+.header div span {
+  color: #4b83f3;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.header div strong {
+  font-size: 1.8rem;
+}
+.header > button {
+  display: grid;
+  place-items: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.content {
+  padding: 3rem;
+}
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: #3678dd;
+  font: inherit;
+  cursor: pointer;
+}
+.breadcrumb span {
+  color: #1f2937;
+}
+.intro {
+  display: grid;
+  grid-template-columns: 6.4rem 1fr;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 3.4rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 2.8rem;
+}
+.introIcon {
+  display: grid;
+  place-items: center;
+  width: 6.4rem;
+  height: 6.4rem;
+  border-radius: 1.2rem;
+  background: #edf3ff;
+  color: #4b83f3;
+}
+.intro h1 {
+  margin: 0 0 0.7rem;
+  font-size: 2.6rem;
+}
+.intro p {
+  margin: 0;
+  color: #667085;
+  line-height: 1.5;
+}
+.options {
+  display: grid;
+}
+.options button {
+  display: grid;
+  grid-template-columns: 4.4rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.4rem;
+  min-height: 7.2rem;
+  border: 0;
+  border-bottom: 1px solid #e8ebef;
+  background: #fff;
+  color: #1f2937;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.options button:hover {
+  background: #f8faff;
+}
+.options button > span {
+  display: grid;
+  place-items: center;
+  width: 4.2rem;
+  height: 4.2rem;
+  border-radius: 1rem;
+  background: #f4f5fa;
+  color: #8490a7;
+}
+.options button > svg {
+  color: #c5cad3;
+}
+@media (max-width: 760px) {
+  .panel {
+    width: 100vw;
+  }
+  .header,
+  .content {
+    padding-inline: 1.6rem;
+  }
+}

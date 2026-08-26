@@ -1,0 +1,149 @@
+.modal {
+  top: 14vh !important;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: var(--ds-font-weight-bold);
+  color: #17181c;
+}
+
+.search {
+  width: 22rem;
+  margin-left: auto;
+  margin-right: 1.2rem;
+  border: 0;
+  border-bottom: 1px solid #d0d5dd;
+  padding: 0.6rem 0.2rem;
+  color: #344054;
+  font: inherit;
+}
+
+.search:focus {
+  outline: none;
+  border-bottom-color: #2563eb;
+}
+
+.body {
+  display: grid;
+  min-height: 24rem;
+  align-content: start;
+  padding: 1.6rem 2.8rem 2.4rem;
+}
+
+.hint {
+  margin: 0;
+  color: #667085;
+  text-align: center;
+}
+
+/* ── User list ──────────────────────────────────────── */
+.list {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  border-radius: 0.8rem;
+  padding: 1rem 1.2rem;
+  cursor: pointer;
+}
+
+.row:hover {
+  background: #f8f9fb;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.userInfo {
+  display: grid;
+  gap: 0.2rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.userInfo strong {
+  color: #1f2937;
+  font-size: 1.45rem;
+}
+
+.userInfo small {
+  overflow: hidden;
+  color: #667085;
+  font-size: 1.25rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.checkbox {
+  width: 1.8rem;
+  height: 1.8rem;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+/* ── Empty state ────────────────────────────────────── */
+.empty {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  flex: 1;
+  padding: 3.2rem 2rem;
+  text-align: center;
+}
+
+.emptyIcon {
+  margin-bottom: 1.6rem;
+  color: #f0b429;
+}
+
+.empty h3 {
+  margin: 0 0 1rem;
+  font-size: 2.2rem;
+  font-weight: var(--ds-font-weight-bold);
+  color: #1f2937;
+}
+
+.empty p {
+  max-width: 44rem;
+  margin: 0 0 1.6rem;
+  color: #475467;
+  line-height: 1.6;
+}
+
+.inviteLink {
+  color: #2563eb;
+  font-size: 1.4rem;
+  text-decoration: none;
+}
+
+.inviteLink:hover {
+  text-decoration: underline;
+}
+
+.error {
+  margin: 1rem 0 0;
+  color: #b42318;
+}
+
+.footer {
+  justify-content: flex-end;
+  background: #f9fafb;
+}

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from '@hlb/design-system';
 import {
   ArrowRight,
@@ -8,6 +9,8 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import styles from './TrialExpired.module.css';
+import { useSession } from '@/shared';
+import { api } from '@/shared/api';
 
 const benefits = [
   'Facturación y control de cobros',
@@ -20,7 +23,37 @@ const benefits = [
 
 const supportEmail = 'mailto:soporte@helebba.com';
 
+const plans = [
+  { code: 'plus', name: 'Plus', price: 19500, description: 'Para empezar a organizar tu negocio.' },
+  { code: 'basic', name: 'Basic', price: 36500, description: 'Para equipos pequeños que están creciendo.' },
+  { code: 'standard', name: 'Business', price: 69500, description: 'Para centralizar toda la operación.' },
+] as const;
+
+type BillingProvider = 'mercadopago' | 'stripe';
+
 const TrialExpired = () => {
+  const email = useSession((state) => state.user?.email ?? state.organization?.email ?? '');
+  const [selectedPlan, setSelectedPlan] = useState<(typeof plans)[number]['code']>('basic');
+  const [loadingProvider, setLoadingProvider] = useState<BillingProvider | null>(null);
+  const [error, setError] = useState('');
+
+  const beginCheckout = async (provider: BillingProvider) => {
+    setError('');
+    setLoadingProvider(provider);
+    try {
+      const { data } = await api.post<{ checkoutUrl: string }>('/subscriptions/checkout', {
+        provider,
+        planCode: selectedPlan,
+        interval: 'monthly',
+        customerEmail: email,
+      }, { headers: { 'Idempotency-Key': crypto.randomUUID() } });
+      window.location.assign(data.checkoutUrl);
+    } catch (checkoutError) {
+      setError(checkoutError instanceof Error ? checkoutError.message : 'No pudimos iniciar el pago.');
+      setLoadingProvider(null);
+    }
+  };
+
   return (
     <main className={styles.page}>
       <title>Prueba finalizada - Helebba</title>
@@ -46,17 +79,24 @@ const TrialExpired = () => {
           ))}
         </div>
 
-        <Button
-          className={styles.primaryButton}
-          size="large"
-          icon={<ArrowRight size={18} />}
-          iconPosition="right"
-          onClick={() => {
-            window.location.href = `${supportEmail}?subject=Quiero%20activar%20mi%20plan%20Helebba`;
-          }}
-        >
-          Elige tu plan
-        </Button>
+        <div className={styles.plans}>
+          {plans.map((plan) => (
+            <button key={plan.code} type="button" className={selectedPlan === plan.code ? styles.selectedPlan : styles.plan} onClick={() => setSelectedPlan(plan.code)}>
+              <strong>{plan.name}</strong>
+              <span>{plan.description}</span>
+              <b>${plan.price.toLocaleString('es-CO')} COP/mes</b>
+            </button>
+          ))}
+        </div>
+        <div className={styles.checkoutActions}>
+          <Button className={styles.primaryButton} size="large" disabled={!email || loadingProvider !== null} icon={<ArrowRight size={18} />} iconPosition="right" onClick={() => beginCheckout('mercadopago')}>
+            {loadingProvider === 'mercadopago' ? 'Conectando...' : 'Pagar con Mercado Pago'}
+          </Button>
+          <Button className={styles.primaryButton} size="large" variant="outline" theme="optional" disabled={!email || loadingProvider !== null} onClick={() => beginCheckout('stripe')}>
+            {loadingProvider === 'stripe' ? 'Conectando...' : 'Pagar con Stripe'}
+          </Button>
+        </div>
+        {error && <p className={styles.error} role="alert">{error}</p>}
       </section>
 
       <section className={styles.helpCard} aria-labelledby="trial-help-title">

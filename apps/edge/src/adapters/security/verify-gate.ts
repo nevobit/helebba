@@ -12,7 +12,9 @@ export const verifyGatePlugin = fp<BuildAppOpts>(
     const READY_PATH = '/-/ready';
 
     const SKIP_EXACT = new Set([HEALTH_PATH, READY_PATH, '/docs', '/docs/json', '/docs/yaml']);
-    const SKIP_PREFIXES = ['/docs'];
+    // These endpoints authenticate with the upstream provider signature instead of
+    // Helebba's client API signature. Keep this list narrow and explicit.
+    const SKIP_PREFIXES = ['/docs', '/api/v1/subscriptions/webhooks/', '/api/v1/public/catalogs/'];
 
     app.addHook('preValidation', async (req, reply) => {
       const pathname = getPathname(req.url);

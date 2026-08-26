@@ -1,0 +1,183 @@
+.page {
+  min-height: 100%;
+  padding: 2.4rem 3.2rem;
+  background: #fff;
+  color: #1f2937;
+  font-size: var(--ds-font-size-14);
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2.4rem;
+}
+.header h1 {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0;
+  font-size: 2.4rem;
+}
+.actions {
+  display: flex;
+  gap: 0.8rem;
+}
+.card {
+  min-height: 56rem;
+  overflow: hidden;
+  border: 1px solid #e4e7ec;
+  border-radius: 0.8rem;
+  background: #fff;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid #e4e7ec;
+  padding: 1.4rem;
+}
+.toolbar select {
+  width: 19rem;
+  height: 4.2rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.6rem;
+  background: #fff;
+  padding: 0 1.2rem;
+  font: inherit;
+}
+.filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 0;
+  background: transparent;
+  color: #2563eb;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.search {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 22rem;
+  height: 4.2rem;
+  margin-left: auto;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.6rem;
+  padding: 0 1rem;
+  color: #98a2b3;
+}
+.search input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  font: inherit;
+}
+.iconButton {
+  display: grid;
+  place-items: center;
+  width: 4.2rem;
+  height: 4.2rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.6rem;
+  background: #fff;
+  cursor: pointer;
+}
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 1.4rem;
+  padding: 7rem 2rem;
+  text-align: center;
+}
+.emptyArt {
+  display: grid;
+  place-items: center;
+  width: 11rem;
+  height: 11rem;
+  border-radius: 50%;
+  background: #f2f4f7;
+  color: #8aa4d0;
+}
+.empty h2,
+.empty p {
+  margin: 0;
+}
+.empty h2 {
+  font-size: 2.2rem;
+}
+.empty p {
+  color: #475467;
+  line-height: 1.5;
+}
+.list {
+  display: grid;
+}
+.activity {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 1.4rem;
+  border-bottom: 1px solid #eaecf0;
+  padding: 1.4rem 1.8rem;
+}
+.activityIcon {
+  display: grid;
+  place-items: center;
+  width: 3.8rem;
+  height: 3.8rem;
+  border-radius: 0.7rem;
+  background: #edf3ff;
+  color: #2563eb;
+}
+.activity div {
+  display: grid;
+  gap: 0.3rem;
+}
+.activity div span,
+.activity time {
+  color: #667085;
+  font-size: 1.25rem;
+}
+.pending,
+.done {
+  border-radius: 999px;
+  background: #fff4e5;
+  padding: 0.4rem 0.8rem;
+  color: #b54708;
+  font-size: 1.2rem;
+}
+.done {
+  background: #ecfdf3;
+  color: #027a48;
+}
+@media (max-width: 700px) {
+  .page {
+    padding: 1.6rem;
+  }
+  .header {
+    align-items: flex-start;
+  }
+  .actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .toolbar {
+    flex-wrap: wrap;
+  }
+  .search {
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+  }
+  .activity {
+    grid-template-columns: auto 1fr;
+  }
+  .activity time,
+  .activity > span:last-child {
+    grid-column: 2;
+  }
+}

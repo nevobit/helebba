@@ -4,6 +4,7 @@ export const PublicRoutes = {
   SIGNUP: '/signup',
   SIGNUP_VERIFY: '/signup/verify',
   APPLE_CALLBACK: '/auth/oauth/apple/callback',
+  PUBLIC_CATALOG: '/c/:publicId',
 } as const;
 
 export const PrivateRoutes = {
@@ -14,9 +15,12 @@ export const PrivateRoutes = {
   CONTACT_DETAIL: '/contacts/:id',
   SERVICES: '/services',
   PRODUCTS: '/products',
+  INVENTORY: '/inventory',
+  INVENTORY_ANALYTICS: '/reporting/inventoryanalytics',
   CATALOG: '/catalog',
   POS: '/pos',
   CRM_FUNNELS: '/crm/funnels',
+  CRM_ACTIVITIES: '/crm/activities',
   CRM_LEADS: '/crm/leads',
   CRM_LEAD_DETAIL: '/crm/leads/:leadId',
   CRM_LEAD_BOARD: '/crm/funnels/:funnelId/board',

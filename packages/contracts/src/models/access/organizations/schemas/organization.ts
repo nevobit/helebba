@@ -1,5 +1,13 @@
 import type { OrganizationId, PersistedSoftDeletableEntity, UserId } from '../../../../common';
 
+export interface OrganizationNavigationPreference {
+  itemId: string;
+  isVisible: boolean;
+  position?: number;
+  name?: string;
+  icon?: string;
+}
+
 export interface Organization extends PersistedSoftDeletableEntity<OrganizationId, UserId> {
   name: string;
   legalName: string;
@@ -17,4 +25,5 @@ export interface Organization extends PersistedSoftDeletableEntity<OrganizationI
   isPrincipal: boolean;
   slug: string;
   ownerId: UserId;
+  navigationPreferences?: OrganizationNavigationPreference[];
 }

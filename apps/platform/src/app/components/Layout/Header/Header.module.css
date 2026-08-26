@@ -1,45 +1,44 @@
 .header {
-    background: var(--color-primary);
-    width: 100%;
-    height: 100%;
-    color: var(--color-white);
-    font-weight: 300;
+  background: var(--color-primary);
+  width: 100%;
+  height: 100%;
+  color: var(--color-white);
+  font-weight: 300;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 var(--ds-space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--ds-space-6);
 }
 
 .header a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .logo {
-    width: 20px;
-    height: 20px;
+  width: 20px;
+  height: 20px;
 }
 
 .header nav {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
-
 .header nav ul li {
-    list-style: none;
-    font-size: var(--ds-font-size-14);
-    line-height: var(--ds-line-height-normal);
-    font-weight: var(--ds-font-weight-regular);
+  list-style: none;
+  font-size: var(--ds-font-size-14);
+  line-height: var(--ds-line-height-normal);
+  font-weight: var(--ds-font-weight-regular);
 }
 
 .headerRight {
-    display: flex;
-    align-items: center;
-    gap: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
 }
 
 .options {
-    display: flex;
-    gap: 2rem;
+  display: flex;
+  gap: 2rem;
 }

@@ -52,7 +52,10 @@ export const createPaymentMethod = async (payload: CreatePaymentMethodPayload) =
   return data;
 };
 
-export const updatePaymentMethod = async (paymentMethodId: string, payload: UpdatePaymentMethodPayload) => {
+export const updatePaymentMethod = async (
+  paymentMethodId: string,
+  payload: UpdatePaymentMethodPayload,
+) => {
   const { data } = await api.patch<PaymentMethod>(`/payment-methods/${paymentMethodId}`, payload);
 
   return data;

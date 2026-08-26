@@ -1,8 +1,9 @@
-import type { NavigationItem, OrganizationNavigationItem } from './types';
+import type { OrganizationNavigationPreference } from '@hlb/contracts';
+import type { NavigationItem } from './types';
 
 export function mergeNavigation(
   defaultItems: NavigationItem[],
-  customItems: OrganizationNavigationItem[],
+  customItems: OrganizationNavigationPreference[],
 ): NavigationItem[] {
   const customByItemId = new Map(customItems.map((item) => [item.itemId, item]));
 

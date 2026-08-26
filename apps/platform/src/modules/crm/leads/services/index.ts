@@ -50,7 +50,6 @@ export const crmLeads = async (filters?: CrmLeadFilters) => {
     limit: number;
     totalPages: number;
   }>(`/crm/leads?${params.toString()}`);
-  console.log(data);
   return data;
 };
 

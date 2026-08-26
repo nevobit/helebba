@@ -1,0 +1,22 @@
+.title {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: var(--ds-font-weight-bold);
+  color: #17181c;
+}
+
+.body p {
+  margin: 0;
+  color: #475467;
+  line-height: 1.6;
+}
+
+.error {
+  margin: 1rem 0 0 !important;
+  color: #b42318;
+}
+
+.footer {
+  justify-content: flex-end;
+  background: #f9fafb;
+}

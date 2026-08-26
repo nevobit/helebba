@@ -10,7 +10,12 @@ import { accessRoutes } from './access';
 import { roleRoutes } from './roles';
 import { subscriptionRoutes } from './subscriptions';
 import { serviceRoutes } from './sales/services';
-import { estimateRoutes, invoiceRoutes, purchaseOrderRoutes, purchaseRoutes } from './sales/documents';
+import {
+  estimateRoutes,
+  invoiceRoutes,
+  purchaseOrderRoutes,
+  purchaseRoutes,
+} from './sales/documents';
 import { paymentMethodRoutes } from './treasury/payment-methods';
 import { treasuryAccountRoutes } from './treasury/accounts';
 import { paymentRoutes } from './accounting/payments';
@@ -20,10 +25,14 @@ import { productFieldDefinitionRoutes } from './inventory/product-field-definiti
 import { catalogRoutes } from './inventory/catalogs';
 import { posRoutes } from './sales/pos';
 import { crmFunnelRoutes } from './crm/funnels';
+import { crmDealRoutes } from './crm/deals';
 import { leadRoutes } from './crm/leads';
+import { crmActivityRoutes } from './crm/activities';
+import { crmPreferenceRoutes } from './crm/preferences';
 import { productNoteRoutes } from './inventory/product-notes';
 import { stockMovementRoutes } from './inventory/stock-movements';
 import { priceListRoutes } from './inventory/price-lists';
+import { publicCatalogRoutes } from './public/catalogs';
 
 const routes: RouteOptions[] = [
   ...opsRoutes,
@@ -50,10 +59,14 @@ const routes: RouteOptions[] = [
   ...catalogRoutes,
   ...posRoutes,
   ...crmFunnelRoutes,
+  ...crmDealRoutes,
   ...leadRoutes,
+  ...crmActivityRoutes,
+  ...crmPreferenceRoutes,
   ...productNoteRoutes,
   ...stockMovementRoutes,
   ...priceListRoutes,
+  ...publicCatalogRoutes,
 ];
 
 export const registerRoutes = (app: FastifyInstance) => {

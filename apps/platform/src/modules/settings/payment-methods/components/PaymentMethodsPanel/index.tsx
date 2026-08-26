@@ -99,16 +99,24 @@ export const PaymentMethodsPanel = ({ onClose }: PaymentMethodsPanelProps) => {
       documentText: getDocumentText(paymentMethod),
       dueDays: String(paymentMethod.dueDays ?? 0),
       settlementMode: paymentMethod.settlementMode ?? 'deferred',
-      disbursementRule: paymentMethod.disbursementRule ?? (paymentMethod.settlementMode === 'instant' ? 'immediate' : 'days_after_issue'),
-      disbursementDays: paymentMethod.disbursementDays ? String(paymentMethod.disbursementDays) : '',
-      disbursementDayOfMonth: paymentMethod.disbursementDayOfMonth ? String(paymentMethod.disbursementDayOfMonth) : '',
+      disbursementRule:
+        paymentMethod.disbursementRule ??
+        (paymentMethod.settlementMode === 'instant' ? 'immediate' : 'days_after_issue'),
+      disbursementDays: paymentMethod.disbursementDays
+        ? String(paymentMethod.disbursementDays)
+        : '',
+      disbursementDayOfMonth: paymentMethod.disbursementDayOfMonth
+        ? String(paymentMethod.disbursementDayOfMonth)
+        : '',
       supportsInstallments: Boolean(paymentMethod.supportsInstallments),
       minInstallments: paymentMethod.minInstallments ? String(paymentMethod.minInstallments) : '',
       maxInstallments: paymentMethod.maxInstallments ? String(paymentMethod.maxInstallments) : '',
       requiresApprovalReference: Boolean(paymentMethod.requiresApprovalReference),
       requiresDeliveryConfirmation: Boolean(paymentMethod.requiresDeliveryConfirmation),
       financialFeeType: paymentMethod.financialFeeType ?? 'none',
-      financialFeeValue: paymentMethod.financialFeeValue ? String(paymentMethod.financialFeeValue) : '',
+      financialFeeValue: paymentMethod.financialFeeValue
+        ? String(paymentMethod.financialFeeValue)
+        : '',
     });
     setIsModalOpen(true);
   };
@@ -180,7 +188,9 @@ export const PaymentMethodsPanel = ({ onClose }: PaymentMethodsPanelProps) => {
       requiresDeliveryConfirmation: formState.requiresDeliveryConfirmation,
       financialFeeType: formState.financialFeeType,
       financialFeeValue:
-        formState.financialFeeType !== 'none' && formState.financialFeeType !== 'custom' && formState.financialFeeValue
+        formState.financialFeeType !== 'none' &&
+        formState.financialFeeType !== 'custom' &&
+        formState.financialFeeValue
           ? Number(formState.financialFeeValue)
           : undefined,
       metadata: {
@@ -578,7 +588,9 @@ export const PaymentMethodsPanel = ({ onClose }: PaymentMethodsPanelProps) => {
                   value={formState.financialFeeValue}
                   placeholder={formState.financialFeeType === 'percentage' ? '2.5' : '0'}
                   suffix={formState.financialFeeType === 'percentage' ? '%' : undefined}
-                  disabled={formState.financialFeeType === 'none' || formState.financialFeeType === 'custom'}
+                  disabled={
+                    formState.financialFeeType === 'none' || formState.financialFeeType === 'custom'
+                  }
                   fullWidth
                   onChange={updateField}
                 />

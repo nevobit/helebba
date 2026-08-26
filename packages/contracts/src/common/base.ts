@@ -27,6 +27,7 @@ export type DocumentId = Brand<string, 'DocumentId'>;
 export type ApiKeyId = Brand<string, 'ApiKeyId'>;
 export type ProductFieldDefinitionId = Brand<string, 'ProductFieldDefinitionId'>;
 export type CatalogId = Brand<string, 'CatalogId'>;
+export type CatalogOrderId = Brand<string, 'CatalogOrderId'>;
 export type PosStoreId = Brand<string, 'PosStoreId'>;
 export type PosRegisterId = Brand<string, 'PosRegisterId'>;
 export type PosSessionId = Brand<string, 'PosSessionId'>;
@@ -34,6 +35,7 @@ export type PosReceiptId = Brand<string, 'PosReceiptId'>;
 export type CrmFunnelId = Brand<string, 'CrmFunnelId'>;
 export type CrmStageId = Brand<string, 'CrmStageId'>;
 export type CrmOpportunityId = Brand<string, 'CrmOpportunityId'>;
+export type CrmActivityId = Brand<string, 'CrmActivityId'>;
 export type ProductNoteId = Brand<string, 'ProductNoteId'>;
 export type StockMovementId = Brand<string, 'StockMovementId'>;
 

@@ -1,5 +1,5 @@
 import type { RouteOptions } from 'fastify';
-import { createCatalog, deleteCatalog, listCatalogs, updateCatalog } from '@hlb/business-logic';
+import { createCatalog, deleteCatalog, listCatalogOrders, listCatalogs, updateCatalog } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod, withPrefix } from '@hlb/constant-definitions';
 import { type Catalog, type CatalogId, type OrganizationId, type UserId } from '@hlb/contracts';
 import { verifyJwt } from '@hlb/security';
@@ -27,4 +27,9 @@ const deleteRoute = makeFastifyRoute(RouteMethod.DELETE, '/:catalogId', verifyJw
   reply.status(200).send(await deleteCatalog(catalogId, req.organization?.organizationId as OrganizationId, userId));
 });
 
-export const catalogRoutes: RouteOptions[] = withPrefix('/catalogs', [listRoute, createRoute, updateRoute, deleteRoute]);
+const listOrdersRoute = makeFastifyRoute(RouteMethod.GET, '/:catalogId/orders', verifyJwt, { organization: 'required', auth: 'required' }, async (req, reply) => {
+  const { catalogId } = req.params as { catalogId: string };
+  reply.status(200).send(await listCatalogOrders(String(req.organization?.organizationId), catalogId));
+});
+
+export const catalogRoutes: RouteOptions[] = withPrefix('/catalogs', [listRoute, createRoute, updateRoute, deleteRoute, listOrdersRoute]);

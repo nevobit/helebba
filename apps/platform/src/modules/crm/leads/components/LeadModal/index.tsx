@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useCrmLeadMutations } from '../../hooks';
 
 const LeadModalContent = ({ funnel, initialStageId, lead, closeModal }: any) => {
   const defaultValues = {
@@ -26,6 +27,7 @@ const LeadModalContent = ({ funnel, initialStageId, lead, closeModal }: any) => 
 
   const [formState, setFormState] = useState(defaultValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const { createLead, updateLead, isCreating, isUpdating } = useCrmLeadMutations();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -52,10 +54,28 @@ const LeadModalContent = ({ funnel, initialStageId, lead, closeModal }: any) => 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    console.log('Submit', formState);
+    setErrors({});
+    const payload = {
+      ...formState,
+      funnelId: String(funnel?.id ?? ''),
+      value: Number(formState.value ?? 0),
+      potential: Number(formState.potential ?? 0),
+      probability: Number(formState.probability ?? 0),
+      stagnationDays: Number(formState.stagnationDays ?? 0),
+      tags: String(formState.tags ?? '').split(',').map((tag) => tag.trim()).filter(Boolean),
+      expectedCloseDate: formState.expectedCloseDate || undefined,
+      dueDate: formState.dueDate || undefined,
+    };
+    try {
+      if (lead?.id) await updateLead({ id: String(lead.id), payload });
+      else await createLead(payload);
+      closeModal();
+    } catch (error) {
+      setErrors({ submit: error instanceof Error ? error.message : 'No pudimos guardar la oportunidad.' });
+    }
   };
 
-  const stages = funnel?.stages?.sort((a: any, b: any) => a.order - b.order) || [];
+  const stages = funnel?.stages ? [...funnel.stages].sort((a: any, b: any) => a.order - b.order) : [];
 
   return (
     <div className="modal">
@@ -292,11 +312,12 @@ const LeadModalContent = ({ funnel, initialStageId, lead, closeModal }: any) => 
         </div>
 
         <div className="actions">
+          {errors.submit && <p role="alert">{errors.submit}</p>}
           <button type="button" className="buttonSecondary" onClick={handleClose}>
             Cancelar
           </button>
-          <button type="submit" className="buttonPrimary">
-            {lead ? 'Guardar cambios' : 'Crear oportunidad'}
+          <button type="submit" className="buttonPrimary" disabled={isCreating || isUpdating}>
+            {isCreating || isUpdating ? 'Guardando…' : lead ? 'Guardar cambios' : 'Crear oportunidad'}
           </button>
         </div>
       </form>

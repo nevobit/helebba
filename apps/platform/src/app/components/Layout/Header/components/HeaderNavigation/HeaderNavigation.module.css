@@ -1,9 +1,9 @@
 .nav {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .logo {
-    margin-right: var(--ds-space-4);
+  margin-right: var(--ds-space-4);
 }

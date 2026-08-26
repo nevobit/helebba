@@ -108,7 +108,85 @@ export const createCrmFunnel = async (
     name: data.name.trim(),
     description: data.description?.trim() ?? '',
     isDefault: false,
+    members: data.members?.length ? data.members : [data.createdBy],
     stages,
+  });
+};
+export const setCrmFunnelMembers = async (
+  funnelId: CrmFunnelId,
+  organizationId: OrganizationId,
+  userId: UserId,
+  members: UserId[],
+) => {
+  if (!Array.isArray(members) || members.some((member) => !member))
+    throw new Error('Lista de usuarios inválida.');
+  const funnel = await funnels().findOne({
+    _id: funnelId,
+    organizationId,
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+  });
+  if (!funnel) throw new Error('Embudo no encontrado.');
+  funnel.members = [...new Set(members)];
+  funnel.set('updatedBy', userId);
+  return funnel.save();
+};
+export const updateCrmFunnel = async (
+  funnelId: CrmFunnelId,
+  organizationId: OrganizationId,
+  userId: UserId,
+  patch: { name?: string; description?: string },
+) => {
+  if (patch.name !== undefined && !patch.name.trim())
+    throw new Error('Ingresa el nombre del embudo.');
+  const funnel = await funnels().findOne({
+    _id: funnelId,
+    organizationId,
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+  });
+  if (!funnel) throw new Error('Embudo no encontrado.');
+  if (patch.name !== undefined) funnel.name = patch.name.trim();
+  if (patch.description !== undefined) funnel.description = patch.description;
+  funnel.set('updatedBy', userId);
+  return funnel.save();
+};
+export const deleteCrmFunnel = async (
+  funnelId: CrmFunnelId,
+  organizationId: OrganizationId,
+  userId: UserId,
+) => {
+  const funnel = await funnels().findOne({
+    _id: funnelId,
+    organizationId,
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+  });
+  if (!funnel) throw new Error('Embudo no encontrado.');
+  if (funnel.isDefault) throw new Error('No puedes eliminar el embudo predeterminado.');
+  funnel.lifecycleStatus = LifecycleStatus.DELETED;
+  funnel.deletedAt = new Date();
+  funnel.set('deletedBy', userId);
+  await funnel.save();
+  return { success: true };
+};
+export const duplicateCrmFunnel = async (
+  funnelId: CrmFunnelId,
+  organizationId: OrganizationId,
+  userId: UserId,
+) => {
+  const source = await funnels().findOne({
+    _id: funnelId,
+    organizationId,
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+  });
+  if (!source) throw new Error('Embudo no encontrado.');
+  return funnels().create({
+    organizationId,
+    createdBy: userId,
+    updatedBy: userId,
+    name: `${source.name} (copia)`,
+    description: source.description,
+    isDefault: false,
+    members: source.members ?? [userId],
+    stages: source.stages.map((stage) => ({ ...stage, id: randomUUID() as CrmStageId })),
   });
 };
 export const listCrmOpportunities = async (funnelId: CrmFunnelId, organizationId: OrganizationId) =>
@@ -170,5 +248,81 @@ export const moveCrmOpportunity = async (
   opportunity.stageId = stageId;
   opportunity.order = Date.now();
   opportunity.set('updatedBy', userId);
+  return opportunity.save();
+};
+export const setCrmOpportunityStatus = async (
+  opportunityId: CrmOpportunityId,
+  organizationId: OrganizationId,
+  userId: UserId,
+  status: CrmOpportunity['status'],
+) => {
+  const opportunity = await opportunities().findOne({
+    _id: opportunityId,
+    organizationId,
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+  });
+  if (!opportunity) throw new Error('Oportunidad no encontrada.');
+  opportunity.status = status;
+  opportunity.set('updatedBy', userId);
+  return opportunity.save();
+};
+export const updateCrmOpportunity = async (
+  opportunityId: CrmOpportunityId,
+  organizationId: OrganizationId,
+  userId: UserId,
+  patch: Partial<CrmOpportunity>,
+) => {
+  const opportunity = await opportunities().findOne({
+    _id: opportunityId,
+    organizationId,
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+  });
+  if (!opportunity) throw new Error('Oportunidad no encontrada.');
+  if (patch.stageId !== undefined) {
+    const funnel = await getCrmFunnel(opportunity.funnelId, organizationId);
+    if (
+      !funnel?.stages.some((stage) =>
+        stageMatches(stage as CrmStage & { _id?: unknown }, patch.stageId as CrmStageId),
+      )
+    )
+      throw new Error('La etapa seleccionada no existe.');
+    opportunity.stageId = patch.stageId;
+  }
+  if (patch.name !== undefined) {
+    if (!patch.name.trim()) throw new Error('Ingresa el nombre de la oportunidad.');
+    opportunity.name = patch.name.trim();
+  }
+  if (patch.value !== undefined) opportunity.value = Number(patch.value);
+  if (patch.currency !== undefined) opportunity.currency = patch.currency;
+  if (patch.contactId !== undefined) opportunity.contactId = patch.contactId;
+  if (patch.contactName !== undefined) opportunity.contactName = patch.contactName;
+  if (patch.companyId !== undefined) opportunity.companyId = patch.companyId;
+  if (patch.companyName !== undefined) opportunity.companyName = patch.companyName;
+  if (patch.expectedCloseDate !== undefined)
+    opportunity.expectedCloseDate = patch.expectedCloseDate;
+  if (patch.assignedToName !== undefined) opportunity.assignedToName = patch.assignedToName;
+  if (patch.tags !== undefined) opportunity.tags = patch.tags;
+  if (patch.probability !== undefined) opportunity.probability = patch.probability;
+  if (patch.relatedDocumentType !== undefined)
+    opportunity.relatedDocumentType = patch.relatedDocumentType;
+  if (patch.relatedDocumentId !== undefined)
+    opportunity.relatedDocumentId = patch.relatedDocumentId;
+  opportunity.set('updatedBy', userId);
+  return opportunity.save();
+};
+export const deleteCrmOpportunity = async (
+  opportunityId: CrmOpportunityId,
+  organizationId: OrganizationId,
+  userId: UserId,
+) => {
+  const opportunity = await opportunities().findOne({
+    _id: opportunityId,
+    organizationId,
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+  });
+  if (!opportunity) throw new Error('Oportunidad no encontrada.');
+  opportunity.lifecycleStatus = LifecycleStatus.DELETED;
+  opportunity.deletedAt = new Date();
+  opportunity.set('deletedBy', userId);
   return opportunity.save();
 };

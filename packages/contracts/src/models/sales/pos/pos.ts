@@ -56,6 +56,7 @@ export interface PosPayment {
 }
 
 export interface PosReceipt extends PersistedEntity<PosReceiptId, UserId> {
+  idempotencyKey?: string;
   storeId: PosStoreId;
   storeName: string;
   registerId: PosRegisterId;
@@ -68,6 +69,8 @@ export interface PosReceipt extends PersistedEntity<PosReceiptId, UserId> {
   tax: number;
   total: number;
   status: 'completed' | 'refunded';
+  refundedAt?: Date;
+  refundedBy?: UserId;
 }
 
 export interface PosStore extends PersistedSoftDeletableEntity<PosStoreId, UserId> {

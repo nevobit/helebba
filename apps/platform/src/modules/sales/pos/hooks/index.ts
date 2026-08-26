@@ -9,6 +9,7 @@ import {
   posReceipts,
   posStore,
   posStores,
+  refundPosReceipt,
   type PosSalePayload,
   type PosStorePayload,
 } from '../services';
@@ -111,12 +112,22 @@ export const usePosTransactions = () => {
       client.invalidateQueries({ queryKey: ['products'] });
     },
   });
+  const refund = useMutation({
+    mutationFn: ({ storeId, receiptId }: { storeId: string; receiptId: string }) =>
+      refundPosReceipt(storeId, receiptId),
+    onSuccess: (_, v) => {
+      refresh(v.storeId);
+      client.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
   return {
     openSession: open.mutate,
     closeSession: close.mutate,
     createSale: sale.mutate,
+    refundReceipt: refund.mutate,
     isOpening: open.isPending,
     isClosing: close.isPending,
     isSelling: sale.isPending,
+    isRefunding: refund.isPending,
   };
 };

@@ -5,8 +5,13 @@ import Login from '@/modules/auth/screens/Login';
 import Signup from '@/modules/auth/screens/Signup';
 import VerifyCode from '@/modules/auth/screens/VerifyCode';
 import AppleCallback from '@/modules/auth/screens/AppleCallback';
+import PublicCatalog from '@/modules/catalog/screens/PublicCatalog';
 
 export const publicRoutes: RouteObject[] = [
+  {
+    path: PublicRoutes.PUBLIC_CATALOG,
+    element: <PublicCatalog />,
+  },
   {
     path: PublicRoutes.LOGIN,
     loader: guestLoader,

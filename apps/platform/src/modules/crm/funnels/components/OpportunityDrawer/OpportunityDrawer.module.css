@@ -1,0 +1,421 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 990;
+  background: rgb(15 23 42 / 0.4);
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 995;
+  display: flex;
+  flex-direction: column;
+  width: 54rem;
+  max-width: 92vw;
+  height: 100vh;
+  overflow-y: auto;
+  background: #f3f5fa;
+  border-left: 1px solid #d8dee8;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-height: 8.8rem;
+  padding: 1.8rem 3.6rem;
+  background: #f7f8fc;
+  border-bottom: 1px solid #d5dce8;
+}
+
+.title {
+  margin: 0;
+  color: #273247;
+  font-size: 2.1rem;
+  font-weight: var(--ds-font-weight-bold);
+}
+
+.subtitle {
+  display: block;
+  margin-top: 0.4rem;
+  color: #81899a;
+  font-size: 1.3rem;
+}
+
+.menuButton {
+  display: grid;
+  place-items: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border: 0;
+  border-radius: 0.6rem;
+  background: transparent;
+  color: #687287;
+  cursor: pointer;
+}
+
+.menuButton:hover {
+  background: #e8ebf0;
+}
+
+.section {
+  padding: 2rem 2.2rem;
+  border-bottom: 1px solid #d5dce8;
+}
+
+.sectionLabel {
+  margin: 0 0 1.6rem;
+  color: #667086;
+  font-size: 1.4rem;
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.sectionTitle {
+  margin: 0 0 1.4rem;
+  color: #687289;
+  font-size: 1.4rem;
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+/* ── Contact actions ────────────────────────────────── */
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.8rem;
+  text-align: center;
+}
+
+.actionItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.actionItem span {
+  color: #8b93a4;
+  font-size: 1.35rem;
+}
+
+.actionCircle {
+  display: grid;
+  place-items: center;
+  width: 4.3rem;
+  height: 4.3rem;
+  border: 1px solid #d8dee9;
+  border-radius: 50%;
+  background: #fff;
+  color: #687287;
+  cursor: pointer;
+}
+
+.actionCircle:hover {
+  background: #f0f2f7;
+  border-color: #bcc2ce;
+}
+
+.actionMap {
+  color: #1473d2;
+}
+
+.actionMore {
+  background: #3d7eea;
+  border-color: #3d7eea;
+  color: #fff;
+}
+
+.actionMore:hover {
+  background: #2d6bd9;
+  border-color: #2d6bd9;
+}
+
+/* ── Metrics ────────────────────────────────────────── */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.metricCard {
+  min-height: 9.2rem;
+  border-radius: 1rem;
+  background: #fff;
+  padding: 1.5rem 1.8rem;
+}
+
+.metricLabel {
+  display: block;
+  color: #929292;
+  font-size: 1.35rem;
+}
+
+.metricLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.metricLabelRow .metricLabel {
+  display: inline;
+}
+
+.metricIcon {
+  color: #9aa3b5;
+}
+
+.metricValue {
+  display: block;
+  margin-top: 0.7rem;
+  color: #26344b;
+  font-size: 2.4rem;
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.probabilityRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 0.7rem;
+}
+
+.probabilityRow .metricValue {
+  display: inline;
+  margin-top: 0;
+}
+
+.autoLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #3d7eea;
+  font-size: 1.3rem;
+}
+
+.assigneeRow {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin-top: 1.4rem;
+}
+
+.avatarMagenta {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  background: #d728a1;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.assigneeName {
+  color: #26344b;
+  font-size: 1.65rem;
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.estimateDate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #687287;
+  font-size: 1.3rem;
+}
+
+.statusButtons {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+.statusBtn {
+  flex: 1;
+  height: 3.5rem;
+  border: 0;
+  border-radius: 0.4rem;
+  font: inherit;
+  font-size: 1.4rem;
+  font-weight: var(--ds-font-weight-semibold);
+  cursor: pointer;
+}
+
+.statusBtn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.statusWon {
+  background: #ddf4c9;
+  color: #415b25;
+}
+
+.statusWon:hover:not(:disabled) {
+  background: #cee8b5;
+}
+
+.statusLost {
+  background: #ffcaca;
+  color: #723333;
+}
+
+.statusLost:hover:not(:disabled) {
+  background: #ffb5b5;
+}
+
+/* ── Pipeline progress ──────────────────────────────── */
+.stageBar {
+  display: flex;
+  height: 3.4rem;
+  overflow: hidden;
+  border-radius: 0.8rem;
+}
+
+.stageBar span {
+  white-space: nowrap;
+}
+
+.stageDone {
+  flex: 0 0 4rem;
+  background: #5877a5;
+}
+
+.stageActive {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  overflow: hidden;
+  padding: 0 0.8rem;
+  background: #347eef;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: var(--ds-font-weight-semibold);
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+}
+
+.stageSegment {
+  flex: 1;
+  background: #d9e0f0;
+}
+
+/* ── Create shortcuts ───────────────────────────────── */
+.createGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+}
+
+.createGridSingle {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-top: 0.8rem;
+}
+
+.createBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  height: 4rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: #fff;
+  padding: 0 1.3rem;
+  color: #626c7e;
+  font: inherit;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.createBtn:hover {
+  background: #f0f2f7;
+}
+
+/* ── Activities ─────────────────────────────────────── */
+.activitiesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.6rem;
+}
+
+.activityCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.activityNumber {
+  color: #354159;
+  font-size: 2rem;
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.activityLabel {
+  color: #858da0;
+  font-size: 1.35rem;
+}
+
+.activityLink {
+  color: #1473d2;
+  font-size: 1.35rem;
+  cursor: pointer;
+}
+
+.activityLink:hover {
+  text-decoration: underline;
+}
+
+/* ── Company ────────────────────────────────────────── */
+.companyCard {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  height: 6.8rem;
+  border-radius: 0.9rem;
+  background: #fff;
+  padding: 0 1.7rem;
+  cursor: pointer;
+}
+
+.avatarOrange {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 4.3rem;
+  height: 4.3rem;
+  border-radius: 50%;
+  background: #ff793f;
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.companyName {
+  flex: 1;
+  color: #29364b;
+  font-size: 1.6rem;
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.companyChevron {
+  color: #bcc2ce;
+  font-size: 2rem;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 640px) {
+  .drawer {
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  .header {
+    padding: 1.6rem 2rem;
+  }
+}

@@ -3,12 +3,20 @@ import Header from '../Header';
 import styles from './AppShell.module.css';
 import TopBar, { subscription } from '../TopBar';
 import { useQuery } from '@tanstack/react-query';
-import { SettingsDataPanel } from '@/modules/settings/components';
+import {
+  AccountSettingsPanel,
+  SettingsDataPanel,
+  SettingsHomePanel,
+  SettingsCategoryPanel,
+  ProductConfigurationPanel,
+} from '@/modules/settings/components';
 import { useSettingsHashRoute } from '@/modules/settings/hooks';
 import { PaymentMethodsPanel } from '@/modules/settings/payment-methods/components';
 import { UsersSettingsPanel } from '@/modules/settings/users/components';
 import { PrivateRoutes } from '@/app/router/routes/route-paths';
 import { ProductFieldsSettingsPanel } from '@/modules/settings/product-fields/components';
+import { NavigationSettingsPanel } from '@/modules/settings/navigation/components';
+import { CrmPreferencesPanel } from '@/modules/settings/crm/components';
 
 const hasTrialExpired = (trialEndsAt?: string) => {
   if (!trialEndsAt) return false;
@@ -19,14 +27,28 @@ const hasTrialExpired = (trialEndsAt?: string) => {
 
 const AppShell = () => {
   const location = useLocation();
-  const { closeSettings, isPaymentMethodsOpen, isProductFieldsOpen, isSettingsDataOpen, isUsersOpen, usersInitialView } =
-    useSettingsHashRoute();
+  const {
+    closeSettings,
+    isNavigationOpen,
+    isPaymentMethodsOpen,
+    isProductFieldsOpen,
+    isProductConfigurationOpen,
+    isSettingsDataOpen,
+    isSettingsAccountOpen,
+    isSettingsHomeOpen,
+    isCrmPreferencesOpen,
+    settingsCategory,
+    isUsersOpen,
+    usersInitialView,
+  } = useSettingsHashRoute();
   const { data, isLoading } = useQuery({
     queryKey: ['subscription'],
     queryFn: subscription,
   });
 
-  const isExpired = data?.status === 'expired' || (data?.status === 'trialing' && hasTrialExpired(data.trialEndsAt));
+  const isExpired =
+    data?.status === 'expired' ||
+    (data?.status === 'trialing' && hasTrialExpired(data.trialEndsAt));
   const isExpiredRoute = location.pathname === PrivateRoutes.TRIAL_EXPIRED;
   const showTopBar = data?.status === 'trialing' && !isExpired;
 
@@ -46,9 +68,17 @@ const AppShell = () => {
         <Outlet />
       </div>
       {isSettingsDataOpen && <SettingsDataPanel onClose={closeSettings} />}
+      {isSettingsHomeOpen && <SettingsHomePanel onClose={closeSettings} />}
+      {isSettingsAccountOpen && <AccountSettingsPanel onClose={closeSettings} />}
+      {isCrmPreferencesOpen && <CrmPreferencesPanel onClose={closeSettings} />}
+      {settingsCategory && (
+        <SettingsCategoryPanel category={settingsCategory} onClose={closeSettings} />
+      )}
       {isPaymentMethodsOpen && <PaymentMethodsPanel onClose={closeSettings} />}
       {isUsersOpen && <UsersSettingsPanel initialView={usersInitialView} onClose={closeSettings} />}
       {isProductFieldsOpen && <ProductFieldsSettingsPanel onClose={closeSettings} />}
+      {isProductConfigurationOpen && <ProductConfigurationPanel onClose={closeSettings} />}
+      {isNavigationOpen && <NavigationSettingsPanel onClose={closeSettings} />}
     </div>
   );
 };

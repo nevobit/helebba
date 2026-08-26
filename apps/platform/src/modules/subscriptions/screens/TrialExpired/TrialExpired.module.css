@@ -103,7 +103,60 @@
 }
 
 .primaryButton {
+  width: 100%;
+}
+
+.plans {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
   width: min(62.8rem, 100%);
+  margin-bottom: 18px;
+}
+
+.plan,
+.selectedPlan {
+  display: grid;
+  gap: 7px;
+  padding: 18px;
+  border: 1px solid #d9e0ea;
+  border-radius: 8px;
+  background: #fff;
+  color: #2b3445;
+  text-align: left;
+  cursor: pointer;
+}
+
+.selectedPlan {
+  border-color: #2b69da;
+  box-shadow: 0 0 0 2px rgba(43, 105, 218, 0.12);
+}
+
+.plan span,
+.selectedPlan span {
+  min-height: 38px;
+  color: #667085;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.plan b,
+.selectedPlan b {
+  color: #1f2937;
+  font-size: 14px;
+}
+
+.checkoutActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: min(62.8rem, 100%);
+}
+
+.error {
+  margin: 14px 0 0;
+  color: #c0362c;
+  font-size: 13px;
 }
 
 .helpCard {
@@ -167,6 +220,11 @@
   .benefits {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+
+  .plans,
+  .checkoutActions {
+    grid-template-columns: 1fr;
   }
 
   .helpCard {

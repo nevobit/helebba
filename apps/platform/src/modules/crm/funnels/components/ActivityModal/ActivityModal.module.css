@@ -1,0 +1,298 @@
+.modal {
+  top: 3.2vh !important;
+  max-height: 93.6vh !important;
+  border-radius: 0.9rem !important;
+}
+.body {
+  display: grid;
+  grid-template-columns: 32rem minmax(0, 1fr);
+  height: 72rem;
+  padding: 0 !important;
+  overflow: hidden;
+  color: #1f2937;
+  font-size: var(--ds-font-size-14);
+}
+.dayPanel {
+  border-right: 1px solid #eef0f3;
+  padding: 2.2rem 1.8rem 1.8rem;
+  background: #fff;
+}
+.dayHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 5.8rem;
+}
+.dayHeader > div:first-child {
+  display: grid;
+  gap: 0.35rem;
+}
+.dayNavigation {
+  display: flex;
+  overflow: hidden;
+  border: 1px solid #e4e7ec;
+  border-radius: 999px;
+}
+.dayNavigation button {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border: 0;
+  background: #f7f8fa;
+  color: #667085;
+  cursor: pointer;
+}
+.dayNavigation button + button {
+  border-left: 1px solid #e4e7ec;
+}
+.dayNavigation button:hover {
+  background: #eef1f5;
+}
+.dayHeader strong {
+  font-size: 1.7rem;
+  text-transform: capitalize;
+}
+.weekday {
+  display: block;
+  color: #667085;
+  text-transform: capitalize;
+}
+.schedule {
+  position: relative;
+  height: 60rem;
+  overflow: hidden;
+  border-radius: 0.6rem;
+  background: #fffbea;
+}
+.schedule > span {
+  display: block;
+  height: 4.65rem;
+  border-bottom: 1px dotted #d8d2aa;
+  padding: 0.4rem 1rem;
+  color: #667085;
+  font-size: 1.1rem;
+}
+.eventPreview {
+  position: absolute;
+  right: 1.5rem;
+  left: 3.2rem;
+  min-height: 4.65rem;
+  border-radius: 0.3rem;
+  background: #3b82f6;
+  padding: 0.8rem 1rem;
+  color: #fff;
+  font-size: 1.2rem;
+}
+.form {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 2.2rem;
+  overflow-y: auto;
+}
+.formHead {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.formHead input {
+  flex: 1;
+  border: 0;
+  border-radius: 0.2rem;
+  background: #f1f1f1;
+  padding: 1.05rem 1.4rem;
+  color: #1f2937;
+  font: inherit;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+.formHead input:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+.types {
+  display: flex;
+  gap: 0.8rem;
+  margin: 0.8rem 0 1.6rem;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+.type,
+.typeActive {
+  display: grid;
+  place-items: center;
+  gap: 0.6rem;
+  min-width: 9rem;
+  flex: 1 0 9rem;
+  min-height: 8.7rem;
+  border: 0;
+  border-radius: 0.7rem;
+  background: #f5f6f8;
+  color: #1f2937;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.typeActive {
+  background: #4285ed;
+  color: #fff;
+}
+.dateCard {
+  overflow: hidden;
+  border-radius: 0.8rem;
+  background: #f7f8fa;
+  margin-bottom: 0.2rem;
+}
+.toggleRow,
+.dateRow,
+.optionRow,
+.selectRow {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4.35rem;
+  padding: 0.75rem 1.3rem;
+}
+.assigneeRow {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2rem 1fr auto auto;
+  align-items: center;
+  gap: 0.9rem;
+  min-height: 4.35rem;
+  border-radius: 0.8rem;
+  background: #f7f8fa;
+  padding: 0.75rem 1.3rem;
+  color: #667085;
+}
+.assigneeRow select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  cursor: pointer;
+  opacity: 0;
+}
+.assigneeAvatar {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+  background: #d72ba1;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.addCircle {
+  display: grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  background: #4285ed;
+  color: #fff;
+}
+.dateRow + .dateRow,
+.dateRow:first-of-type {
+  border-top: 1px solid #e4e7ec;
+}
+.dateRow input {
+  width: 12rem;
+  border: 0;
+  background: transparent;
+  color: #3b82f6;
+  font: inherit;
+  text-align: right;
+}
+.optionRow,
+.selectRow {
+  border-radius: 0.8rem;
+  background: #edf3ff;
+  color: #2563eb;
+  font-weight: 600;
+}
+.selectRow {
+  grid-template-columns: 2rem 1fr minmax(15rem, auto);
+  background: #f7f8fa;
+  color: #667085;
+}
+.selectRow select {
+  border: 0;
+  background: transparent;
+  color: #344054;
+  font: inherit;
+  text-align: right;
+}
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4.35rem;
+  border: 0;
+  border-radius: 0.8rem;
+  background: #edf3ff;
+  padding: 0.75rem 1.3rem;
+  color: #4285ed;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.actionRow:hover {
+  background: #e2ecff;
+}
+.notesInput {
+  resize: none;
+  border: 1px solid #bfd2f7;
+  border-radius: 0.5rem;
+  background: #fff;
+  padding: 0.8rem;
+  color: #344054;
+  font: inherit;
+}
+.notesInput:focus {
+  border-color: #4285ed;
+  outline: 0;
+}
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: auto -2.2rem -2.2rem;
+  border-top: 1px solid #e4e7ec;
+  padding: 1.5rem 2.2rem;
+}
+.footer label {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.error {
+  margin: 0;
+  color: #b42318;
+}
+@media (max-width: 760px) {
+  .body {
+    grid-template-columns: 1fr;
+  }
+  .dayPanel {
+    display: none;
+  }
+  .types {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .form {
+    height: auto;
+    max-height: 90vh;
+  }
+  .dateRow {
+    grid-template-columns: 2rem 1fr;
+  }
+  .dateRow input {
+    width: 100%;
+  }
+}

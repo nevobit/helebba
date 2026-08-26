@@ -1,0 +1,21 @@
+.title {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: var(--ds-font-weight-bold);
+  color: #17181c;
+}
+
+.body {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.error {
+  margin: 0;
+  color: #b42318;
+}
+
+.footer {
+  justify-content: flex-end;
+  background: #f9fafb;
+}

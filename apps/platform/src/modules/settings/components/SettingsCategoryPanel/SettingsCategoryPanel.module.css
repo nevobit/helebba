@@ -1,0 +1,28 @@
+.overlay {
+  composes: overlay from '../AccountSettingsPanel/AccountSettingsPanel.module.css';
+}
+.panel {
+  composes: panel from '../AccountSettingsPanel/AccountSettingsPanel.module.css';
+}
+.header {
+  composes: header from '../AccountSettingsPanel/AccountSettingsPanel.module.css';
+}
+.content {
+  composes: content from '../AccountSettingsPanel/AccountSettingsPanel.module.css';
+}
+.breadcrumb {
+  composes: breadcrumb from '../AccountSettingsPanel/AccountSettingsPanel.module.css';
+}
+.intro {
+  composes: intro from '../AccountSettingsPanel/AccountSettingsPanel.module.css';
+}
+.introIcon {
+  composes: introIcon from '../AccountSettingsPanel/AccountSettingsPanel.module.css';
+}
+.options {
+  composes: options from '../AccountSettingsPanel/AccountSettingsPanel.module.css';
+}
+.options button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}

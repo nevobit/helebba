@@ -7,8 +7,12 @@ import { getProductByIdRoute } from './get-by-id';
 import { getBySlugRoute } from './get-by-slug';
 import { getAllProductsRoute } from './list';
 import { getProductStatsRoute } from './stats';
+import { getInventoryDashboardRoute } from './dashboard';
+import { getInventoryAnalyticsRoute } from './inventory-analytics';
 
 export const productRoutes: RouteOptions[] = withPrefix('/products', [
+  getInventoryDashboardRoute,
+  getInventoryAnalyticsRoute,
   createProductRoute,
   deleteProductRoute,
   updateProductRoute,

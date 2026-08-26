@@ -1,8 +1,8 @@
 import { getModel } from '@hlb/constant-definitions';
-import { type LeadId, type OrganizationId } from '@hlb/contracts';
+import { CrmNoteSchemaMongo, type LeadId, type OrganizationId } from '@hlb/contracts';
 
 export const deleteCrmLeadNote = async (noteId: string, organizationId: string) => {
-  const model = getModel('CRM_NOTES');
+  const model = getModel('CRM_NOTES', CrmNoteSchemaMongo);
 
   const result = await model.deleteOne({ _id: noteId, organizationId });
 

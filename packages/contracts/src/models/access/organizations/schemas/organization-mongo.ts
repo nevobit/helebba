@@ -21,6 +21,16 @@ export const OrganizationSchemaMongo = new Schema<Organization>(
     isPrincipal: { type: Boolean },
     slug: { type: String },
     ownerId: { type: String, ref: 'users' },
+    navigationPreferences: [
+      {
+        _id: false,
+        itemId: { type: String, required: true },
+        isVisible: { type: Boolean, required: true },
+        position: { type: Number },
+        name: { type: String },
+        icon: { type: String },
+      },
+    ],
   },
 
   { ...opts },

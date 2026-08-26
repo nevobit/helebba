@@ -1,1 +1,157 @@
-.modal{top:2vh!important;max-height:96vh!important}.body{display:grid;gap:1.25rem;color:#344054;font-size:var(--ds-font-size-14);overflow-y:auto}.body label{display:grid;gap:.5rem;font-size:var(--ds-font-size-12);font-weight:var(--ds-font-weight-semibold)}.body select,.body label>input,.document input{width:100%;min-height:4.2rem;border:1px solid #d0d5dd;border-radius:.6rem;background:#fff;padding:.8rem 1.2rem;color:#344054;font-size:var(--ds-font-size-14)}.two{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}.label{display:block;margin-bottom:.7rem;font-size:var(--ds-font-size-12)}.stagePicker{display:flex;overflow:hidden}.stagePicker button{min-width:0;flex:1;overflow:hidden;border:0;background:#eaecf0;padding:1rem;text-overflow:ellipsis;white-space:nowrap;color:#475467;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 50%,calc(100% - 8px) 100%,0 100%,8px 50%)}.stagePicker button:first-child{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 50%,calc(100% - 8px) 100%,0 100%)}.stagePicker .activeStage{background:#3b82f6;color:#fff}.document{display:grid;grid-template-columns:20rem 1fr}.document select{border-radius:.6rem 0 0 .6rem}.document input{border-left:0;border-radius:0 .6rem .6rem 0}.error{margin:0;color:#b42318}.footer{justify-content:flex-end;background:#f9fafb}@media(max-width:650px){.two{grid-template-columns:1fr}.stagePicker{overflow-x:auto}.stagePicker button{flex:0 0 14rem}.document{grid-template-columns:1fr}}
+.modal {
+  top: 4vh !important;
+  max-height: 92vh !important;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: var(--ds-font-weight-bold);
+  color: #17181c;
+}
+
+.body {
+  display: grid;
+  gap: 1.6rem;
+  padding: 2.4rem 2.8rem;
+  color: #344054;
+}
+
+/* ── Fields ─────────────────────────────────────────── */
+.field {
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.3rem;
+  font-weight: var(--ds-font-weight-semibold);
+  color: #1f2937;
+}
+
+.labelIcon {
+  color: #98a2b3;
+}
+
+.control {
+  width: 100%;
+  min-height: 4.2rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.6rem;
+  background: #fff;
+  padding: 0.8rem 1.2rem;
+  color: #344054;
+  font: inherit;
+  font-size: 1.35rem;
+}
+
+.control:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 0.3rem rgba(37, 99, 235, 0.12);
+}
+
+.control::placeholder {
+  color: #98a2b3;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.6rem;
+}
+
+/* ── Stage chevron picker ───────────────────────────── */
+.stagePicker {
+  display: flex;
+  overflow: hidden;
+}
+
+.stageOption {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  border: 0;
+  background: #f2f4f7;
+  padding: 1.2rem 1.6rem 1.2rem 2rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #475467;
+  font: inherit;
+  font-size: 1.3rem;
+  cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 0.9rem) 0, 100% 50%, calc(100% - 0.9rem) 100%, 0 100%, 0.9rem 50%);
+}
+
+.stageOptionFirst {
+  clip-path: polygon(0 0, calc(100% - 0.9rem) 0, 100% 50%, calc(100% - 0.9rem) 100%, 0 100%);
+}
+
+.stageOption:hover {
+  background: #e4e7ec;
+}
+
+.stageOptionActive,
+.stageOptionActive:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* ── Related document ───────────────────────────────── */
+.document {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+}
+
+.document .control:first-child {
+  border-radius: 0.6rem 0 0 0.6rem;
+}
+
+.document .control:last-child {
+  border-left: 0;
+  border-radius: 0 0.6rem 0.6rem 0;
+}
+
+.error {
+  margin: 0;
+  color: #b42318;
+}
+
+.footer {
+  justify-content: flex-end;
+  background: #f9fafb;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 650px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .stagePicker {
+    overflow-x: auto;
+  }
+
+  .stageOption {
+    flex: 0 0 14rem;
+  }
+
+  .document {
+    grid-template-columns: 1fr;
+  }
+
+  .document .control:first-child {
+    border-radius: 0.6rem 0.6rem 0 0;
+    border-left: 1px solid #d0d5dd;
+  }
+
+  .document .control:last-child {
+    border-left: 1px solid #d0d5dd;
+    border-top: 0;
+    border-radius: 0 0 0.6rem 0.6rem;
+  }
+}

@@ -37,7 +37,6 @@ export const listCrmLeads = async (filters: {
     sortBy = 'order',
     sortOrder = 'asc',
   } = filters;
-
   const query: Record<string, unknown> = {
     organizationId,
     lifecycleStatus: { $ne: 'DELETED' },

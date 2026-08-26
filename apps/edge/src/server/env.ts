@@ -39,6 +39,12 @@ export const loadEnv = () => {
     CLOUDINARY_API_KEY: str({ default: '' }),
     CLOUDINARY_API_SECRET: str({ default: '' }),
 
+    PUBLIC_APP_URL: str({ default: 'http://localhost:5174' }),
+    STRIPE_SECRET_KEY: str({ default: '' }),
+    STRIPE_WEBHOOK_SECRET: str({ default: '' }),
+    MERCADOPAGO_ACCESS_TOKEN: str({ default: '' }),
+    MERCADOPAGO_WEBHOOK_SECRET: str({ default: '' }),
+
     REDIS_URL: str(),
     MONGODB_URI: str(),
   });

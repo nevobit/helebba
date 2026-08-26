@@ -6,3 +6,5 @@ export * from './get-by-id';
 export * from './get-by-slug';
 export * from './soft-delete';
 export * from './stats';
+export * from './dashboard';
+export * from './inventory-analytics';

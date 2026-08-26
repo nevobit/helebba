@@ -3,9 +3,11 @@ import { withPrefix } from '@hlb/constant-definitions';
 import { meOrganizationRoutes } from './organizations';
 import { meUserRoutes } from './users';
 import { meApiKeyRoutes } from './api-keys';
+import { meNavigationRoutes } from './navigation';
 
 export const meRoutes: RouteOptions[] = withPrefix('/me', [
   ...meOrganizationRoutes,
   ...meUserRoutes,
   ...meApiKeyRoutes,
+  ...meNavigationRoutes,
 ]);

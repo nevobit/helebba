@@ -4,7 +4,7 @@ import { Plus, Store } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { RegisterModal } from '../../components/RegisterModal';
 import { SessionModal } from '../../components/SessionModal';
-import { usePosReceipts, usePosStore } from '../../hooks';
+import { usePosReceipts, usePosStore, usePosTransactions } from '../../hooks';
 import styles from './StoreDetails.module.css';
 
 const money = (value: number) =>
@@ -14,6 +14,7 @@ const StoreDetails = () => {
   const navigate = useNavigate();
   const { store, isLoading, error } = usePosStore(storeId);
   const { receipts } = usePosReceipts(storeId);
+  const { refundReceipt, isRefunding } = usePosTransactions();
   const { openModal, closeModal } = useModal();
   if (isLoading) return <main className={styles.page}>Cargando tienda...</main>;
   if (error || !store) return <main className={styles.page}>No pudimos cargar la tienda.</main>;
@@ -143,6 +144,8 @@ const StoreDetails = () => {
               <span>Fecha</span>
               <span>Pago</span>
               <span>Total</span>
+              <span>Estado</span>
+              <span />
             </div>
             {receipts.length ? (
               receipts.map((receipt) => (
@@ -152,6 +155,29 @@ const StoreDetails = () => {
                   <span>{new Date(receipt.createdAt).toLocaleString()}</span>
                   <span>{receipt.payments.map((payment) => payment.method).join(', ')}</span>
                   <strong>{money(receipt.total)}</strong>
+                  <span>{receipt.status === 'refunded' ? 'Devuelto' : 'Completado'}</span>
+                  <span>
+                    {receipt.status === 'completed' && (
+                      <Button
+                        variant="outline"
+                        theme="optional"
+                        disabled={isRefunding}
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `¿Devolver el ticket ${receipt.number}? El stock se restituirá automáticamente.`,
+                            )
+                          )
+                            refundReceipt({
+                              storeId: String(store.id),
+                              receiptId: String(receipt.id),
+                            });
+                        }}
+                      >
+                        Devolver
+                      </Button>
+                    )}
+                  </span>
                 </div>
               ))
             ) : (

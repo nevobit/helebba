@@ -43,7 +43,12 @@ export type PosSalePayload = {
   payments: PosPayment[];
 };
 export const createPosSale = async (storeId: string, registerId: string, payload: PosSalePayload) =>
-  (await api.post<PosReceipt>(`/pos/stores/${storeId}/registers/${registerId}/sales`, payload))
-    .data;
+  (
+    await api.post<PosReceipt>(`/pos/stores/${storeId}/registers/${registerId}/sales`, payload, {
+      headers: { 'Idempotency-Key': crypto.randomUUID() },
+    })
+  ).data;
 export const posReceipts = async (storeId: string) =>
   (await api.get<PosReceipt[]>(`/pos/stores/${storeId}/receipts`)).data;
+export const refundPosReceipt = async (storeId: string, receiptId: string) =>
+  (await api.post<PosReceipt>(`/pos/stores/${storeId}/receipts/${receiptId}/refund`)).data;

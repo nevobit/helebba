@@ -1,7 +1,8 @@
 import { useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react';
 import { Button, TextInput } from '@hlb/design-system';
-import { ChevronRight, ExternalLink, Info, LockKeyhole, Upload, X } from 'lucide-react';
+import { ChevronRight, ExternalLink, Info, LockKeyhole, Menu, Upload, X } from 'lucide-react';
 import { useSession } from '@/shared';
+import { SETTINGS_NAVIGATION_HASH } from '@/modules/settings/hooks';
 import styles from './SettingsDataPanel.module.css';
 
 type SettingsDataPanelProps = {
@@ -109,6 +110,28 @@ export const SettingsDataPanel = ({ onClose }: SettingsDataPanelProps) => {
               <ChevronRight size={16} />
               <strong>Preferencias generales</strong>
             </nav>
+
+            <section className={styles.card} aria-labelledby="navigation-settings-title">
+              <div className={styles.lockHeader}>
+                <div>
+                  <h3 id="navigation-settings-title">Menú principal</h3>
+                  <p className={styles.mutedText}>
+                    Elige los módulos y opciones que quieres mostrar en la navegación superior.
+                  </p>
+                </div>
+                <Menu size={20} />
+              </div>
+              <Button
+                size="medium"
+                theme="optional"
+                variant="outline"
+                onClick={() => {
+                  window.location.hash = SETTINGS_NAVIGATION_HASH;
+                }}
+              >
+                Configurar menú
+              </Button>
+            </section>
 
             <section className={styles.card} aria-labelledby="account-data-title">
               <div className={styles.cardHeader}>

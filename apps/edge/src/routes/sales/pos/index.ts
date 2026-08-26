@@ -9,6 +9,7 @@ import {
   listPosReceipts,
   listPosStores,
   openPosSession,
+  refundPosReceipt,
   type PosSaleInput,
 } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod, withPrefix } from '@hlb/constant-definitions';
@@ -166,6 +167,7 @@ const sale = makeFastifyRoute(
       registerId: PosRegisterId;
     };
     const { userId } = req.auth as unknown as { userId: UserId };
+    const body = req.body as PosSaleInput;
     reply
       .status(201)
       .send(
@@ -174,7 +176,7 @@ const sale = makeFastifyRoute(
           registerId,
           req.organization?.organizationId as OrganizationId,
           userId,
-          req.body as PosSaleInput,
+          { ...body, idempotencyKey: String(req.headers['idempotency-key'] ?? body.idempotencyKey ?? '') || undefined },
         ),
       );
   },
@@ -191,6 +193,24 @@ const receiptList = makeFastifyRoute(
       .send(await listPosReceipts(storeId, req.organization?.organizationId as OrganizationId));
   },
 );
+const refundReceipt = makeFastifyRoute(
+  RouteMethod.POST,
+  '/stores/:storeId/receipts/:receiptId/refund',
+  verifyJwt,
+  { organization: 'required', auth: 'required' },
+  async (req, reply) => {
+    const { storeId, receiptId } = req.params as { storeId: PosStoreId; receiptId: string };
+    const { userId } = req.auth as unknown as { userId: UserId };
+    reply.status(200).send(
+      await refundPosReceipt(
+        storeId,
+        receiptId,
+        req.organization?.organizationId as OrganizationId,
+        userId,
+      ),
+    );
+  },
+);
 export const posRoutes: RouteOptions[] = withPrefix('/pos', [
   list,
   create,
@@ -200,5 +220,6 @@ export const posRoutes: RouteOptions[] = withPrefix('/pos', [
   closeSession,
   sale,
   receiptList,
+  refundReceipt,
   remove,
 ]);

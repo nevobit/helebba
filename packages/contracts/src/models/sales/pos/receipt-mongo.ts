@@ -8,6 +8,7 @@ export const PosReceiptSchemaMongo = new Schema<PosReceipt>(
     organizationId: { type: String, required: true, index: true },
     createdBy: { type: String },
     updatedBy: { type: String },
+    idempotencyKey: { type: String },
     storeId: { type: String, required: true, index: true },
     storeName: { type: String },
     registerId: { type: String, required: true },
@@ -41,7 +42,13 @@ export const PosReceiptSchemaMongo = new Schema<PosReceipt>(
     tax: { type: Number, min: 0 },
     total: { type: Number, min: 0 },
     status: { type: String, enum: ['completed', 'refunded'], default: 'completed' },
+    refundedAt: { type: Date },
+    refundedBy: { type: String },
   },
   { ...opts },
 );
 PosReceiptSchemaMongo.index({ organizationId: 1, number: 1 }, { unique: true });
+PosReceiptSchemaMongo.index(
+  { organizationId: 1, idempotencyKey: 1 },
+  { unique: true, partialFilterExpression: { idempotencyKey: { $type: 'string' } } },
+);

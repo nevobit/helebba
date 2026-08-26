@@ -37,6 +37,15 @@ export const defaultNavigation: NavigationItem[] = [
         isSystem: true,
         parentId: 'crm',
       },
+      {
+        id: 'crm.activities',
+        name: 'Actividades',
+        path: PrivateRoutes.CRM_ACTIVITIES,
+        position: 2,
+        isVisible: true,
+        isSystem: true,
+        parentId: 'crm',
+      },
     ],
   },
 
@@ -128,7 +137,7 @@ export const defaultNavigation: NavigationItem[] = [
   {
     id: 'inventory',
     name: 'Inventario',
-    path: '/products',
+    path: '/inventory',
     position: 5,
     isVisible: true,
     isSystem: true,
@@ -136,7 +145,7 @@ export const defaultNavigation: NavigationItem[] = [
       {
         id: 'inventory.control.panel',
         name: 'Panel de control',
-        path: '/products',
+        path: '/inventory',
         position: 1,
         isVisible: true,
         isSystem: true,
@@ -204,6 +213,26 @@ export const defaultNavigation: NavigationItem[] = [
         isVisible: false,
         isSystem: true,
         parentId: 'inventory',
+      },
+    ],
+  },
+
+  {
+    id: 'analytics',
+    name: 'Analítica',
+    path: PrivateRoutes.INVENTORY_ANALYTICS,
+    position: 6,
+    isVisible: true,
+    isSystem: true,
+    children: [
+      {
+        id: 'analytics.reports',
+        name: 'Informes',
+        path: PrivateRoutes.INVENTORY_ANALYTICS,
+        position: 1,
+        isVisible: true,
+        isSystem: true,
+        parentId: 'analytics',
       },
     ],
   },

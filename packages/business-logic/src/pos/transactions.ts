@@ -42,39 +42,44 @@ export const openPosSession = async (
 ) => {
   if (!Number.isFinite(openingBalance) || openingBalance < 0)
     throw new Error('El saldo inicial debe ser igual o mayor que cero.');
-  const store = await stores().findOne({
-    _id: storeId,
-    organizationId,
-    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
-  });
-  const register = store?.registers.find((item) =>
-    matchesEmbeddedId(item as typeof item & { _id?: unknown }, registerId),
-  );
-  if (!store) throw new Error('Tienda POS no encontrada para la organización actual.');
-  if (!register) throw new Error('Caja registradora no encontrada dentro de la tienda.');
-  if (
-    register.status === 'open' ||
-    store.sessions.some(
-      (item) => String(item.registerId) === String(registerId) && item.status === 'open',
-    )
-  )
-    throw new Error('Esta caja ya tiene una sesión abierta.');
   const sessionId = randomUUID() as PosSessionId;
-  register.id = registerId;
-  register.status = 'open';
-  store.sessions.push({
+  const session = {
     id: sessionId,
     registerId,
-    registerName: register.name,
+    registerName: '',
     openedAt: new Date(),
     status: 'open',
     openingBalance,
     salesTotal: 0,
     receiptCount: 0,
     openedBy: userId,
-  } as PosSession);
-  store.set('updatedBy', userId);
-  await store.save();
+  } as PosSession;
+  const current = await stores().findOne({
+    _id: storeId,
+    organizationId,
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+    registers: { $elemMatch: { id: registerId, status: 'closed' } },
+    sessions: { $not: { $elemMatch: { registerId, status: 'open' } } },
+  });
+  const register = current?.registers.find((item) => String(item.id) === String(registerId));
+  if (register) session.registerName = register.name;
+  const store = register ? await stores().findOneAndUpdate(
+    {
+      _id: storeId,
+      organizationId,
+      lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+      registers: { $elemMatch: { id: registerId, status: 'closed' } },
+      sessions: { $not: { $elemMatch: { registerId, status: 'open' } } },
+    },
+    { $set: { 'registers.$[register].status': 'open', updatedBy: userId }, $push: { sessions: session } },
+    { arrayFilters: [{ 'register.id': registerId, 'register.status': 'closed' }], new: true },
+  ) : null;
+  if (!store) {
+    const existing = await stores().findOne({ _id: storeId, organizationId, lifecycleStatus: { $ne: LifecycleStatus.DELETED } });
+    if (!existing) throw new Error('Tienda POS no encontrada para la organización actual.');
+    if (!existing.registers.some((item) => String(item.id) === String(registerId))) throw new Error('Caja registradora no encontrada dentro de la tienda.');
+    throw new Error('Esta caja ya tiene una sesión abierta.');
+  }
   return { store, sessionId };
 };
 export const closePosSession = async (
@@ -128,6 +133,7 @@ export const closePosSession = async (
 export type PosSaleInput = {
   lines: Array<{ productId: ProductId; variantId?: string; quantity: number }>;
   payments: PosPayment[];
+  idempotencyKey?: string;
 };
 export const createPosSale = async (
   storeId: PosStoreId,
@@ -138,6 +144,10 @@ export const createPosSale = async (
 ) => {
   if (!input.lines.length) throw new Error('Añade al menos un producto al carrito.');
   if (!input.payments.length) throw new Error('Añade un método de pago.');
+  if (input.idempotencyKey) {
+    const previous = await receipts().findOne({ organizationId, idempotencyKey: input.idempotencyKey });
+    if (previous) return previous;
+  }
   const dbSession = await stores().db.startSession();
   let created: PosReceipt | undefined;
   try {
@@ -255,6 +265,7 @@ export const createPosSale = async (
             organizationId,
             createdBy: userId,
             updatedBy: userId,
+            idempotencyKey: input.idempotencyKey,
             storeId,
             storeName: store.name,
             registerId,
@@ -280,6 +291,17 @@ export const createPosSale = async (
       );
       created = receipt;
     });
+  } catch (error) {
+    if (input.idempotencyKey && (error as { code?: number }).code === 11000) {
+      created =
+        (await receipts().findOne({
+          organizationId,
+          idempotencyKey: input.idempotencyKey,
+        })) ?? undefined;
+      if (!created) throw error;
+    } else {
+      throw error;
+    }
   } finally {
     await dbSession.endSession();
   }
@@ -288,3 +310,99 @@ export const createPosSale = async (
 };
 export const listPosReceipts = async (storeId: PosStoreId, organizationId: OrganizationId) =>
   receipts().find({ storeId, organizationId }).sort({ createdAt: -1 }).limit(100);
+
+export const refundPosReceipt = async (
+  storeId: PosStoreId,
+  receiptId: string,
+  organizationId: OrganizationId,
+  userId: UserId,
+) => {
+  const dbSession = await receipts().db.startSession();
+  let refunded: PosReceipt | undefined;
+  try {
+    await dbSession.withTransaction(async () => {
+      const receipt = await receipts()
+        .findOne({
+          _id: receiptId,
+          storeId,
+          organizationId,
+          status: 'completed',
+        })
+        .session(dbSession);
+      if (!receipt) {
+        const existing = await receipts()
+          .findOne({ _id: receiptId, storeId, organizationId })
+          .session(dbSession);
+        if (existing?.status === 'refunded') throw new Error('Este ticket ya fue devuelto.');
+        throw new Error('Ticket no encontrado para esta tienda.');
+      }
+
+      for (const line of receipt.lines) {
+        const product = await products()
+          .findOne({
+            _id: line.productId,
+            organizationId,
+            lifecycleStatus: { $ne: LifecycleStatus.DELETED },
+          })
+          .session(dbSession);
+        if (!product?.hasStock) continue;
+
+        if (line.variantId) {
+          const variant = product.variants?.find((item) =>
+            variantIdentity(item as typeof item & { _id?: unknown }, line.variantId as string),
+          );
+          const identity = variant
+            ? variantIdentity(variant as typeof variant & { _id?: unknown }, line.variantId)
+            : undefined;
+          if (!identity)
+            throw new Error(`La variante devuelta de “${product.name}” ya no existe.`);
+          await products().updateOne(
+            { _id: product.id, organizationId, [`variants.${identity.field}`]: identity.value },
+            { $inc: { stock: line.quantity, 'variants.$[variant].stock': line.quantity } },
+            {
+              arrayFilters: [{ [`variant.${identity.field}`]: identity.value }],
+              session: dbSession,
+            },
+          );
+        } else {
+          await products().updateOne(
+            { _id: product.id, organizationId },
+            { $inc: { stock: line.quantity } },
+            { session: dbSession },
+          );
+        }
+      }
+
+      const updated = await receipts().findOneAndUpdate(
+        { _id: receipt.id, storeId, organizationId, status: 'completed' },
+        {
+          $set: {
+            status: 'refunded',
+            refundedAt: new Date(),
+            refundedBy: userId,
+            updatedBy: userId,
+          },
+        },
+        { new: true, session: dbSession },
+      );
+      if (!updated) throw new Error('Este ticket ya fue devuelto.');
+
+      await stores().updateOne(
+        { _id: storeId, organizationId, 'sessions.id': receipt.sessionId },
+        {
+          $inc: {
+            'sessions.$[session].salesTotal': -receipt.total,
+            'sessions.$[session].receiptCount': -1,
+          },
+          $set: { updatedBy: userId },
+        },
+        { arrayFilters: [{ 'session.id': receipt.sessionId }], session: dbSession },
+      );
+      refunded = updated;
+    });
+  } finally {
+    await dbSession.endSession();
+  }
+  if (!refunded) throw new Error('No pudimos completar la devolución.');
+  return refunded;
+};

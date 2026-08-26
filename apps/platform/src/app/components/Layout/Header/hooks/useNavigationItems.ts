@@ -1,13 +1,10 @@
 import { useMemo } from 'react';
 import { mergeNavigation } from '../merge-navigation';
 import { defaultNavigation } from '../default-navigation';
-import type { NavigationItem } from '../types';
+import { useOrganizationNavigation } from '@/modules/settings/navigation/hooks';
 
 export function useNavigationItems() {
-  //   const { items: customItems = [], isLoading } = useOrganizationNavigation();
-
-  const customItems: NavigationItem | [] = [];
-  const isLoading = false;
+  const { data: customItems = [], isLoading } = useOrganizationNavigation();
 
   const items = useMemo(() => {
     return mergeNavigation(defaultNavigation, customItems);

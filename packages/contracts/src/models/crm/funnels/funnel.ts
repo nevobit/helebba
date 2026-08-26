@@ -25,6 +25,7 @@ export interface CrmFunnel extends PersistedSoftDeletableEntity<CrmFunnelId, Use
   description: string;
   isDefault: boolean;
   stages: CrmStage[];
+  members?: UserId[];
 }
 
 export interface CrmOpportunity extends PersistedSoftDeletableEntity<CrmOpportunityId, UserId> {
@@ -48,6 +49,55 @@ export interface CrmOpportunity extends PersistedSoftDeletableEntity<CrmOpportun
   order: number;
 }
 
+export type CrmOpportunityActivityType = string;
+
+export interface CrmActivityTypePreference {
+  id: string;
+  name: string;
+  color: string;
+  icon: string;
+}
+
+export interface CrmSalesTeam {
+  id: string;
+  name: string;
+  color: string;
+  icon: string;
+  leaderId?: UserId;
+  members: UserId[];
+}
+
+export interface CrmPreferences {
+  id: string;
+  organizationId: string;
+  activityTypes: CrmActivityTypePreference[];
+  salesTeams: CrmSalesTeam[];
+  createdBy: UserId;
+  updatedBy: UserId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CrmOpportunityActivity extends PersistedSoftDeletableEntity<
+  import('../../../common').CrmActivityId,
+  UserId
+> {
+  title: string;
+  type: CrmOpportunityActivityType;
+  opportunityId?: CrmOpportunityId;
+  opportunityName?: string;
+  startsAt: Date;
+  endsAt: Date;
+  allDay: boolean;
+  emailReminder: boolean;
+  assignedTo?: UserId;
+  assignedToName?: string;
+  invitees?: UserId[];
+  contactId?: ContactId;
+  notes?: string;
+  completed: boolean;
+}
+
 export interface CrmCustomField {
   fieldId: string;
   value: string | number | boolean;
@@ -58,6 +108,17 @@ export interface CrmNote {
   leadId: LeadId;
   organizationId: string;
   content: string;
+  createdBy: UserId;
+  createdAt: Date;
+}
+
+export interface CrmOpportunityNote {
+  id: string;
+  opportunityId: CrmOpportunityId;
+  organizationId: string;
+  title?: string;
+  content: string;
+  color?: string;
   createdBy: UserId;
   createdAt: Date;
 }
