@@ -11,7 +11,7 @@ import { useGoogleLogin as useGoogleLoginCode } from '@/modules/auth/hooks';
 const Login = () => {
   const navigate = useNavigate();
   const { login, isLogging } = useLogin();
-  const { loginWithGoogle: loginWithGoogleCode } = useGoogleLoginCode();
+  const { loginWithGoogle: loginWithGoogleCode, isLoggingGoogle } = useGoogleLoginCode();
 
   const googleLogin = useGoogleLogin({
     flow: 'auth-code',
@@ -112,7 +112,12 @@ const Login = () => {
                 children: 'Continuar con Google',
               }}
             /> */}
-            <button className={styles.socialButton} type="button" onClick={() => googleLogin()}>
+            <button
+              className={styles.socialButton}
+              type="button"
+              onClick={() => googleLogin()}
+              disabled={isLoggingGoogle}
+            >
               <span className={styles.googleMark}>
                 <img src="/images/google.svg" />
               </span>

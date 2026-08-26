@@ -1,5 +1,5 @@
 import { LifecycleStatus, type User } from '@hlb/contracts';
-import { createUserFromApple, findByEmail } from '../../users';
+import { createUserFromApple, findByEmailOrNull } from '../../users';
 import { issueTokens } from './tokens';
 import crypto from 'crypto';
 
@@ -21,7 +21,7 @@ export const appleLogin = async (input: AppleLoginInput): Promise<AppleLoginOutp
   if (!email) throw new Error('APPLE_EMAIL_MISSING');
   if (!input.appleSub) throw new Error('APPLE_SUB_MISSING');
 
-  let user: User = await findByEmail(email);
+  let user: User | null = await findByEmailOrNull(email);
 
   if (!user) {
     user = await createUserFromApple({

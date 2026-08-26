@@ -1,5 +1,5 @@
 import { LifecycleStatus, type User } from '@hlb/contracts';
-import { createUserFromGoogle, findByEmail } from '../../users';
+import { createUserFromGoogle, findByEmailOrNull } from '../../users';
 import { issueTokens } from './tokens';
 import crypto from 'crypto';
 
@@ -21,7 +21,7 @@ export const googleLogin = async (input: GoogleLoginInput): Promise<GoogleLoginO
   if (!email) throw new Error('GOOGLE_EMAIL_MISSING');
   if (!input.googleSub) throw new Error('GOOGLE_SUB_MISSING');
 
-  let user: User = await findByEmail(email);
+  let user: User | null = await findByEmailOrNull(email);
 
   if (!user) {
     user = await createUserFromGoogle({
