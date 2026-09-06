@@ -1,3 +1,1 @@
-import type { Id } from '../../common';
-
-export type OrganizationId = Id<'OrganizationId'>;
+export type { OrganizationId } from '../../common';
