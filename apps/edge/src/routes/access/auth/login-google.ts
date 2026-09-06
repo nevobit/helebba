@@ -9,20 +9,15 @@ type GoogleLoginRequestBody = {
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
-if (!googleClientId) {
-  throw new Error('GOOGLE_CLIENT_ID_MISSING');
-}
-
-if (!googleClientSecret) {
-  throw new Error('GOOGLE_CLIENT_SECRET_MISSING');
-}
-
 export const loginGoogleRoute = makeFastifyRoute(
   RouteMethod.POST,
   '/oauth/google',
   null,
   { organization: 'none', auth: 'none' },
   async (req, reply) => {
+    if (!googleClientId || !googleClientSecret) {
+      return reply.code(503).send({ message: 'GOOGLE_LOGIN_NOT_CONFIGURED' });
+    }
     const googleClient = new OAuth2Client(googleClientId, googleClientSecret, 'postmessage');
 
     const body = req.body as GoogleLoginRequestBody;

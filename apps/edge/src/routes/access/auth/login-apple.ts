@@ -26,10 +26,6 @@ const applePrivateKeyPath = process.env.APPLE_PRIVATE_KEY_PATH;
 //   throw new Error('APPLE_KEY_ID_MISSING');
 // }
 
-if (!applePrivateKeyPath) {
-  throw new Error('APPLE_PRIVATE_KEY_PATH_MISSING');
-}
-
 // const applePrivateKey = readFileSync(applePrivateKeyPath, 'utf8');
 const applePrivateKey = '';
 
@@ -120,6 +116,9 @@ export const loginAppleRoute = makeFastifyRoute(
   null,
   { organization: 'none', auth: 'none' },
   async (req, reply) => {
+    if (!appleClientId || !appleTeamId || !appleKeyId || !applePrivateKeyPath) {
+      return reply.code(503).send({ message: 'APPLE_LOGIN_NOT_CONFIGURED' });
+    }
     const body = req.body as AppleLoginRequestBody;
 
     if (!body.code) {
