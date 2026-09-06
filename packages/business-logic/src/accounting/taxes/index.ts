@@ -9,9 +9,7 @@ import {
   type TaxId,
   type UserId,
 } from '@hlb/contracts';
-// TODO: create expense-accounts module
-// import { getExpenseAccount } from '../../accounting/expense-accounts';
-const getExpenseAccount = async (_id: string, _organizationId: string) => {};
+import { getExpenseAccount } from '../expense-accounts';
 
 const model = () => getModel<Tax>(Collection.TAXES, TaxSchemaMongo);
 const scope = (organizationId: OrganizationId) => ({ organizationId, lifecycleStatus: { $ne: LifecycleStatus.DELETED } });

@@ -2,6 +2,8 @@ export * from './convert';
 export * from './create';
 export * from './get-by-id';
 export * from './list';
+export * from './operations';
+export * from './pdf';
 export * from './send-email';
 export * from './soft-delete';
 export * from './update';

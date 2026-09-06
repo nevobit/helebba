@@ -5,3 +5,5 @@ export * from './soft-delete';
 export * from './update';
 export * from './get-by-id';
 export * from './attachments';
+export * from './contact-groups';
+export * from './contact-tags';

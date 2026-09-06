@@ -8,4 +8,5 @@ export * from './inbox';
 export * from './inventory';
 export * from './projects';
 export * from './sales';
+export * from './team-hr';
 export * from './treasury';
