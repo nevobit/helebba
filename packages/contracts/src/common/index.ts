@@ -8,3 +8,4 @@ export * from './ids';
 export * from './brand';
 export * from './datetime';
 export * from './mongoose';
+export * from './status';
