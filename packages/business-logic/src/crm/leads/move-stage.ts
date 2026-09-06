@@ -13,7 +13,7 @@ export const moveCrmLeadStage = async (
   const lead = await getModel('CRM_LEADS').findOne({
     _id: leadId,
     organizationId,
-    lifecycleStatus: { $ne: 'DELETED' },
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
   });
 
   if (!lead) throw new Error('Oportunidad no encontrada.');
@@ -25,7 +25,7 @@ export const moveCrmLeadStage = async (
   const funnel = await getModel('CRM_FUNNELS').findOne({
     _id: targetFunnelId,
     organizationId: lead.organizationId,
-    lifecycleStatus: { $ne: 'DELETED' },
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
   });
 
   if (!funnel) throw new Error('Embudo no encontrado.');
@@ -35,7 +35,7 @@ export const moveCrmLeadStage = async (
 
   lead.stageId = stageId;
   lead.order = Date.now();
-  lead.updatedBy = leadId;
+  lead.updatedBy = userId;
 
   await lead.save();
 

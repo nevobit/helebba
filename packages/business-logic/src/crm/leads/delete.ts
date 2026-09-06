@@ -8,7 +8,7 @@ export const deleteCrmLead = async (leadId: string, organizationId: string, user
     { _id: leadId, organizationId },
     {
       $set: {
-        lifecycleStatus: 'DELETED',
+        lifecycleStatus: LifecycleStatus.DELETED,
         deletedAt: new Date(),
         deletedBy: userId,
       },

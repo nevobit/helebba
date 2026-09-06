@@ -9,7 +9,7 @@ export const getCrmLead = async (leadId: string, organizationId: string) => {
   const lead = await getLeadModel().findOne({
     _id: leadId,
     organizationId,
-    lifecycleStatus: { $ne: 'DELETED' },
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
   }).lean();
 
   if (!lead) return null;

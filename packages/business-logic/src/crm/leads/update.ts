@@ -35,7 +35,7 @@ export const updateCrmLead = async (
   const lead = await getModel('CRM_LEADS').findOne({
     _id: leadId,
     organizationId,
-    lifecycleStatus: { $ne: 'DELETED' },
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
   });
 
   if (!lead) throw new Error('Oportunidad no encontrada.');
@@ -49,7 +49,7 @@ export const updateCrmLead = async (
     {
       $set: {
         ...data,
-        updatedBy: leadId,
+        updatedBy: userId,
       },
     },
     { new: true },

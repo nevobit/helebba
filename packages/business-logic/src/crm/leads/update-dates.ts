@@ -1,5 +1,5 @@
 import { getModel } from '@hlb/constant-definitions';
-import { type LeadId, type OrganizationId, type UserId } from '@hlb/contracts';
+import { LifecycleStatus, type LeadId, type OrganizationId, type UserId } from '@hlb/contracts';
 
 const leads = () => getModel('CRM_LEADS', 'CrmLeadSchemaMongo');
 
@@ -26,7 +26,7 @@ export const updateCrmLeadDates = async (
   }
 
   const updated = await model.findOneAndUpdate(
-    { _id: leadId, organizationId, lifecycleStatus: { $ne: 'DELETED' } },
+    { _id: leadId, organizationId, lifecycleStatus: { $ne: LifecycleStatus.DELETED } },
     { $set: updateData },
     { new: true },
   );

@@ -7,6 +7,7 @@ import {
   type OrganizationId,
   type ContactId,
   CrmLeadSchemaMongo,
+  LifecycleStatus,
 } from '@hlb/contracts';
 
 const leads = () => getModel<CrmLead>(Collection.CRM_LEADS, CrmLeadSchemaMongo);
@@ -39,7 +40,7 @@ export const listCrmLeads = async (filters: {
   } = filters;
   const query: Record<string, unknown> = {
     organizationId,
-    lifecycleStatus: { $ne: 'DELETED' },
+    lifecycleStatus: { $ne: LifecycleStatus.DELETED },
   };
 
   if (funnelId) query.funnelId = funnelId;

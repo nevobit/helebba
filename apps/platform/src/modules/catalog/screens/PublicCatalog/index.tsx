@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { CheckCircle2, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react';
 import { useParams } from 'react-router-dom';
-import type { PublicCatalog as PublicCatalogType, PublicCatalogProduct } from '@hlb/contracts';
+import type { PublicCatalog as PublicCatalogType, PublicCatalogProduct, PublicCatalogProductVariant } from '@hlb/contracts';
 import styles from './PublicCatalog.module.css';
 
 type CartLine = {
@@ -15,6 +15,17 @@ type CartLine = {
 
 const apiBase = String(import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
 const money = (value: number, currency: string) => new Intl.NumberFormat('es-CO', { style: 'currency', currency, maximumFractionDigits: 0 }).format(value);
+const variantOptionLabel = (productName: string, variant: PublicCatalogProductVariant) => {
+  const attributes = [variant.color?.name, variant.size].filter(Boolean).join(' · ');
+  if (attributes) return attributes;
+
+  const normalizedProductName = productName.trim();
+  const variantName = variant.name.trim();
+  const nameWithoutProduct = variantName.toLocaleLowerCase().startsWith(normalizedProductName.toLocaleLowerCase())
+    ? variantName.slice(normalizedProductName.length).replace(/^[\s\-–—·|:/]+/, '').trim()
+    : variantName;
+  return nameWithoutProduct || variant.sku || 'Variante';
+};
 
 const PublicCatalog = () => {
   const { publicId = '' } = useParams();
@@ -114,15 +125,21 @@ const PublicCatalog = () => {
     </header>
     {error && <div className={styles.alert}>{error}<button type="button" onClick={() => setError('')}><X size={16} /></button></div>}
     <section className={styles.products}>
-      {catalog.products.map((product) => <article className={styles.product} key={product.id}>
-        <div className={styles.image}>{product.images[0] ? <img src={product.images[0]} alt={product.name} /> : <ShoppingBag size={42} />}</div>
-        <div className={styles.productBody}><h2>{product.name}</h2>{product.description && <p>{product.description}</p>}
-          {product.variants.length > 0 && <select aria-label={`Variante de ${product.name}`} value={selectedVariants[product.id] ?? ''} onChange={(event) => setSelectedVariants((current) => ({ ...current, [product.id]: event.target.value }))}>
-            <option value="">Selecciona una variante</option>{product.variants.map((variant) => <option key={variant.id} value={variant.id} disabled={!variant.available}>{[variant.name, variant.color?.name, variant.size].filter(Boolean).join(' · ')}{!variant.available ? ' · Agotada' : ''}</option>)}
-          </select>}
-          <div className={styles.productFooter}>{catalog.settings.showPrices && <strong>{money(Number(product.price ?? 0), catalog.currency)}</strong>}<button type="button" disabled={!product.available} onClick={() => addProduct(product)}><Plus size={17} />{product.available ? 'Añadir' : 'Agotado'}</button></div>
-        </div>
-      </article>)}
+      {catalog.products.map((product) => {
+        const selectedVariantId = selectedVariants[product.id];
+        const selectedVariant = product.variants.find((variant) => variant.id === selectedVariantId);
+        const displayedPrice = Number(selectedVariant?.price ?? product.price ?? 0);
+
+        return <article className={styles.product} key={product.id}>
+          <div className={styles.image}>{product.images[0] ? <img src={product.images[0]} alt={product.name} /> : <ShoppingBag size={42} />}</div>
+          <div className={styles.productBody}><h2>{product.name}</h2>{product.description && <p>{product.description}</p>}
+            {product.variants.length > 0 && <select aria-label={`Variante de ${product.name}`} value={selectedVariantId ?? ''} onChange={(event) => setSelectedVariants((current) => ({ ...current, [product.id]: event.target.value }))}>
+              <option value="">Selecciona una variante</option>{product.variants.map((variant) => <option key={variant.id} value={variant.id} disabled={!variant.available}>{variantOptionLabel(product.name, variant)}{!variant.available ? ' · Agotada' : ''}</option>)}
+            </select>}
+            <div className={styles.productFooter}>{catalog.settings.showPrices && <strong>{money(displayedPrice, catalog.currency)}</strong>}<button type="button" disabled={!product.available} onClick={() => addProduct(product)}><Plus size={17} />{product.available ? 'Añadir' : 'Agotado'}</button></div>
+          </div>
+        </article>;
+      })}
     </section>
     {cartOpen && <div className={styles.overlay} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setCartOpen(false); }}><aside className={styles.cart} aria-label="Carrito">
       <header><div><span>Tu pedido</span><h2>{totalItems} {totalItems === 1 ? 'producto' : 'productos'}</h2></div><button type="button" onClick={() => setCartOpen(false)}><X /></button></header>
