@@ -1,5 +1,5 @@
 import { Collection, getModel } from '@hlb/constant-definitions';
-import { ApiKeySchemaMongo, LifecycleStatus, type ExternalApiKey } from '@hlb/contracts';
+import { ApiKeySchemaMongo, type ExternalApiKey } from '@hlb/contracts';
 import type { ApiKeyRecord, ApiKeyRepository } from '@hlb/security';
 
 const toApiKeyRecord = (apiKey: ExternalApiKey): ApiKeyRecord => ({
@@ -18,7 +18,7 @@ export const databaseApiKeyRepo = (): ApiKeyRepository => {
       const apiKey = await model.findOne({
         keyHash: hashHex,
         status: 'active',
-        lifecycleStatus: LifecycleStatus.ACTIVE,
+        lifecycleStatus: 'active',
         deletedAt: null,
         $or: [
           { expiresAt: null },
