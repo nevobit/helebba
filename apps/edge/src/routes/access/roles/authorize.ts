@@ -1,7 +1,7 @@
 import { Collection, getModel } from '@hlb/constant-definitions';
 import { type Role, RoleSchemaMongo } from '@hlb/contracts';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { problem } from '../access/auth/responses';
+import { problem } from '../auth/responses';
 
 const normalize = (value: string) => value.trim().toLowerCase();
 

@@ -4,7 +4,7 @@ import { getCurrentOrganizationSubscription, recordSubscriptionCheckout } from '
 import { makeFastifyRoute, RouteMethod } from '@hlb/constant-definitions';
 import { createSubscriptionCheckout, type BillingProvider } from '@hlb/integrations';
 import { verifyJwt } from '@hlb/security';
-import { problem } from '../access/auth/responses';
+import { problem } from '../auth/responses';
 
 type CheckoutBody = {
   provider?: BillingProvider;

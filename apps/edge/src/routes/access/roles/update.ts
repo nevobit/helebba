@@ -2,7 +2,7 @@ import { updateRole } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod } from '@hlb/constant-definitions';
 import { type OrganizationId, type RoleId, type UserId } from '@hlb/contracts';
 import { verifyJwt } from '@hlb/security';
-import { problem } from '../access/auth/responses';
+import { problem } from '../auth/responses';
 import { authorizeRolePermission } from './authorize';
 
 type UpdateRoleBody = {
