@@ -101,6 +101,13 @@ const changeStock = async (
   field: StockField,
   delta: number,
 ) => {
+  const initialQuantities: Partial<Record<StockField, number>> = {
+    quantity: 0,
+    reservedQuantity: 0,
+    inTransitQuantity: 0,
+  };
+  delete initialQuantities[field];
+
   const query = {
     ...activeScope(organizationId),
     productId: line.productId,
@@ -116,9 +123,7 @@ const changeStock = async (
       productId: line.productId,
       ...(line.variantId ? { variantId: line.variantId } : {}),
       warehouseId,
-      quantity: 0,
-      reservedQuantity: 0,
-      inTransitQuantity: 0,
+      ...initialQuantities,
       createdBy: userId,
       lifecycleStatus: LifecycleStatus.ACTIVE,
     },
@@ -127,6 +132,7 @@ const changeStock = async (
     new: true,
     upsert: delta > 0,
     runValidators: true,
+    setDefaultsOnInsert: false,
   });
   if (!result) throw new Error(`Stock insuficiente para el producto ${String(line.productId)}.`);
   await syncProductStock(organizationId, line.productId);
