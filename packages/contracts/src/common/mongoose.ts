@@ -6,6 +6,9 @@ export const schemaOptions = {
   versionKey: false,
 } as const satisfies SchemaOptions;
 
+// Backwards-compatible name used by the existing Mongo schemas.
+export const opts = schemaOptions;
+
 export const baseFields = {
   lifecycleStatus: {
     type: String,
