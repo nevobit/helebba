@@ -2,6 +2,7 @@ export * from './brands';
 export * from './catalogs';
 export * from './categories';
 export * from './media';
+export * from './operations';
 export * from './price-lists';
 export * from './product-field-definitions';
 export * from './product-notes';
