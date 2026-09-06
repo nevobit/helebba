@@ -5,6 +5,7 @@ import {
   type ProductId,
   type StockMovementType,
   type UserId,
+  type WarehouseId,
 } from '@hlb/contracts';
 import { verifyJwt } from '@hlb/security';
 
@@ -22,6 +23,8 @@ export const createStockMovementRoute = makeFastifyRoute(
       quantity?: number;
       reason?: string;
       variantId?: string;
+      warehouseId?: WarehouseId;
+      reference?: string;
     };
     if (!body.type || !MOVEMENT_TYPES.includes(body.type)) {
       return reply.status(400).send({ message: 'El tipo de movimiento no es válido.' });
@@ -38,6 +41,8 @@ export const createStockMovementRoute = makeFastifyRoute(
       reason: body.reason ?? '',
       variantId: body.variantId,
       createdBy: userId,
+      warehouseId: body.warehouseId,
+      reference: body.reference,
     });
     reply.status(201).send(movement);
   },

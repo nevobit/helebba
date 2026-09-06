@@ -1,0 +1,36 @@
+import { useMemo, useState } from 'react';
+import { Button, Modal, TextInput } from '@hlb/design-system';
+import { CalendarDays, ChevronDown, Circle, CloudDownload, Columns3, Grid2X2Plus, Info, LayoutList, MoreVertical, Plus, Search, Table2 } from 'lucide-react';
+import type { Project, ProjectTask, ProjectTaskPriority, ProjectTaskStatus } from '@hlb/contracts';
+import TaskDetailModal from '../../components/TaskDetailModal';
+import { useProjectMutations, useProjects, useProjectTasks } from '../../hooks';
+import styles from './AllTasks.module.css';
+
+const statusName: Record<ProjectTaskStatus, string> = { open: 'Abierta', in_progress: 'En progreso', blocked: 'Bloqueada', completed: 'Completada', cancelled: 'Cancelada' };
+const priorityName: Record<ProjectTaskPriority, string> = { none: 'Sin prioridad', low: 'Baja', medium: 'Media', high: 'Alta', urgent: 'Urgente' };
+
+function CreateTaskModal({ open, projects, onClose }: { open: boolean; projects: Project[]; onClose: () => void }) {
+  const { createTask } = useProjectMutations();
+  const [projectId, setProjectId] = useState(''); const [name, setName] = useState(''); const [description, setDescription] = useState(''); const [tags, setTags] = useState(''); const [listId, setListId] = useState('');
+  const project = projects.find((item) => String(item.id) === projectId);
+  const close = () => { setProjectId(''); setName(''); setDescription(''); setTags(''); setListId(''); onClose(); };
+  const submit = () => { const selectedList = project?.lists.find((list) => String(list.id) === listId)?.id ?? project?.lists[0]?.id; if (!projectId || !selectedList || !name.trim()) return; createTask.mutate({ projectId, listId: selectedList, name: name.trim(), description: description.trim(), tags: tags.split(',').map((tag) => tag.trim()).filter(Boolean) }, { onSuccess: close }); };
+  return <Modal.Window isOpen={open} ariaLabel="Crear tarea" closeOnEsc closeOnOverlay onClose={close} size={{ width: '62rem', maxWidth: 'calc(100vw - 3.2rem)' }}>
+    <Modal.Header><h2>Crear tarea</h2><Modal.CloseButton /></Modal.Header><Modal.Body><div className={styles.taskForm}>
+      <label><span>Proyecto</span><select value={projectId} onChange={(event) => { const id = event.target.value; setProjectId(id); setListId(String(projects.find((item) => String(item.id) === id)?.lists[0]?.id ?? '')); }}><option value="">Selecciona un proyecto</option>{projects.map((item) => <option value={String(item.id)} key={String(item.id)}>{item.name}</option>)}</select></label>
+      <label><span>Título</span><TextInput value={name} onChange={(event) => setName(event.target.value)} placeholder="Añadir título" /></label><label><span>Descripción</span><textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Añadir una descripción" /></label><label><span>Tags</span><TextInput value={tags} onChange={(event) => setTags(event.target.value)} placeholder="Tags" /></label>
+      <div className={styles.formColumns}><label><span>Lista</span><select value={listId} onChange={(event) => setListId(event.target.value)} disabled={!project}>{project?.lists.map((list) => <option value={String(list.id)} key={String(list.id)}>{list.name}</option>)}</select></label><label><span>Tipo</span><select defaultValue="task"><option value="task">Tarea</option></select></label></div>
+    </div></Modal.Body><Modal.Footer><Button onClick={submit} disabled={!projectId || !name.trim() || createTask.isPending}>Crear</Button></Modal.Footer>
+  </Modal.Window>;
+}
+
+export default function AllTasks() {
+  const { data: projects = [] } = useProjects(); const { data: tasks = [], isLoading } = useProjectTasks(); const { moveTask, removeTask } = useProjectMutations();
+  const [search, setSearch] = useState(''); const [status, setStatus] = useState<'active' | ProjectTaskStatus>('active'); const [selected, setSelected] = useState<ProjectTask>(); const [createOpen, setCreateOpen] = useState(false);
+  const projectById = useMemo(() => new Map(projects.map((project) => [String(project.id), project])), [projects]);
+  const visible = tasks.filter((task) => (status === 'active' ? !['completed', 'cancelled'].includes(task.status) : task.status === status) && `${task.name} ${task.key}`.toLowerCase().includes(search.toLowerCase())); const selectedProject = selected ? projectById.get(String(selected.projectId)) : undefined;
+  return <main className={styles.page}><header className={styles.pageHeader}><h1>Tareas <Info /></h1><nav><button aria-label="Aplicaciones"><Grid2X2Plus /></button><button aria-label="Más opciones"><MoreVertical /></button><div className={styles.viewGroup}><button className={styles.activeView}><Table2 /></button><button><CalendarDays /></button><button><Columns3 /></button></div><button className={styles.mine}>Mis tareas</button><Button icon={<Plus />} onClick={() => setCreateOpen(true)}>Nueva tarea</Button></nav></header>
+    <section className={styles.panel}><div className={styles.toolbar}><div><label className={styles.statusSelect}><select value={status} onChange={(event) => setStatus(event.target.value as typeof status)}><option value="active">Activo</option>{Object.entries(statusName).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><ChevronDown /></label><span className={styles.filterChip}>Activo Sí <button>×</button></span><button className={styles.addFilter}><Plus /> Filtro</button></div><div><label className={styles.search}><Search /><input value={search} onChange={(event) => setSearch(event.target.value)} aria-label="Buscar tareas" /></label><button className={styles.download} aria-label="Descargar"><CloudDownload /></button></div></div>
+      {isLoading ? <div className={styles.empty}>Cargando tareas…</div> : visible.length === 0 ? <div className={styles.empty}><div className={styles.taskIllustration}><LayoutList /><i /><i /><b /></div><strong>Aún no hay tareas</strong><small>Para crear tu primera tarea, entra en uno de tus proyectos</small></div> : <div className={styles.table}><div className={styles.tableHead}><span>Tarea</span><span>Proyecto</span><span>Estado</span><span>Prioridad</span><span>Fecha límite</span></div>{visible.map((task) => <button type="button" className={styles.row} key={String(task.id)} onClick={() => setSelected(task)}><span><Circle /><div><strong>{task.name}</strong><small>{task.key}</small></div></span><span>{projectById.get(String(task.projectId))?.name ?? 'Proyecto'}</span><span className={`${styles.pill} ${styles[task.status]}`}>{statusName[task.status]}</span><span>{priorityName[task.priority]}</span><span>{task.dueDate ? <><CalendarDays />{new Date(task.dueDate).toLocaleDateString('es-CO')}</> : '—'}</span></button>)}</div>}</section>
+    <CreateTaskModal open={createOpen} projects={projects} onClose={() => setCreateOpen(false)} />{selectedProject && <TaskDetailModal task={selected} project={selectedProject} saving={moveTask.isPending} onClose={() => setSelected(undefined)} onSave={(patch) => selected && moveTask.mutate({ taskId: String(selected.id), patch }, { onSuccess: () => setSelected(undefined) })} onDelete={() => selected && removeTask.mutate(String(selected.id), { onSuccess: () => setSelected(undefined) })} />}</main>;
+}

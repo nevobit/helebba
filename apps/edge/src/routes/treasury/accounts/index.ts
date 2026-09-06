@@ -163,6 +163,26 @@ export const treasuryAccountRoutes: RouteOptions[] = withPrefix('/treasury/accou
     },
   ),
   makeFastifyRoute(
+    RouteMethod.GET,
+    '/:id/transactions',
+    verifyJwt,
+    { organization: 'required', auth: 'required' },
+    async (req, reply) => {
+      const { id } = req.params as { id: BankingAccountId };
+      const query = (req.query ?? {}) as MovementListQuery;
+      const movements = await getTreasuryMovements({
+        organizationId: getOrganizationId(req),
+        accountId: id,
+        page: Number(query.page ?? 1),
+        limit: Number(query.limit ?? 100),
+        search: query.search ?? '',
+        reconciliationStatus: query.reconciliationStatus ?? 'all',
+      });
+
+      reply.status(200).send(movements);
+    },
+  ),
+  makeFastifyRoute(
     RouteMethod.POST,
     '/:bankingAccountId/bank-movements',
     verifyJwt,

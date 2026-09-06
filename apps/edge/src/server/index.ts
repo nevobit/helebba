@@ -9,6 +9,7 @@ import { buildApiPrefix } from '../adapters/versioning/api-versioning';
 import { initDataSources } from '@hlb/data-sources';
 import { setLogger, setMailer, setStorageProvider } from '@hlb/constant-definitions';
 import { createMailer, createStorageProvider } from '@hlb/integrations';
+import { processDueWebhookDeliveries } from '@hlb/business-logic';
 
 type BuildServer = ReturnType<typeof buildApp>;
 
@@ -90,6 +91,15 @@ const main = async (): Promise<void> => {
     baseDomain: env.BASE_DOMAIN,
     pathPrefix: buildApiPrefix({ version: 'v1' }),
   });
+
+  const webhookRetryTimer = setInterval(() => {
+    void processDueWebhookDeliveries().catch((error) =>
+      logger.error('Error processing webhook retries', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }),
+    );
+  }, 30_000);
+  webhookRetryTimer.unref();
 
   const startPromise = server.listen({ host: env.APP_HOST, port: env.APP_PORT });
   try {

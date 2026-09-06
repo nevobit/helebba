@@ -36,4 +36,6 @@ export const PrivateRoutes = {
   PURCHASE_ORDERS: '/inventory/purchase-orders',
   SETUP: '/setup',
   TRIAL_EXPIRED: '/trial/expired',
+  PROJECTS: '/projects',
+  PROJECT_TASKS: '/projects/tasks',
 } as const;

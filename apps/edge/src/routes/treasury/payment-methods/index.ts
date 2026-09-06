@@ -1,6 +1,8 @@
 import {
   createPaymentMethod,
+  deletePaymentMethod,
   getAllPaymentMethods,
+  getPaymentMethodById,
   updatePaymentMethod,
 } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod, withPrefix } from '@hlb/constant-definitions';
@@ -58,6 +60,12 @@ const createPaymentMethodRoute = makeFastifyRoute(
   },
 );
 
+const getPaymentMethodRoute = makeFastifyRoute(RouteMethod.GET, '/:paymentMethodId', verifyJwt, { organization: 'required', auth: 'required' }, async (req, reply) => {
+  const { paymentMethodId } = req.params as { paymentMethodId: PaymentMethodId };
+  const item = await getPaymentMethodById(paymentMethodId, req.organization?.organizationId as OrganizationId);
+  reply.status(item ? 200 : 404).send(item ?? { message: 'Método de pago no encontrado.' });
+});
+
 const updatePaymentMethodRoute = makeFastifyRoute(
   RouteMethod.PATCH,
   '/:paymentMethodId',
@@ -66,7 +74,6 @@ const updatePaymentMethodRoute = makeFastifyRoute(
   async (req, reply) => {
     const body = req.body as Partial<PaymentMethod>;
     const { paymentMethodId } = req.params as { paymentMethodId: PaymentMethodId };
-    console.log({ paymentMethodId });
     const { userId } = req.auth as unknown as { userId: UserId };
     const paymentMethod = await updatePaymentMethod(paymentMethodId, {
       ...body,
@@ -80,8 +87,17 @@ const updatePaymentMethodRoute = makeFastifyRoute(
   },
 );
 
+const deletePaymentMethodRoute = makeFastifyRoute(RouteMethod.DELETE, '/:paymentMethodId', verifyJwt, { organization: 'required', auth: 'required' }, async (req, reply) => {
+  const { paymentMethodId } = req.params as { paymentMethodId: PaymentMethodId };
+  const { userId } = req.auth as unknown as { userId: UserId };
+  const item = await deletePaymentMethod(paymentMethodId, req.organization?.organizationId as OrganizationId, userId);
+  reply.status(item ? 200 : 404).send(item ?? { message: 'Método de pago no encontrado.' });
+});
+
 export const paymentMethodRoutes: RouteOptions[] = withPrefix('/payment-methods', [
   listPaymentMethodsRoute,
   createPaymentMethodRoute,
+  getPaymentMethodRoute,
   updatePaymentMethodRoute,
+  deletePaymentMethodRoute,
 ]);

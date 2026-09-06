@@ -7,6 +7,7 @@ import type {
   ProductId,
   ServiceId,
   UserId,
+  NumberingSeriesId,
 } from '../../../../common';
 import type { FinancialFeeType } from '../../../treasury';
 
@@ -18,6 +19,16 @@ export const StatusDocument = {
 } as const;
 
 export type StatusDocument = (typeof StatusDocument)[keyof typeof StatusDocument];
+
+export const DocumentApprovalStatus = {
+  DRAFT: 'draft',
+  APPROVED: 'approved',
+  ACCEPTED: 'accepted',
+  REJECTED: 'rejected',
+} as const;
+
+export type DocumentApprovalStatus =
+  (typeof DocumentApprovalStatus)[keyof typeof DocumentApprovalStatus];
 
 export interface ProductDocument {
   id: string;
@@ -73,6 +84,13 @@ export interface Document extends PersistedSoftDeletableEntity<DocumentId, UserI
   tax: number;
   currency: string;
   status: StatusDocument;
+  approvalStatus?: DocumentApprovalStatus;
+  approvedAt?: ISODateTimeString;
+  approvedBy?: UserId;
+  acceptedAt?: ISODateTimeString;
+  acceptedBy?: UserId;
+  rejectedAt?: ISODateTimeString;
+  rejectedBy?: UserId;
   tags: string[];
   lines: Partial<ProductDocument>[];
   paymentMethodId: string;
@@ -87,9 +105,24 @@ export interface Document extends PersistedSoftDeletableEntity<DocumentId, UserI
   docType: DocumentType | string;
   customFields: DocumentCustomField[];
   docNumber: string;
+  numberingSeriesId?: NumberingSeriesId;
+  recurringDocumentId?: string;
+  attachments: DocumentAttachment[];
+  pipelineId?: string;
+  pipelineStageId?: string;
 }
 
 export interface DocumentCustomField {
   field: string;
   value: string;
+}
+
+export interface DocumentAttachment {
+  id: string;
+  name: string;
+  url: string;
+  contentType?: string;
+  size?: number;
+  createdAt: ISODateTimeString;
+  createdBy: UserId;
 }

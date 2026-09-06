@@ -1,7 +1,7 @@
-import type { HelebbaClientOptions, ListParams } from './types';
+import type { HelebbaClientOptions, QueryParams } from './types';
 
 type RequestOptions = {
-  query?: ListParams;
+  query?: QueryParams;
 };
 
 type TokenResponse = {
@@ -30,17 +30,20 @@ export const createHelebbaApiError = (
 const trimTrailingSlash = (value: string) => value.replace(/\/+$/, '');
 const DEFAULT_BASE_URL = 'https://apis.helebba.com/api/v1';
 
-const appendQuery = (url: URL, query: ListParams | undefined) => {
+const appendQuery = (url: URL, query: QueryParams | undefined) => {
   if (!query) return;
-
-  if (query.page !== undefined) url.searchParams.set('page', String(query.page));
-  if (query.limit !== undefined) url.searchParams.set('limit', String(query.limit));
-  if (query.search) url.searchParams.set('search', query.search);
+  for (const [key, value] of Object.entries(query)) {
+    if (value !== undefined && value !== null && value !== '') {
+      url.searchParams.set(key, String(value));
+    }
+  }
 };
 
 export type HttpClient = {
   get: <T>(path: string, options?: RequestOptions) => Promise<T>;
+  getBinary: (path: string) => Promise<ArrayBuffer>;
   post: <T>(path: string, body?: unknown) => Promise<T>;
+  put: <T>(path: string, body?: unknown) => Promise<T>;
   patch: <T>(path: string, body?: unknown) => Promise<T>;
   delete: <T>(path: string) => Promise<T>;
 };
@@ -131,6 +134,26 @@ export const createHttpClient = (options: HelebbaClientOptions): HttpClient => {
       return (await assertOk(response)) as T;
     },
 
+    getBinary: async (path: string): Promise<ArrayBuffer> => {
+      const url = new URL(`${baseUrl}${path}`);
+      const accessToken = await requestAccessToken();
+      const timestamp = Date.now().toString();
+      const response = await fetcher(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'api-key': apiKey,
+          'x-timestamp': timestamp,
+          'x-path': url.pathname,
+          'x-client-user-agent': 'GSDK/0.1.0 (node)',
+          Accept: 'application/pdf',
+        },
+      });
+
+      if (!response.ok) await assertOk(response);
+      return response.arrayBuffer();
+    },
+
     post: async <T>(path: string, body?: unknown): Promise<T> => {
       const url = new URL(`${baseUrl}${path}`);
       const accessToken = await requestAccessToken();
@@ -138,6 +161,28 @@ export const createHttpClient = (options: HelebbaClientOptions): HttpClient => {
 
       const response = await fetcher(url, {
         method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'api-key': apiKey,
+          'x-timestamp': timestamp,
+          'x-path': url.pathname,
+          'x-client-user-agent': 'GSDK/0.1.0 (node)',
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: body != null ? JSON.stringify(body) : undefined,
+      });
+
+      return (await assertOk(response)) as T;
+    },
+
+    put: async <T>(path: string, body?: unknown): Promise<T> => {
+      const url = new URL(`${baseUrl}${path}`);
+      const accessToken = await requestAccessToken();
+      const timestamp = Date.now().toString();
+
+      const response = await fetcher(url, {
+        method: 'PUT',
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'api-key': apiKey,

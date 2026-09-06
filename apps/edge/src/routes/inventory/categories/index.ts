@@ -4,10 +4,12 @@ import { createCategoryRoute } from './create';
 import { listCategoriesRoute } from './list';
 import { deleteCategoryRoute } from './delete';
 import { updateCategoryRoute } from './update';
+import { getCategoryRoute } from './get';
 
 export const categoryRoutes: RouteOptions[] = withPrefix('/categories', [
   createCategoryRoute,
   listCategoriesRoute,
   deleteCategoryRoute,
   updateCategoryRoute,
+  getCategoryRoute,
 ]);

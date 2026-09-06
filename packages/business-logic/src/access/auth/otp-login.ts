@@ -1,6 +1,6 @@
 import { getMailer, getRedisWriteClient } from '@hlb/constant-definitions';
 import { isEmail } from '@hlb/foundation';
-import { findByEmail } from '../../users';
+import { findByEmail } from '../users';
 import { generateUserTOTP } from '@hlb/security';
 
 export const otpLogin = async (email: string, rememberMe?: boolean) => {

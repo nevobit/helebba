@@ -1,11 +1,19 @@
 import { Schema } from 'mongoose';
 import { type Contact } from './contact';
-import { baseFields, opts } from '../../../common';
+import {
+  auditFields,
+  baseFields,
+  organizationScopedFields,
+  schemaOptions,
+  softDeleteFields,
+} from '../../../common';
 
 export const ContactSchemaMongo = new Schema<Contact>(
   {
     ...baseFields,
-    organizationId: { type: String, required: true, index: true },
+    ...organizationScopedFields,
+    ...auditFields,
+    ...softDeleteFields,
     createdBy: { type: String },
     updatedBy: { type: String },
     deletedBy: { type: String },
@@ -44,11 +52,26 @@ export const ContactSchemaMongo = new Schema<Contact>(
       ],
       default: undefined,
     },
+    attachments: {
+      type: [
+        {
+          _id: false,
+          id: { type: String, required: true },
+          name: { type: String, required: true },
+          url: { type: String, required: true },
+          contentType: { type: String },
+          size: { type: Number },
+          createdAt: { type: String, required: true },
+          createdBy: { type: String, required: true },
+        },
+      ],
+      default: undefined,
+    },
+    portalAccessToken: { type: String, select: false },
     groupId: { type: String },
     clientRecord: { type: String },
     isPerson: { type: Boolean },
     companyId: { type: String },
   },
-
-  { ...opts },
+  schemaOptions,
 );

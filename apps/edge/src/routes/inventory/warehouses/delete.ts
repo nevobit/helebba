@@ -1,6 +1,6 @@
 import { deleteWarehouse } from "@hlb/business-logic";
 import { makeFastifyRoute, RouteMethod } from "@hlb/constant-definitions";
-import { type WarehouseId } from "@hlb/contracts";
+import { type OrganizationId, type UserId, type WarehouseId } from '@hlb/contracts';
 import { verifyJwt } from '@hlb/security';
 
 export const deleteWarehouseRoute = makeFastifyRoute(
@@ -10,7 +10,12 @@ export const deleteWarehouseRoute = makeFastifyRoute(
     {organization: 'required', auth: 'required'},
     async (req, reply) => {
         const {warehouseId} = req.params as {warehouseId: WarehouseId};
-        const deletedWarehouse = await deleteWarehouse(warehouseId);
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const deletedWarehouse = await deleteWarehouse(
+          warehouseId,
+          req.organization!.organizationId as OrganizationId,
+          userId,
+        );
         reply.status(200).send(deletedWarehouse);
     }
 )

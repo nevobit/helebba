@@ -1,11 +1,6 @@
-import type {
-  CompanyId,
-  ContactId,
-  GroupId,
-  PersistedSoftDeletableEntity,
-  OrganizationId,
-  UserId,
-} from '../../../common';
+import type { OrganizationId, UserId } from '../..';
+import type { CompanyId, PersistedSoftDeletableEntity } from '../../../common';
+import type { ContactId, GroupId } from '../ids';
 
 export type ContactBankAccount = {
   bank?: string;
@@ -18,7 +13,17 @@ export type ContactBankAccount = {
   isDefault?: boolean;
 };
 
-export interface Contact extends PersistedSoftDeletableEntity<ContactId, UserId> {
+export type ContactAttachment = {
+  id: string;
+  name: string;
+  url: string;
+  contentType?: string;
+  size?: number;
+  createdAt: string;
+  createdBy: UserId;
+};
+
+export interface Contact extends PersistedSoftDeletableEntity<ContactId> {
   customId: string;
   name: string;
   code: string;
@@ -39,6 +44,8 @@ export interface Contact extends PersistedSoftDeletableEntity<ContactId, UserId>
   iban: string;
   swift: string;
   bankAccounts?: readonly ContactBankAccount[];
+  attachments?: readonly ContactAttachment[];
+  portalAccessToken?: string;
   groupId: GroupId;
   clientRecord: string;
   isPerson: boolean;

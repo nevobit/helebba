@@ -1,7 +1,7 @@
 import { getRedisReadClient, getRedisWriteClient } from '@hlb/constant-definitions';
 import type { User } from '@hlb/contracts';
 import { isEmail } from '@hlb/foundation';
-import { createUser, findByEmail } from '../../users';
+import { createUser, findByEmail } from '../users';
 import crypto from 'crypto';
 import { issueTokens } from './tokens';
 

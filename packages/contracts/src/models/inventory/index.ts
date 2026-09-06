@@ -7,3 +7,4 @@ export * from './product-field-definitions';
 export * from './catalogs';
 export * from './product-notes';
 export * from './stock-movements';
+export * from './inventory-operations';

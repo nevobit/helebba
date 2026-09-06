@@ -1,5 +1,5 @@
 import { LifecycleStatus, type User } from '@hlb/contracts';
-import { createUserFromApple, findByEmailOrNull } from '../../users';
+import { createUserFromApple, findByEmailOrNull } from '../users';
 import { issueTokens } from './tokens';
 import crypto from 'crypto';
 

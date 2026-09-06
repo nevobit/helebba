@@ -1,0 +1,58 @@
+.page { width: min(154rem, calc(100% - 6.4rem)); margin: 0 auto; padding: 2.4rem 0 4rem; color: #101828; font-size: var(--ds-font-size-14); }
+.header, .header > div, .header nav { display: flex; align-items: center; }
+.header { justify-content: space-between; gap: 2rem; }
+.header > div, .header nav { gap: .8rem; }
+.header h1 { margin: 0; font-size: var(--ds-font-size-24); }
+.header > div > svg { width: 1.5rem; }
+.header button { min-height: 4rem; display: inline-flex; align-items: center; justify-content: center; gap: .7rem; border: 1px solid #d0d5dd; border-radius: .6rem; background: #fff; padding: 0 1.2rem; color: #344054; font: inherit; font-weight: 600; cursor: pointer; }
+.header svg { width: 1.8rem; }
+.header .backButton { min-height: auto; border: 0; padding: .4rem; }
+.primary, .header .primary { border-color: #2563eb; background: #2563eb; color: #fff; }
+.toolbar { min-height: 6rem; display: flex; align-items: center; justify-content: space-between; margin: 1.8rem 0 0; border: 1px solid #dfe3e8; border-bottom: 0; border-radius: .8rem .8rem 0 0; padding: 0 1.2rem; }
+.toolbar > div { display: flex; align-items: center; gap: 1rem; }.toolbar button { min-height: 4rem; border: 1px solid #d0d5dd; border-radius: .6rem; background: #fff; padding: 0 1.4rem; font: inherit; font-weight: 600; }.toolbar .filter { display: flex; align-items: center; gap: .4rem; border: 0; color: #2563eb; }.toolbar .filter svg { color: #2563eb; }
+.toolbar label { width: 32rem; display: flex; align-items: center; gap: .8rem; border: 1px solid #d0d5dd; border-radius: .6rem; padding: 0 1.2rem; }
+.toolbar input { width: 100%; min-height: 4rem; border: 0; outline: 0; font: inherit; }
+.toolbar svg { width: 1.8rem; color: #98a2b3; }
+.toolbar > div > button:last-child:not(.filter) { width: 4rem; padding: 0; }
+.empty { position: relative; min-height: 60rem; display: flex; align-items: center; justify-content: center; gap: 9rem; padding: 0 0 11rem; }
+.projectsEmpty { border: 1px solid #dfe3e8; border-radius: 0 0 .8rem .8rem; }
+.myTasksEmpty { min-height: calc(100vh - 10rem); }
+.illustration { width: 30rem; height: 30rem; display: grid; place-items: center; border-radius: 50%; background: #f6f8fb; color: #7f8da3; }
+.miniBoard { width: 22rem; border: 1px solid #d0d5dd; border-radius: .8rem; background: #fff; padding: 1rem; box-shadow: 0 .6rem 1.6rem rgb(16 24 40 / 5%); }
+.miniBoard > header { display: flex; align-items: center; gap: .7rem; margin-bottom: .8rem; font-size: var(--ds-font-size-10); }
+.miniBoard > header span { width: 1.6rem; height: 1.6rem; border: 1px solid #84adff; border-radius: .4rem; }
+.miniBoard > section { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+.miniBoard > section > div { min-height: 10rem; border-radius: .4rem; background: #f2f4f7; padding: .5rem; }
+.miniBoard i { display: block; width: 1.4rem; height: .35rem; margin-bottom: .6rem; border-radius: 1rem; background: #2e90fa; }
+.miniBoard article { margin-bottom: .5rem; border: 1px solid #eaecf0; border-radius: .3rem; background: #fff; padding: .5rem; }
+.miniBoard article b { display: block; width: 80%; height: .35rem; margin-bottom: .4rem; border-radius: 1rem; background: #d0d5dd; }
+.miniBoard article b + b { width: 55%; }
+.miniBoard article footer { display: flex; align-items: center; justify-content: space-between; }
+.miniBoard article small { width: 1rem; height: 1rem; border-radius: .2rem; background: #84adff; }
+.miniBoard article em { width: 1rem; height: 1rem; border-radius: 50%; background: #fda29b; }
+.miniBoard article svg { width: 1.5rem; color: #3478f6; }
+.empty h2 { margin: 0 0 2rem; font-size: var(--ds-font-size-32); }
+.empty p { display: flex; align-items: center; gap: .9rem; color: #475467; }
+.empty p svg { width: 1.7rem; color: #12b76a; }
+.empty > div:nth-child(2) > button { margin-top: 2rem; }
+.helpBanner { position: absolute; bottom: 2rem; left: 50%; width: min(104rem, 92%); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.6rem; border: 1px solid #d0d5dd; border-radius: .7rem; background: #fff; padding: 1.4rem 1.8rem; transform: translateX(-50%); }
+.helpBanner > span { display: grid; width: 3.2rem; height: 3.2rem; place-items: center; border-radius: 50%; background: #98a2b3; color: #fff; }
+.helpBanner svg { width: 1.6rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr)); gap: 1.6rem; min-height: 50rem; border: 1px solid #dfe3e8; border-radius: 0 0 .8rem .8rem; padding: 2rem; }
+.grid > button { min-height: 15rem; display: grid; grid-template-columns: auto 1fr auto; gap: 1.4rem; border: 1px solid #e4e7ec; border-radius: .8rem; background: #fff; padding: 2rem; color: #344054; text-align: left; cursor: pointer; }
+.grid > button:hover { border-color: #84adff; box-shadow: 0 .6rem 1.8rem rgb(16 24 40 / 7%); }
+.grid strong, .grid small, .grid p { display: block; }
+.grid strong { color: #101828; font-size: var(--ds-font-size-16); }
+.grid small, .grid p { margin-top: .7rem; color: #667085; }
+.projectIcon { display: grid; place-items: center; width: 4rem; height: 4rem; border-radius: .7rem; background: #eaf2ff; color: #3478f6; }
+.state { min-height: 50vh; display: grid; place-items: center; color: #667085; }
+.taskEmptyIcon { display: grid; width: 18rem; height: 18rem; place-items: center; border-radius: 50%; background: #f6f8fb; color: #7f8da3; }
+.taskEmptyIcon svg { width: 7rem; height: 7rem; }
+.myTaskList { margin-top: 2rem; border: 1px solid #dfe3e8; border-radius: .8rem; overflow: hidden; }
+.myTaskList > button { width: 100%; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.4rem; border: 0; border-bottom: 1px solid #eaecf0; background: #fff; padding: 1.6rem 2rem; color: #344054; text-align: left; cursor: pointer; }
+.myTaskList > button:last-child { border-bottom: 0; }
+.myTaskList > button:hover { background: #f9fafb; }
+.myTaskList strong, .myTaskList small { display: block; }
+.myTaskList small { margin-top: .3rem; color: #667085; }
+.taskStatus { width: 1rem; height: 1rem; border-radius: 50%; background: #2e90fa; }
+@media (max-width: 760px) { .page { width: calc(100% - 3rem); } .empty { flex-direction: column; gap: 3rem; padding-bottom: 13rem; } .illustration { width: 24rem; height: 24rem; } .header nav > button:not(:last-child) { display: none; } .helpBanner { grid-template-columns: auto 1fr; } .helpBanner > button { grid-column: 1 / -1; } }

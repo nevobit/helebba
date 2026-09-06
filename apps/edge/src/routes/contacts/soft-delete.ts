@@ -1,6 +1,6 @@
 import { softDeleteContact } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod } from '@hlb/constant-definitions';
-import { ContactId } from '@hlb/contracts';
+import { ContactId, OrganizationId, UserId } from '@hlb/contracts';
 import { verifyJwt } from '@hlb/security';
 
 export const softDeleteContactRoute = makeFastifyRoute(
@@ -10,7 +10,11 @@ export const softDeleteContactRoute = makeFastifyRoute(
   { organization: 'required', auth: 'required' },
   async (req, reply) => {
     const { contactId } = req.params as { contactId: ContactId };
-    const softDeletedContact = await softDeleteContact(contactId);
+    const softDeletedContact = await softDeleteContact(
+      contactId,
+      req.organization?.organizationId as OrganizationId,
+      (req.auth as unknown as { userId: UserId }).userId,
+    );
     reply.status(200).send(softDeletedContact);
   },
 );

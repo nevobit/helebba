@@ -1,18 +1,28 @@
 import {
+  attachDocumentFile,
   convertDocument,
   createDocument,
+  deleteDocumentAttachment,
+  downloadDocumentPdf,
   getAllDocuments,
+  getDocumentAttachment,
   getDocumentById,
+  listDocumentAttachments,
   sendDocumentEmail,
+  registerDocumentPayment,
+  setDocumentApprovalStatus,
+  setDocumentPipeline,
   softDeleteDocument,
   updateDocument,
 } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod, withPrefix } from '@hlb/constant-definitions';
 import {
+  DocumentApprovalStatus,
   DocumentType,
   type Document as SalesDocument,
   type DocumentId,
   type OrganizationId,
+  type Payment,
   type UserId,
 } from '@hlb/contracts';
 import { verifyJwt } from '@hlb/security';
@@ -36,6 +46,36 @@ type SendDocumentEmailBody = {
   message?: string;
   subject?: string;
   to?: string | string[];
+};
+
+type RegisterDocumentPaymentBody = Pick<
+  Partial<Payment>,
+  'amount' | 'bankAccountId' | 'date' | 'description' | 'paymentMethodId'
+>;
+
+type DocumentAttachmentBody = {
+  name: string;
+  url: string;
+  contentType?: string;
+  size?: number;
+};
+
+type DocumentPipelineBody = {
+  pipelineId: string;
+  pipelineStageId?: string;
+};
+
+const DEFAULT_CONVERSION_TARGETS: Partial<Record<DocumentType, DocumentType>> = {
+  [DocumentType.INVOICE]: DocumentType.CREDIT_NOTE,
+  [DocumentType.SALES_RECEIPT]: DocumentType.CREDIT_NOTE,
+  [DocumentType.ESTIMATE]: DocumentType.INVOICE,
+  [DocumentType.SALES_ORDER]: DocumentType.INVOICE,
+  [DocumentType.WAYBILL]: DocumentType.INVOICE,
+  [DocumentType.PROFORM]: DocumentType.INVOICE,
+  [DocumentType.PURCHASE]: DocumentType.PURCHASE_REFUND,
+  [DocumentType.PURCHASE_ORDER]: DocumentType.PURCHASE,
+  [DocumentType.REFERRALS]: DocumentType.PURCHASE,
+  [DocumentType.QUOTES]: DocumentType.INVOICE,
 };
 
 export const createDocumentRoutes = (prefix: string, docType: DocumentType): RouteOptions[] =>
@@ -119,6 +159,28 @@ export const createDocumentRoutes = (prefix: string, docType: DocumentType): Rou
       },
     ),
     makeFastifyRoute(
+      RouteMethod.PUT,
+      '/:documentId',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const body = req.body as Partial<SalesDocument>;
+        const { documentId } = req.params as { documentId: DocumentId };
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const document = await updateDocument(
+          documentId,
+          {
+            ...body,
+            updatedBy: userId,
+            docType,
+          },
+          req.organization?.organizationId as OrganizationId,
+        );
+
+        reply.status(200).send(document);
+      },
+    ),
+    makeFastifyRoute(
       RouteMethod.DELETE,
       '/:documentId',
       verifyJwt,
@@ -145,13 +207,14 @@ export const createDocumentRoutes = (prefix: string, docType: DocumentType): Rou
         const { documentId } = req.params as { documentId: DocumentId };
         const body = (req.body ?? {}) as ConvertDocumentBody;
         const { userId } = req.auth as unknown as { userId: UserId };
-        const targetDocType =
-          body.docType ??
-          (docType === DocumentType.INVOICE
-            ? DocumentType.ESTIMATE
-            : docType === DocumentType.PURCHASE_ORDER
-              ? DocumentType.PURCHASE
-              : DocumentType.INVOICE);
+        const targetDocType = body.docType ?? DEFAULT_CONVERSION_TARGETS[docType];
+
+        if (!targetDocType) {
+          reply.status(400).send({
+            message: `A target docType is required to convert a ${docType}.`,
+          });
+          return;
+        }
         const document = await convertDocument({
           documentId,
           organizationId: req.organization?.organizationId as OrganizationId,
@@ -184,6 +247,293 @@ export const createDocumentRoutes = (prefix: string, docType: DocumentType): Rou
         });
 
         reply.status(202).send(result);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.POST,
+      '/:documentId/send',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const body = (req.body ?? {}) as SendDocumentEmailBody;
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const result = await sendDocumentEmail({
+          bcc: body.bcc,
+          cc: body.cc,
+          documentId,
+          docType,
+          message: body.message,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          subject: body.subject,
+          to: body.to,
+          userId,
+        });
+
+        reply.status(202).send(result);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.POST,
+      '/:documentId/approve',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const document = await setDocumentApprovalStatus({
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          status: DocumentApprovalStatus.APPROVED,
+          userId,
+        });
+
+        reply.status(document ? 200 : 404).send(document ?? { message: 'Document not found' });
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.POST,
+      '/:documentId/accept',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const document = await setDocumentApprovalStatus({
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          status: DocumentApprovalStatus.ACCEPTED,
+          userId,
+        });
+
+        reply.status(document ? 200 : 404).send(document ?? { message: 'Document not found' });
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.POST,
+      '/:documentId/reject',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const document = await setDocumentApprovalStatus({
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          status: DocumentApprovalStatus.REJECTED,
+          userId,
+        });
+
+        reply.status(document ? 200 : 404).send(document ?? { message: 'Document not found' });
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.POST,
+      '/:documentId/payment',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const result = await registerDocumentPayment({
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          payment: (req.body ?? {}) as RegisterDocumentPaymentBody,
+          userId,
+        });
+
+        reply.status(201).send(result);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.GET,
+      '/:documentId/pdf',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const result = await downloadDocumentPdf({
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+        });
+
+        reply.header('Content-Type', 'application/pdf');
+        reply.header('Content-Disposition', `inline; filename="${result.filename}"`);
+        reply.status(200).send(result.buffer);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.POST,
+      '/:documentId/attachments',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const attachment = await attachDocumentFile({
+          attachment: req.body as DocumentAttachmentBody,
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          userId,
+        });
+        reply.status(201).send(attachment);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.POST,
+      '/:documentId/attach',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const attachment = await attachDocumentFile({
+          attachment: req.body as DocumentAttachmentBody,
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          userId,
+        });
+        reply.status(201).send(attachment);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.GET,
+      '/:documentId/attachments',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const attachments = await listDocumentAttachments({
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+        });
+        reply.status(200).send(attachments);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.GET,
+      '/:documentId/attachments/list',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const attachments = await listDocumentAttachments({
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+        });
+        reply.status(200).send(attachments);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.GET,
+      '/:documentId/attachments/get',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const { filename } = (req.query ?? {}) as { filename?: string };
+        if (!filename) {
+          reply.status(400).send({ message: 'filename is required' });
+          return;
+        }
+        const attachments = await listDocumentAttachments({
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+        });
+        const attachment = attachments.find((item) => item.name === filename);
+        reply
+          .status(attachment ? 200 : 404)
+          .send(attachment ?? { message: 'Attachment not found' });
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.GET,
+      '/:documentId/attachments/:attachmentId',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { attachmentId, documentId } = req.params as {
+          attachmentId: string;
+          documentId: DocumentId;
+        };
+        const attachment = await getDocumentAttachment({
+          attachmentId,
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+        });
+        reply.status(200).send(attachment);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.DELETE,
+      '/:documentId/attachments/:attachmentId',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { attachmentId, documentId } = req.params as {
+          attachmentId: string;
+          documentId: DocumentId;
+        };
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const result = await deleteDocumentAttachment({
+          attachmentId,
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          userId,
+        });
+        reply.status(200).send(result);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.POST,
+      '/:documentId/pipeline',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const body = req.body as DocumentPipelineBody;
+        const document = await setDocumentPipeline({
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          pipelineId: body.pipelineId,
+          pipelineStageId: body.pipelineStageId,
+          userId,
+        });
+        reply.status(200).send(document);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.POST,
+      '/:documentId/set-pipeline',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const body = req.body as DocumentPipelineBody;
+        const document = await setDocumentPipeline({
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          pipelineId: body.pipelineId,
+          pipelineStageId: body.pipelineStageId,
+          userId,
+        });
+        reply.status(200).send(document);
       },
     ),
   ]);

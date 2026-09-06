@@ -14,8 +14,8 @@ import {
 } from '@hlb/contracts';
 import { getOwnerRole, seedDefaultRoles } from '../roles';
 import { createOrganizationSubscription } from '../subscriptions';
-import { createWarehouse } from '../../warehouses';
-import { seedDefaultPaymentMethods } from '../../payment-methods';
+import { createWarehouse } from '../../inventory/warehouses';
+import { seedDefaultPaymentMethods } from '../../treasury/payment-methods';
 import { seedDefaultCrmFunnel } from '../../crm';
 
 export type CreateOrganizationInput = {

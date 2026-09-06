@@ -4,3 +4,4 @@ export * from './delete';
 export * from './soft-delete';
 export * from './update';
 export * from './get-by-id';
+export * from './attachments';

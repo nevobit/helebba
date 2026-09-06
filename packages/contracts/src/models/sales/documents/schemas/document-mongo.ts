@@ -21,6 +21,18 @@ export const DocumentSchemaMongo = new Schema<Document>(
     tax: { type: Number },
     currency: { type: String },
     status: { type: Number },
+    approvalStatus: {
+      type: String,
+      enum: ['draft', 'approved', 'accepted', 'rejected'],
+      default: 'draft',
+      index: true,
+    },
+    approvedAt: { type: String },
+    approvedBy: { type: String },
+    acceptedAt: { type: String },
+    acceptedBy: { type: String },
+    rejectedAt: { type: String },
+    rejectedBy: { type: String },
     tags: { type: [String] },
     lines: {
       type: [
@@ -70,6 +82,25 @@ export const DocumentSchemaMongo = new Schema<Document>(
       default: undefined,
     },
     docNumber: { type: String },
+    numberingSeriesId: { type: String, index: true },
+    recurringDocumentId: { type: String, index: true },
+    attachments: {
+      type: [
+        {
+          _id: false,
+          id: { type: String, required: true },
+          name: { type: String, required: true },
+          url: { type: String, required: true },
+          contentType: { type: String },
+          size: { type: Number },
+          createdAt: { type: String, required: true },
+          createdBy: { type: String, required: true },
+        },
+      ],
+      default: [],
+    },
+    pipelineId: { type: String, index: true },
+    pipelineStageId: { type: String, index: true },
   },
   { ...opts },
 );

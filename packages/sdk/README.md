@@ -25,11 +25,11 @@ const helebba = createHelebbaClient({
 });
 ```
 
-| Parametro | Requerido | Descripcion |
-|-----------|-----------|-------------|
-| `apiKey` | Si | API key con formato `hlb_dev_xxxxxxxx` |
-| `baseUrl` | No | URL base de la API (default: `https://apis.helebba.com/api/v1`) |
-| `fetcher` | No | Implementacion de `fetch` custom (para Node < 18, proxies, etc.) |
+| Parametro | Requerido | Descripcion                                                      |
+| --------- | --------- | ---------------------------------------------------------------- |
+| `apiKey`  | Si        | API key con formato `hlb_dev_xxxxxxxx`                           |
+| `baseUrl` | No        | URL base de la API (default: `https://apis.helebba.com/api/v1`)  |
+| `fetcher` | No        | Implementacion de `fetch` custom (para Node < 18, proxies, etc.) |
 
 ## Autenticacion
 
@@ -65,10 +65,10 @@ const result = await helebba.products.list({
 // result.pageInfo: { page, pages, pageSize, totalItems, hasNextPage, ... }
 ```
 
-| Param | Tipo | Descripcion |
-|-------|------|-------------|
-| `page` | `number` | Numero de pagina (default: 1) |
-| `limit` | `number` | Elementos por pagina (default: 100) |
+| Param    | Tipo     | Descripcion                           |
+| -------- | -------- | ------------------------------------- |
+| `page`   | `number` | Numero de pagina (default: 1)         |
+| `limit`  | `number` | Elementos por pagina (default: 100)   |
 | `search` | `string` | Busqueda por nombre, SKU, descripcion |
 
 #### `products.get(productId)`
@@ -104,19 +104,22 @@ El modulo de documentos permite crear y gestionar facturas, ordenes de venta, es
 
 #### Tipos de documento disponibles
 
-| Constante | Valor | Descripcion |
-|-----------|-------|-------------|
-| `DocumentTypeValues.INVOICE` | `'invoice'` | Factura de venta |
-| `DocumentTypeValues.SALES_ORDER` | `'sales-order'` | Orden de venta |
-| `DocumentTypeValues.ESTIMATE` | `'estimate'` | Cotizacion/estimacion |
-| `DocumentTypeValues.CREDIT_NOTE` | `'credit-note'` | Nota de credito |
-| `DocumentTypeValues.RECEIPT_NOTE` | `'receipt-note'` | Nota de recibo |
-| `DocumentTypeValues.PURCHASE` | `'purchase'` | Factura de compra |
-| `DocumentTypeValues.PURCHASE_ORDER` | `'purchase-order'` | Orden de compra |
-| `DocumentTypeValues.PROFORM` | `'proform'` | Proforma |
-| `DocumentTypeValues.WAYBILL` | `'waybill'` | Remision |
-| `DocumentTypeValues.EXPENSES` | `'expenses'` | Gastos |
-| `DocumentTypeValues.QUOTES` | `'quotes'` | Cotizaciones |
+| Constante                            | Valor               | Descripcion           |
+| ------------------------------------ | ------------------- | --------------------- |
+| `DocumentTypeValues.INVOICE`         | `'invoice'`         | Factura de venta      |
+| `DocumentTypeValues.SALES_RECEIPT`   | `'sales-receipt'`   | Recibo de venta       |
+| `DocumentTypeValues.SALES_ORDER`     | `'sales-order'`     | Orden de venta        |
+| `DocumentTypeValues.ESTIMATE`        | `'estimate'`        | Cotizacion/estimacion |
+| `DocumentTypeValues.CREDIT_NOTE`     | `'credit-note'`     | Nota de credito       |
+| `DocumentTypeValues.RECEIPT_NOTE`    | `'receipt-note'`    | Nota de recibo        |
+| `DocumentTypeValues.PURCHASE`        | `'purchase'`        | Factura de compra     |
+| `DocumentTypeValues.PURCHASE_REFUND` | `'purchase-refund'` | Devolucion de compra  |
+| `DocumentTypeValues.PURCHASE_ORDER`  | `'purchase-order'`  | Orden de compra       |
+| `DocumentTypeValues.REFERRALS`       | `'referrals'`       | Albaran de compra     |
+| `DocumentTypeValues.PROFORM`         | `'proform'`         | Proforma              |
+| `DocumentTypeValues.WAYBILL`         | `'waybill'`         | Remision              |
+| `DocumentTypeValues.EXPENSES`        | `'expenses'`        | Gastos                |
+| `DocumentTypeValues.QUOTES`          | `'quotes'`          | Cotizaciones          |
 
 #### `documents.create(input)`
 
@@ -160,9 +163,7 @@ const invoice = await helebba.documents.create({
       unitType: 'unit',
     },
   ],
-  customFields: [
-    { field: 'Referencia', value: 'REF-2025-001' },
-  ],
+  customFields: [{ field: 'Referencia', value: 'REF-2025-001' }],
 });
 
 // invoice: Document (con id, docNumber, total, etc.)
@@ -170,37 +171,37 @@ const invoice = await helebba.documents.create({
 
 **Input para `documents.create`:**
 
-| Campo | Tipo | Requerido | Descripcion |
-|-------|------|-----------|-------------|
-| `docType` | `DocumentType` | No | Tipo de documento (default: `invoice`) |
-| `contactId` | `string` | Si | ID del contacto/cliente |
-| `contactName` | `string` | No | Nombre del contacto |
-| `description` | `string` | No | Descripcion del documento |
-| `date` | `string` | No | Fecha ISO del documento |
-| `dueDate` | `string` | No | Fecha de vencimiento ISO |
-| `paymentMethodId` | `string` | No | ID del metodo de pago |
-| `currency` | `string` | No | Moneda (default: `COP`) |
-| `tags` | `string[]` | No | Etiquetas |
-| `lines` | `ProductDocument[]` | No | Lineas/items del documento |
-| `customFields` | `DocumentCustomField[]` | No | Campos personalizados |
-| `status` | `StatusDocument` | No | Estado inicial |
+| Campo             | Tipo                    | Requerido | Descripcion                            |
+| ----------------- | ----------------------- | --------- | -------------------------------------- |
+| `docType`         | `DocumentType`          | No        | Tipo de documento (default: `invoice`) |
+| `contactId`       | `string`                | Si        | ID del contacto/cliente                |
+| `contactName`     | `string`                | No        | Nombre del contacto                    |
+| `description`     | `string`                | No        | Descripcion del documento              |
+| `date`            | `string`                | No        | Fecha ISO del documento                |
+| `dueDate`         | `string`                | No        | Fecha de vencimiento ISO               |
+| `paymentMethodId` | `string`                | No        | ID del metodo de pago                  |
+| `currency`        | `string`                | No        | Moneda (default: `COP`)                |
+| `tags`            | `string[]`              | No        | Etiquetas                              |
+| `lines`           | `ProductDocument[]`     | No        | Lineas/items del documento             |
+| `customFields`    | `DocumentCustomField[]` | No        | Campos personalizados                  |
+| `status`          | `StatusDocument`        | No        | Estado inicial                         |
 
 **Estructura de cada linea (`ProductDocument`):**
 
-| Campo | Tipo | Requerido | Descripcion |
-|-------|------|-----------|-------------|
-| `concept` | `string` | Si | Nombre del producto/servicio |
-| `description` | `string` | No | Descripcion detallada |
-| `price` | `number` | Si | Precio unitario |
-| `units` | `number` | Si | Cantidad |
-| `discount` | `number` | No | Descuento total |
-| `tax` | `number` | Si | Porcentaje de impuesto (ej: 19 para IVA 19%) |
-| `taxes` | `string[]` | No | Nombres de impuestos aplicables |
-| `productId` | `string` | No | ID del producto en inventario |
-| `variantId` | `string` | No | ID de variante |
-| `serviceId` | `string` | No | ID de servicio |
-| `sku` | `string` | No | Codigo SKU |
-| `unitType` | `string` | No | Tipo de unidad (`unit`, `kg`, `m`, etc.) |
+| Campo         | Tipo       | Requerido | Descripcion                                  |
+| ------------- | ---------- | --------- | -------------------------------------------- |
+| `concept`     | `string`   | Si        | Nombre del producto/servicio                 |
+| `description` | `string`   | No        | Descripcion detallada                        |
+| `price`       | `number`   | Si        | Precio unitario                              |
+| `units`       | `number`   | Si        | Cantidad                                     |
+| `discount`    | `number`   | No        | Descuento total                              |
+| `tax`         | `number`   | Si        | Porcentaje de impuesto (ej: 19 para IVA 19%) |
+| `taxes`       | `string[]` | No        | Nombres de impuestos aplicables              |
+| `productId`   | `string`   | No        | ID del producto en inventario                |
+| `variantId`   | `string`   | No        | ID de variante                               |
+| `serviceId`   | `string`   | No        | ID de servicio                               |
+| `sku`         | `string`   | No        | Codigo SKU                                   |
+| `unitType`    | `string`   | No        | Tipo de unidad (`unit`, `kg`, `m`, etc.)     |
 
 #### `documents.list(params?)`
 
@@ -225,92 +226,152 @@ const results = await helebba.documents.list({
 });
 ```
 
-| Param | Tipo | Descripcion |
-|-------|------|-------------|
-| `docType` | `DocumentType` | Filtrar por tipo de documento |
-| `contactId` | `string` | Filtrar por contacto |
-| `paymentMethodId` | `string` | Filtrar por metodo de pago |
-| `page` | `number` | Pagina |
-| `limit` | `number` | Limite por pagina |
-| `search` | `string` | Busqueda por texto |
+| Param             | Tipo           | Descripcion                   |
+| ----------------- | -------------- | ----------------------------- |
+| `docType`         | `DocumentType` | Filtrar por tipo de documento |
+| `contactId`       | `string`       | Filtrar por contacto          |
+| `paymentMethodId` | `string`       | Filtrar por metodo de pago    |
+| `page`            | `number`       | Pagina                        |
+| `limit`           | `number`       | Limite por pagina             |
+| `search`          | `string`       | Busqueda por texto            |
 
-#### `documents.get(documentId)`
+#### `documents.get(documentId, docType?)`
 
 Obtiene un documento por ID.
 
 ```ts
-const doc = await helebba.documents.get('document-id-123');
+const doc = await helebba.documents.get('document-id-123', DocumentTypeValues.SALES_ORDER);
 // doc: Document
 ```
 
-#### `documents.update(documentId, input)`
+#### `documents.update(documentId, input, docType?)`
 
 Actualiza un documento existente.
 
 ```ts
 const updated = await helebba.documents.update('document-id-123', {
+  docType: DocumentTypeValues.CREDIT_NOTE,
   description: 'Descripcion actualizada',
   dueDate: '2025-03-01T00:00:00.000Z',
   status: StatusDocumentValues.Paid,
 });
 ```
 
-#### `documents.delete(documentId)`
+#### `documents.delete(documentId, docType?)`
 
 Elimina (soft delete) un documento.
 
 ```ts
-await helebba.documents.delete('document-id-123');
+await helebba.documents.delete('document-id-123', DocumentTypeValues.PURCHASE_ORDER);
 // Retorna el documento eliminado
 ```
 
-#### `documents.convert(documentId, input?)`
+#### `documents.convert(documentId, input?, sourceDocType?)`
 
 Convierte un documento a otro tipo.
 
 ```ts
 // Convertir estimacion en factura
-const invoice = await helebba.documents.convert('estimate-id-123', {
-  docType: DocumentTypeValues.INVOICE,
-});
+const invoice = await helebba.documents.convert(
+  'estimate-id-123',
+  {
+    docType: DocumentTypeValues.INVOICE,
+  },
+  DocumentTypeValues.ESTIMATE,
+);
 
 // Convertir orden de compra en compra
-const purchase = await helebba.documents.convert('po-id-123', {
-  docType: DocumentTypeValues.PURCHASE,
-});
+const purchase = await helebba.documents.convert(
+  'po-id-123',
+  {
+    docType: DocumentTypeValues.PURCHASE,
+  },
+  DocumentTypeValues.PURCHASE_ORDER,
+);
 
-// Conversion por defecto: estimate -> invoice, purchase-order -> purchase
-const autoConverted = await helebba.documents.convert('doc-id-123');
+// El tipo de origen es opcional y mantiene `invoice` por compatibilidad.
+// Es recomendable enviarlo para documentos que no sean facturas.
 ```
 
 **Conversiones tipicas:**
 
-| Desde | Hacia | Ejemplo |
-|-------|-------|---------|
-| `estimate` | `invoice` | Cotizacion -> Factura |
-| `purchase-order` | `purchase` | Orden de compra -> Factura de compra |
-| `invoice` | `estimate` | Factura -> Estimacion |
+| Desde            | Hacia             | Ejemplo                              |
+| ---------------- | ----------------- | ------------------------------------ |
+| `estimate`       | `invoice`         | Cotizacion -> Factura                |
+| `purchase-order` | `purchase`        | Orden de compra -> Factura de compra |
+| `invoice`        | `credit-note`     | Factura -> Nota de credito           |
+| `sales-order`    | `invoice`         | Pedido de venta -> Factura           |
+| `waybill`        | `invoice`         | Albaran de venta -> Factura          |
+| `purchase`       | `purchase-refund` | Factura de compra -> Devolucion      |
 
-#### `documents.sendEmail(documentId, input)`
+#### `documents.sendEmail(documentId, input, docType?)`
 
 Envia un documento por email.
 
 ```ts
-await helebba.documents.sendEmail('document-id-123', {
-  to: ['cliente@ejemplo.com'],
-  cc: ['ventas@miempresa.com'],
-  subject: 'Su factura #FAC-001',
-  message: 'Adjunto encontrara su factura correspondiente.',
-});
+await helebba.documents.sendEmail(
+  'document-id-123',
+  {
+    to: ['cliente@ejemplo.com'],
+    cc: ['ventas@miempresa.com'],
+    subject: 'Su factura #FAC-001',
+    message: 'Adjunto encontrara su factura correspondiente.',
+  },
+  DocumentTypeValues.INVOICE,
+);
 ```
 
-| Campo | Tipo | Descripcion |
-|-------|------|-------------|
-| `to` | `string \| string[]` | Destinatarios principales |
-| `cc` | `string \| string[]` | Copia |
-| `bcc` | `string \| string[]` | Copia oculta |
-| `subject` | `string` | Asunto del email |
-| `message` | `string` | Cuerpo del mensaje |
+| Campo     | Tipo                 | Descripcion               |
+| --------- | -------------------- | ------------------------- |
+| `to`      | `string \| string[]` | Destinatarios principales |
+| `cc`      | `string \| string[]` | Copia                     |
+| `bcc`     | `string \| string[]` | Copia oculta              |
+| `subject` | `string`             | Asunto del email          |
+| `message` | `string`             | Cuerpo del mensaje        |
+
+#### Aprobacion y respuesta de documentos
+
+Las cotizaciones, pedidos y demas documentos pueden avanzar por un ciclo de aprobacion sin modificar sus datos contables.
+
+```ts
+await helebba.documents.approve('estimate-id-123', DocumentTypeValues.ESTIMATE);
+await helebba.documents.accept('estimate-id-123', DocumentTypeValues.ESTIMATE);
+await helebba.documents.reject('estimate-id-123', DocumentTypeValues.ESTIMATE);
+```
+
+El documento conserva `approvalStatus` y los datos de auditoria correspondientes (`approvedAt`, `approvedBy`, `acceptedAt`, etc.).
+
+#### `documents.registerPayment(documentId, input?, docType?)`
+
+Registra un pago total o parcial y actualiza la conciliacion y el saldo pendiente del documento.
+
+```ts
+const result = await helebba.documents.registerPayment(
+  'invoice-id-123',
+  {
+    amount: 125000,
+    paymentMethodId: 'payment-method-id',
+    bankAccountId: 'bank-account-id',
+    description: 'Transferencia bancaria',
+  },
+  DocumentTypeValues.INVOICE,
+);
+
+console.log(result.document.paymentsPending);
+```
+
+La API rechaza importes negativos, iguales a cero o superiores al saldo pendiente.
+
+#### `documents.downloadPdf(documentId, docType?)`
+
+Descarga la representacion PDF del documento como `ArrayBuffer`.
+
+```ts
+const pdf = await helebba.documents.downloadPdf(
+  'invoice-id-123',
+  DocumentTypeValues.INVOICE,
+);
+```
 
 ---
 
@@ -326,21 +387,21 @@ try {
 } catch (error) {
   const apiError = error as HelebbaApiError;
 
-  console.error(apiError.message);  // Mensaje descriptivo
-  console.error(apiError.status);   // HTTP status code (404, 401, 422, etc.)
-  console.error(apiError.body);     // Cuerpo de la respuesta de la API
+  console.error(apiError.message); // Mensaje descriptivo
+  console.error(apiError.status); // HTTP status code (404, 401, 422, etc.)
+  console.error(apiError.body); // Cuerpo de la respuesta de la API
 }
 ```
 
 **Codigos comunes:**
 
-| Status | Descripcion |
-|--------|-------------|
-| `401` | API key invalida o token expirado |
-| `403` | API key sin permisos para el recurso |
-| `404` | Recurso no encontrado |
-| `422` | Datos de entrada invalidos |
-| `500` | Error interno del servidor |
+| Status | Descripcion                          |
+| ------ | ------------------------------------ |
+| `401`  | API key invalida o token expirado    |
+| `403`  | API key sin permisos para el recurso |
+| `404`  | Recurso no encontrado                |
+| `422`  | Datos de entrada invalidos           |
+| `500`  | Error interno del servidor           |
 
 ---
 
@@ -383,22 +444,19 @@ import type {
 } from '@helebba/sdk';
 
 // Valores de enums
-import {
-  DocumentTypeValues,
-  StatusDocumentValues,
-} from '@helebba/sdk';
+import { DocumentTypeValues, StatusDocumentValues } from '@helebba/sdk';
 ```
 
 ---
 
 ### Estados de documento
 
-| Constante | Valor | Descripcion |
-|-----------|-------|-------------|
-| `StatusDocumentValues.Pending` | `0` | Pendiente de pago |
-| `StatusDocumentValues.Paid` | `1` | Pagado completamente |
-| `StatusDocumentValues.PartiallyPaid` | `2` | Parcialmente pagado |
-| `StatusDocumentValues.Cancelled` | `3` | Cancelado |
+| Constante                            | Valor | Descripcion          |
+| ------------------------------------ | ----- | -------------------- |
+| `StatusDocumentValues.Pending`       | `0`   | Pendiente de pago    |
+| `StatusDocumentValues.Paid`          | `1`   | Pagado completamente |
+| `StatusDocumentValues.PartiallyPaid` | `2`   | Parcialmente pagado  |
+| `StatusDocumentValues.Cancelled`     | `3`   | Cancelado            |
 
 ---
 

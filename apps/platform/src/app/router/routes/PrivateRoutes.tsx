@@ -22,6 +22,7 @@ import { crmFunnelRoutes } from '@/modules/crm/funnels/routes';
 import { crmLeadRoutes } from '@/modules/crm/leads/routes';
 import { inventoryDashboardRoutes } from '@/modules/inventary/dashboard/routes';
 import { reportingRoutes } from '@/modules/reporting/inventory-analytics/routes';
+import { projectRoutes } from '@/modules/projects/routes';
 
 export const privateRoutes: RouteObject[] = [
   {
@@ -64,6 +65,7 @@ export const privateRoutes: RouteObject[] = [
       ...posRoutes,
       ...crmFunnelRoutes,
       ...crmLeadRoutes,
+      ...projectRoutes,
     ],
   },
 ];

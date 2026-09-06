@@ -1,4 +1,5 @@
-import type { ISODateTimeString, PersistedSoftDeletableEntity, UserId } from '../../../../common';
+import type { PersistedSoftDeletableEntity } from '../../../../common';
+import type { ISODateTimeString } from '../../../../common';
 
 interface GoogleProvider {
   sub: string;
