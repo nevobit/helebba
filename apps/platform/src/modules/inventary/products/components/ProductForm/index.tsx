@@ -1,4 +1,11 @@
-import { useMemo, useRef, useState, type ChangeEvent, type CSSProperties, type FormEvent } from 'react';
+import {
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type CSSProperties,
+  type FormEvent,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { Button, TextInput, useModal } from '@hlb/design-system';
 import { List, Search, Trash2, X } from 'lucide-react';
@@ -15,7 +22,13 @@ import { SETTINGS_PRODUCT_FIELDS_HASH } from '@/modules/settings/hooks';
 import { ImageUploader } from '@/modules/media/components';
 import { TariffManagerModal } from '@/modules/inventary/price-lists/components/TariffManagerModal';
 import type { CreateProductPayload } from '../../services';
-import type { CategoryId, PriceListId, Product, ProductFieldValue, WarehouseId } from '@hlb/contracts';
+import type {
+  CategoryId,
+  PriceListId,
+  Product,
+  ProductFieldValue,
+  WarehouseId,
+} from '@hlb/contracts';
 import styles from './ProductForm.module.css';
 
 export const PRODUCT_FORM_ID = 'product-form';
@@ -25,6 +38,7 @@ type ProductFormProps = {
   onCancel: () => void;
   onSuccess?: () => void;
   initialProduct?: Product;
+  mode?: 'create' | 'edit' | 'duplicate';
 };
 
 type ProductFormState = {
@@ -127,7 +141,7 @@ const PRODUCT_STOCK_STATE = { outOfStock: 0, inStock: 1 } as const;
 
 const getColorName = (hex: string) => PRODUCT_COLORS.find((color) => color.hex === hex)?.name ?? '';
 const getVariantColorHex = (color: unknown) =>
-  typeof color === 'string' ? color : (color as { hex?: string } | null)?.hex ?? '';
+  typeof color === 'string' ? color : ((color as { hex?: string } | null)?.hex ?? '');
 
 type ColorSelectProps = {
   value: string;
@@ -247,54 +261,58 @@ const initialState: ProductFormState = {
   inPos: false,
 };
 
-const productToFormState = (product?: Product): ProductFormState => product ? {
-  name: product.name ?? '',
-  description: product.description ?? '',
-  tags: product.tags?.join(', ') ?? '',
-  category: product.categoryId ? String(product.categoryId) : '',
-  secondaryCategories: (product.categories ?? []).map(String),
-  brand: product.brand ?? '',
-  priceListPrices: (product.priceListPrices ?? []).map((item) => ({
-    priceListId: String(item.priceListId),
-    price: String(item.price ?? 0),
-  })),
-  salePrice: String(product.price ?? 0),
-  taxRate: String(product.taxRate ?? 0),
-  purchasePrice: String(product.purchasePrice ?? 0),
-  cost: String(product.cost ?? 0),
-  supplier: product.contactId ? String(product.contactId) : '',
-  sku: product.sku ?? '',
-  barcode: product.barcode ?? '',
-  factoryCode: product.factoryCode ?? '',
-  weight: String(product.weight ?? 0),
-  warehouse: product.warehouseId ? String(product.warehouseId) : '',
-  stock: String(product.stock ?? 0),
-  salesAccount: product.salesAccountId ?? '',
-  purchaseAccount: product.purchaseAccountId ?? '',
-  addVariants: Boolean(product.variants?.length),
-  manageLots: Boolean(product.manageLots),
-  manageSerials: Boolean(product.manageSerials),
-  manageStock: Boolean(product.hasStock),
-  manufactured: Boolean(product.forProduction),
-  forSale: Boolean(product.forSale),
-  forPurchase: Boolean(product.forPurchase),
-  inCatalog: Boolean(product.inCatalog),
-  inPos: Boolean(product.inPos),
-} : initialState;
+const productToFormState = (product?: Product, duplicate = false): ProductFormState =>
+  product
+    ? {
+        name: duplicate ? `${product.name ?? 'Producto'} (copia)` : (product.name ?? ''),
+        description: product.description ?? '',
+        tags: product.tags?.join(', ') ?? '',
+        category: product.categoryId ? String(product.categoryId) : '',
+        secondaryCategories: (product.categories ?? []).map(String),
+        brand: product.brand ?? '',
+        priceListPrices: (product.priceListPrices ?? []).map((item) => ({
+          priceListId: String(item.priceListId),
+          price: String(item.price ?? 0),
+        })),
+        salePrice: String(product.price ?? 0),
+        taxRate: String(product.taxRate ?? 0),
+        purchasePrice: String(product.purchasePrice ?? 0),
+        cost: String(product.cost ?? 0),
+        supplier: product.contactId ? String(product.contactId) : '',
+        sku: duplicate ? '' : (product.sku ?? ''),
+        barcode: duplicate ? '' : (product.barcode ?? ''),
+        factoryCode: duplicate ? '' : (product.factoryCode ?? ''),
+        weight: String(product.weight ?? 0),
+        warehouse: product.warehouseId ? String(product.warehouseId) : '',
+        stock: duplicate ? '0' : String(product.stock ?? 0),
+        salesAccount: product.salesAccountId ?? '',
+        purchaseAccount: product.purchaseAccountId ?? '',
+        addVariants: Boolean(product.variants?.length),
+        manageLots: Boolean(product.manageLots),
+        manageSerials: Boolean(product.manageSerials),
+        manageStock: Boolean(product.hasStock),
+        manufactured: Boolean(product.forProduction),
+        forSale: Boolean(product.forSale),
+        forPurchase: Boolean(product.forPurchase),
+        inCatalog: Boolean(product.inCatalog),
+        inPos: Boolean(product.inPos),
+      }
+    : initialState;
 
-const productToVariants = (product?: Product): VariantFormState[] => (product?.variants ?? []).map((variant) => ({
-  id: variant.id ?? crypto.randomUUID(),
-  color: getVariantColorHex(variant.color),
-  size: variant.size ?? '',
-  price: String(variant.price ?? 0),
-  purchasePrice: String(variant.purchasePrice ?? 0),
-  weight: String(variant.weight ?? 0),
-  sku: variant.sku ?? '',
-  barcode: variant.barcode ?? '',
-  factoryCode: variant.factoryCode ?? '',
-  cost: String(variant.cost ?? 0),
-  stock: String(variant.stock ?? 0),
-}));
+const productToVariants = (product?: Product, duplicate = false): VariantFormState[] =>
+  (product?.variants ?? []).map((variant) => ({
+    id: duplicate ? crypto.randomUUID() : (variant.id ?? crypto.randomUUID()),
+    color: getVariantColorHex(variant.color),
+    size: variant.size ?? '',
+    price: String(variant.price ?? 0),
+    purchasePrice: String(variant.purchasePrice ?? 0),
+    weight: String(variant.weight ?? 0),
+    sku: duplicate ? '' : (variant.sku ?? ''),
+    barcode: duplicate ? '' : (variant.barcode ?? ''),
+    factoryCode: duplicate ? '' : (variant.factoryCode ?? ''),
+    cost: String(variant.cost ?? 0),
+    stock: duplicate ? '0' : String(variant.stock ?? 0),
+  }));
 
 const toNumber = (value: string) => {
   const parsed = Number(value.replace(',', '.'));
@@ -326,14 +344,30 @@ const createVariant = (form: ProductFormState): VariantFormState => ({
   stock: form.stock,
 });
 
-export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess }: ProductFormProps) => {
-  const [formState, setFormState] = useState<ProductFormState>(() => productToFormState(initialProduct));
-  const [variants, setVariants] = useState<VariantFormState[]>(() => productToVariants(initialProduct));
+export const ProductForm = ({
+  initialProduct,
+  mode,
+  onCancel,
+  onDirtyChange,
+  onSuccess,
+}: ProductFormProps) => {
+  const resolvedMode = mode ?? (initialProduct ? 'edit' : 'create');
+  const isEditing = resolvedMode === 'edit';
+  const isDuplicating = resolvedMode === 'duplicate';
+  const [formState, setFormState] = useState<ProductFormState>(() =>
+    productToFormState(initialProduct, isDuplicating),
+  );
+  const [variants, setVariants] = useState<VariantFormState[]>(() =>
+    productToVariants(initialProduct, isDuplicating),
+  );
   const [variantSearch, setVariantSearch] = useState('');
-  const [customFieldValues, setCustomFieldValues] = useState<Record<string, ProductFieldValue>>(() =>
-    Object.fromEntries((initialProduct?.customFields ?? []).flatMap((field) =>
-      field.definitionId ? [[String(field.definitionId), field.value]] : [],
-    )),
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, ProductFieldValue>>(
+    () =>
+      Object.fromEntries(
+        (initialProduct?.customFields ?? []).flatMap((field) =>
+          field.definitionId ? [[String(field.definitionId), field.value]] : [],
+        ),
+      ),
   );
   const [imageUrls, setImageUrls] = useState<string[]>(() => [...(initialProduct?.images ?? [])]);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -341,9 +375,15 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
   const { openModal, closeModal } = useModal();
   const { createProduct, isCreatingProduct: isCreating } = useCreateProduct();
   const { priceLists } = usePriceLists();
-  const { updateProduct, isUpdatingProduct } = useUpdateProduct(initialProduct?.id ? String(initialProduct.id) : undefined);
+  const { updateProduct, isUpdatingProduct } = useUpdateProduct(
+    isEditing && initialProduct?.id ? String(initialProduct.id) : undefined,
+  );
   const isCreatingProduct = isCreating || isUpdatingProduct;
-  const { categories, isLoading: isLoadingCategories } = useCategories({ page: 1, limit: 100, search: '' });
+  const { categories, isLoading: isLoadingCategories } = useCategories({
+    page: 1,
+    limit: 100,
+    search: '',
+  });
   const hierarchicalCategories = useMemo(() => flattenCategories(categories), [categories]);
   const secondaryCategoryIds = useMemo(() => {
     const resolved = formState.secondaryCategories.flatMap((value) => {
@@ -353,7 +393,11 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
     return [...new Set(resolved)].filter((categoryId) => categoryId !== formState.category);
   }, [categories, formState.category, formState.secondaryCategories]);
   const { brands, isLoading: isLoadingBrands } = useBrands({ page: 1, limit: 100, search: '' });
-  const { warehouses, isLoading: isLoadingWarehouses } = useWarehouses({ page: 1, limit: 100, search: '' });
+  const { warehouses, isLoading: isLoadingWarehouses } = useWarehouses({
+    page: 1,
+    limit: 100,
+    search: '',
+  });
   const defaultWarehouseId = !initialProduct
     ? String(warehouses.find((warehouse) => warehouse.isDefault)?.id ?? '')
     : '';
@@ -371,13 +415,19 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
 
   const setDirty = () => onDirtyChange?.(true);
 
-  const updateField = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const updateField = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = event.target;
     setFormState((current) => ({
       ...current,
       [name]: value,
       ...(name === 'category'
-        ? { secondaryCategories: current.secondaryCategories.filter((categoryId) => categoryId !== value) }
+        ? {
+            secondaryCategories: current.secondaryCategories.filter(
+              (categoryId) => categoryId !== value,
+            ),
+          }
         : {}),
     }));
     setError(null);
@@ -403,18 +453,21 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
     setDirty();
   };
 
-  const updateVariant = (variantId: string, field: keyof Omit<VariantFormState, 'id'>, value: string) => {
+  const updateVariant = (
+    variantId: string,
+    field: keyof Omit<VariantFormState, 'id'>,
+    value: string,
+  ) => {
     setVariants((current) =>
-      current.map((variant) => (variant.id === variantId ? { ...variant, [field]: value } : variant)),
+      current.map((variant) =>
+        variant.id === variantId ? { ...variant, [field]: value } : variant,
+      ),
     );
     setDirty();
   };
 
   const addVariant = () => {
-    setVariants((current) => [
-      ...current,
-      { ...createVariant(formState), sku: '', barcode: '' },
-    ]);
+    setVariants((current) => [...current, { ...createVariant(formState), sku: '', barcode: '' }]);
     setVariantSearch('');
     setDirty();
   };
@@ -473,14 +526,20 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
   const buildPayload = (): CreateProductPayload => {
     const price = toNumber(formState.salePrice);
     const tags = splitList(formState.tags);
-    const selectedSupplier = suppliers.find((supplier) => String(supplier.id) === formState.supplier);
+    const selectedSupplier = suppliers.find(
+      (supplier) => String(supplier.id) === formState.supplier,
+    );
     const taxRate = toNumber(formState.taxRate);
     const productStock = formState.addVariants
       ? variants.reduce((total, variant) => total + toNumber(variant.stock), 0)
       : toNumber(formState.stock);
     const customFields = customFieldDefinitions.flatMap((definition) => {
       const value = customFieldValues[String(definition.id)] ?? definition.defaultValue;
-      const isEmpty = value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0);
+      const isEmpty =
+        value === null ||
+        value === undefined ||
+        value === '' ||
+        (Array.isArray(value) && value.length === 0);
       return isEmpty ? [] : [{ definitionId: definition.id, value }];
     });
 
@@ -508,9 +567,10 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
       weight: toNumber(formState.weight),
       stock: formState.manageStock ? productStock : 0,
       hasStock: formState.manageStock,
-      stockState: formState.manageStock && productStock > 0
-        ? PRODUCT_STOCK_STATE.inStock
-        : PRODUCT_STOCK_STATE.outOfStock,
+      stockState:
+        formState.manageStock && productStock > 0
+          ? PRODUCT_STOCK_STATE.inStock
+          : PRODUCT_STOCK_STATE.outOfStock,
       warehouseId: (selectedWarehouseId || undefined) as WarehouseId | undefined,
       taxes: taxRate > 0 ? [`Impuesto ${taxRate}%`] : [],
       forSale: formState.forSale,
@@ -529,10 +589,13 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
         ? variants.map((variant, index) => ({
             id: variant.id,
             name:
-              [formState.name.trim(), getColorName(variant.color) || variant.color.trim(), variant.size.trim()]
+              [
+                formState.name.trim(),
+                getColorName(variant.color) || variant.color.trim(),
+                variant.size.trim(),
+              ]
                 .filter(Boolean)
-                .join(' - ') ||
-              `Variante ${index + 1}`,
+                .join(' - ') || `Variante ${index + 1}`,
             sku: variant.sku.trim(),
             barcode: variant.barcode.trim(),
             factoryCode: variant.factoryCode.trim(),
@@ -572,11 +635,16 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
       setError('Selecciona un almacén para gestionar el stock.');
       return;
     }
-    if (formState.addVariants && variants.some((variant) => !variant.color && !variant.size.trim())) {
+    if (
+      formState.addVariants &&
+      variants.some((variant) => !variant.color && !variant.size.trim())
+    ) {
       setError('Cada variante debe tener al menos un color o un tamaño.');
       return;
     }
-    const variantCombinations = variants.map((variant) => `${variant.color}|${variant.size.trim().toLowerCase()}`);
+    const variantCombinations = variants.map(
+      (variant) => `${variant.color}|${variant.size.trim().toLowerCase()}`,
+    );
     if (formState.addVariants && new Set(variantCombinations).size !== variantCombinations.length) {
       setError('No puede haber dos variantes con la misma combinación de color y tamaño.');
       return;
@@ -606,14 +674,21 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
       ),
     );
     if (formState.addVariants && invalidVariant) {
-      setError('Todos los precios, costes, pesos y cantidades de las variantes deben ser números válidos.');
+      setError(
+        'Todos los precios, costes, pesos y cantidades de las variantes deben ser números válidos.',
+      );
       return;
     }
 
     const missingRequiredField = customFieldDefinitions.find((definition) => {
       if (!definition.required) return false;
       const value = customFieldValues[String(definition.id)] ?? definition.defaultValue;
-      return value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0);
+      return (
+        value === null ||
+        value === undefined ||
+        value === '' ||
+        (Array.isArray(value) && value.length === 0)
+      );
     });
 
     if (missingRequiredField) {
@@ -621,14 +696,18 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
       return;
     }
 
-    const saveProduct = initialProduct ? updateProduct : createProduct;
+    const saveProduct = isEditing ? updateProduct : createProduct;
     saveProduct(buildPayload(), {
       onSuccess: () => {
         onDirtyChange?.(false);
         onSuccess?.();
       },
       onError: (err) => {
-        setError(err instanceof Error ? err.message : `No pudimos ${initialProduct ? 'actualizar' : 'crear'} el producto.`);
+        setError(
+          err instanceof Error
+            ? err.message
+            : `No pudimos ${isEditing ? 'actualizar' : 'crear'} el producto.`,
+        );
       },
     });
   };
@@ -639,7 +718,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
         <div className={styles.mainColumn}>
           <section className={styles.card}>
             <h3>Información básica</h3>
-            <p>Describe tu producto. Puedes utilizar esta información en los documentos que generes.</p>
+            <p>
+              Describe tu producto. Puedes utilizar esta información en los documentos que generes.
+            </p>
             <TextInput
               label="Nombre del producto *"
               placeholder="Añade un nombre a tu producto"
@@ -660,7 +741,12 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                 onChange={updateField}
               />
             </label>
-            <button type="button" className={styles.linkButton} disabled title="Disponible próximamente">
+            <button
+              type="button"
+              className={styles.linkButton}
+              disabled
+              title="Disponible próximamente"
+            >
               + Añadir traducción
             </button>
           </section>
@@ -680,12 +766,17 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
 
                     if (definition.type === 'long-text') {
                       return (
-                        <label className={`${styles.textareaField} ${styles.fullWidthField}`} key={definitionId}>
+                        <label
+                          className={`${styles.textareaField} ${styles.fullWidthField}`}
+                          key={definitionId}
+                        >
                           <span>{label}</span>
                           <textarea
                             value={typeof value === 'string' ? value : ''}
                             disabled={isCreatingProduct}
-                            onChange={(event) => updateCustomField(definitionId, event.target.value)}
+                            onChange={(event) =>
+                              updateCustomField(definitionId, event.target.value)
+                            }
                           />
                         </label>
                       );
@@ -698,7 +789,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                           <select
                             value={typeof value === 'string' ? value : ''}
                             disabled={isCreatingProduct}
-                            onChange={(event) => updateCustomField(definitionId, event.target.value)}
+                            onChange={(event) =>
+                              updateCustomField(definitionId, event.target.value)
+                            }
                           >
                             <option value="">Seleccionar</option>
                             {definition.options.map((option) => (
@@ -745,7 +838,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                             type="checkbox"
                             checked={value === true}
                             disabled={isCreatingProduct}
-                            onChange={(event) => updateCustomField(definitionId, event.target.checked)}
+                            onChange={(event) =>
+                              updateCustomField(definitionId, event.target.checked)
+                            }
                           />
                           {label}
                         </label>
@@ -756,13 +851,21 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                       <TextInput
                         key={definitionId}
                         label={label}
-                        type={definition.type === 'number' ? 'number' : definition.type === 'date' ? 'date' : 'text'}
+                        type={
+                          definition.type === 'number'
+                            ? 'number'
+                            : definition.type === 'date'
+                              ? 'date'
+                              : 'text'
+                        }
                         value={value === null || value === undefined ? '' : String(value)}
                         disabled={isCreatingProduct}
                         onChange={(event) =>
                           updateCustomField(
                             definitionId,
-                            definition.type === 'number' ? toNumber(event.target.value) : event.target.value,
+                            definition.type === 'number'
+                              ? toNumber(event.target.value)
+                              : event.target.value,
                           )
                         }
                       />
@@ -775,7 +878,10 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
 
           <section className={styles.card}>
             <h3>Ventas</h3>
-            <p>Indica el subtotal y el impuesto aplicable. El importe total se calculará de forma automática.</p>
+            <p>
+              Indica el subtotal y el impuesto aplicable. El importe total se calculará de forma
+              automática.
+            </p>
             <div className={styles.priceTable}>
               <div className={styles.tableHeader}>
                 <span>Nombre</span>
@@ -807,14 +913,19 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                 </label>
                 <label className={styles.amountInput}>
                   <input
-                    value={(toNumber(formState.salePrice) * (1 + toNumber(formState.taxRate) / 100)).toFixed(2)}
+                    value={(
+                      toNumber(formState.salePrice) *
+                      (1 + toNumber(formState.taxRate) / 100)
+                    ).toFixed(2)}
                     disabled
                     readOnly
                   />
                 </label>
               </div>
               {formState.priceListPrices.flatMap((item) => {
-                const priceList = priceLists.find((priceList) => String(priceList.id) === item.priceListId);
+                const priceList = priceLists.find(
+                  (priceList) => String(priceList.id) === item.priceListId,
+                );
                 if (!priceList) return [];
                 const price = toNumber(item.price);
                 const tax = (price * toNumber(formState.taxRate)) / 100;
@@ -845,7 +956,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                         value={item.price}
                         disabled={isCreatingProduct}
                         aria-label={`Precio de la tarifa ${priceList.name}`}
-                        onChange={(event) => updateTariffPrice(item.priceListId, event.target.value)}
+                        onChange={(event) =>
+                          updateTariffPrice(item.priceListId, event.target.value)
+                        }
                       />
                       <b>{priceList.currency || 'COP'}</b>
                     </label>
@@ -881,8 +994,8 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
           <section className={styles.card}>
             <h3>Compras y fabricación</h3>
             <p>
-              Indica si es un producto fabricado, define su coste medio para informes y su precio de compra
-              o fabricación para documentos.
+              Indica si es un producto fabricado, define su coste medio para informes y su precio de
+              compra o fabricación para documentos.
             </p>
             <label className={styles.checkboxField}>
               <input
@@ -897,7 +1010,12 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
             <div className={styles.twoColumns}>
               <label className={styles.amountInput}>
                 <span>Coste medio</span>
-                <input name="cost" value={formState.cost} disabled={isCreatingProduct} onChange={updateField} />
+                <input
+                  name="cost"
+                  value={formState.cost}
+                  disabled={isCreatingProduct}
+                  onChange={updateField}
+                />
                 <b>COP</b>
               </label>
               <label className={styles.selectField}>
@@ -908,7 +1026,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                   disabled={isCreatingProduct || isLoadingSuppliers}
                   onChange={updateField}
                 >
-                  <option value="">{isLoadingSuppliers ? 'Cargando proveedores...' : 'Selecciona un proveedor'}</option>
+                  <option value="">
+                    {isLoadingSuppliers ? 'Cargando proveedores...' : 'Selecciona un proveedor'}
+                  </option>
                   {suppliers.map((supplier) => (
                     <option value={String(supplier.id)} key={String(supplier.id)}>
                       {supplier.name}
@@ -926,7 +1046,12 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
               </div>
               <div className={styles.tableRow}>
                 <span>Precio compra</span>
-                <input name="factoryCode" value={formState.factoryCode} disabled={isCreatingProduct} onChange={updateField} />
+                <input
+                  name="factoryCode"
+                  value={formState.factoryCode}
+                  disabled={isCreatingProduct}
+                  onChange={updateField}
+                />
                 <label className={styles.amountInput}>
                   <input
                     name="purchasePrice"
@@ -945,7 +1070,13 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
             <h3>Seguimiento</h3>
             <p>Introduce la información que identifique el producto</p>
             <div className={styles.twoColumns}>
-              <TextInput label="SKU" name="sku" value={formState.sku} disabled={isCreatingProduct} onChange={updateField} />
+              <TextInput
+                label="SKU"
+                name="sku"
+                value={formState.sku}
+                disabled={isCreatingProduct}
+                onChange={updateField}
+              />
               <TextInput
                 label="Código de barras"
                 name="barcode"
@@ -962,7 +1093,12 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
               />
               <label className={styles.amountInput}>
                 <span>Peso</span>
-                <input name="weight" value={formState.weight} disabled={isCreatingProduct} onChange={updateField} />
+                <input
+                  name="weight"
+                  value={formState.weight}
+                  disabled={isCreatingProduct}
+                  onChange={updateField}
+                />
                 <b>kg</b>
               </label>
             </div>
@@ -994,7 +1130,10 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                     {isLoadingWarehouses ? 'Cargando almacenes...' : 'Selecciona un almacén'}
                   </option>
                   {warehouses.map((warehouse) => (
-                    <option key={String(warehouse.id ?? warehouse.name)} value={String(warehouse.id ?? '')}>
+                    <option
+                      key={String(warehouse.id ?? warehouse.name)}
+                      value={String(warehouse.id ?? '')}
+                    >
                       {warehouse.name}
                     </option>
                   ))}
@@ -1016,8 +1155,8 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
           <section className={styles.card}>
             <h3>Opciones</h3>
             <p>
-              Añade variantes al producto o activa la gestión de lotes y números de serie. Un producto con
-              variantes no podrá incluir lotes o números de serie.
+              Añade variantes al producto o activa la gestión de lotes y números de serie. Un
+              producto con variantes no podrá incluir lotes o números de serie.
             </p>
             {[
               ['addVariants', 'Añadir variantes'],
@@ -1088,9 +1227,39 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
 
                         return (
                           <tr key={variant.id}>
-                            <td><input value={variant.sku} placeholder="SKU" disabled={isCreatingProduct} aria-label={`SKU de variante ${variantIndex + 1}`} onChange={(event) => updateVariant(variant.id, 'sku', event.target.value)} /></td>
-                            <td><input value={variant.barcode} placeholder="Código" disabled={isCreatingProduct} aria-label={`Código de barras de variante ${variantIndex + 1}`} onChange={(event) => updateVariant(variant.id, 'barcode', event.target.value)} /></td>
-                            <td><input value={variant.factoryCode} placeholder="Código" disabled={isCreatingProduct} aria-label={`Código de fabricación de variante ${variantIndex + 1}`} onChange={(event) => updateVariant(variant.id, 'factoryCode', event.target.value)} /></td>
+                            <td>
+                              <input
+                                value={variant.sku}
+                                placeholder="SKU"
+                                disabled={isCreatingProduct}
+                                aria-label={`SKU de variante ${variantIndex + 1}`}
+                                onChange={(event) =>
+                                  updateVariant(variant.id, 'sku', event.target.value)
+                                }
+                              />
+                            </td>
+                            <td>
+                              <input
+                                value={variant.barcode}
+                                placeholder="Código"
+                                disabled={isCreatingProduct}
+                                aria-label={`Código de barras de variante ${variantIndex + 1}`}
+                                onChange={(event) =>
+                                  updateVariant(variant.id, 'barcode', event.target.value)
+                                }
+                              />
+                            </td>
+                            <td>
+                              <input
+                                value={variant.factoryCode}
+                                placeholder="Código"
+                                disabled={isCreatingProduct}
+                                aria-label={`Código de fabricación de variante ${variantIndex + 1}`}
+                                onChange={(event) =>
+                                  updateVariant(variant.id, 'factoryCode', event.target.value)
+                                }
+                              />
+                            </td>
                             <td>
                               <ColorSelect
                                 value={variant.color}
@@ -1105,7 +1274,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                                 placeholder="Tamaño"
                                 disabled={isCreatingProduct}
                                 aria-label={`Tamaño de variante ${variantIndex + 1}`}
-                                onChange={(event) => updateVariant(variant.id, 'size', event.target.value)}
+                                onChange={(event) =>
+                                  updateVariant(variant.id, 'size', event.target.value)
+                                }
                               />
                             </td>
                             <td>
@@ -1114,7 +1285,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                                 value={variant.price}
                                 disabled={isCreatingProduct}
                                 aria-label={`Precio de venta de variante ${variantIndex + 1}`}
-                                onChange={(event) => updateVariant(variant.id, 'price', event.target.value)}
+                                onChange={(event) =>
+                                  updateVariant(variant.id, 'price', event.target.value)
+                                }
                               />
                             </td>
                             <td>
@@ -1123,7 +1296,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                                 value={variant.purchasePrice}
                                 disabled={isCreatingProduct}
                                 aria-label={`Precio de compra de variante ${variantIndex + 1}`}
-                                onChange={(event) => updateVariant(variant.id, 'purchasePrice', event.target.value)}
+                                onChange={(event) =>
+                                  updateVariant(variant.id, 'purchasePrice', event.target.value)
+                                }
                               />
                             </td>
                             <td>
@@ -1132,7 +1307,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                                 value={variant.cost}
                                 disabled={isCreatingProduct}
                                 aria-label={`Coste de variante ${variantIndex + 1}`}
-                                onChange={(event) => updateVariant(variant.id, 'cost', event.target.value)}
+                                onChange={(event) =>
+                                  updateVariant(variant.id, 'cost', event.target.value)
+                                }
                               />
                             </td>
                             <td>
@@ -1142,7 +1319,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                                   value={variant.weight}
                                   disabled={isCreatingProduct}
                                   aria-label={`Peso de variante ${variantIndex + 1}`}
-                                  onChange={(event) => updateVariant(variant.id, 'weight', event.target.value)}
+                                  onChange={(event) =>
+                                    updateVariant(variant.id, 'weight', event.target.value)
+                                  }
                                 />
                                 <span>kg</span>
                               </div>
@@ -1153,7 +1332,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                                 value={variant.stock}
                                 disabled={isCreatingProduct || !formState.manageStock}
                                 aria-label={`Stock de variante ${variantIndex + 1}`}
-                                onChange={(event) => updateVariant(variant.id, 'stock', event.target.value)}
+                                onChange={(event) =>
+                                  updateVariant(variant.id, 'stock', event.target.value)
+                                }
                               />
                             </td>
                             <td>
@@ -1173,7 +1354,9 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                     </tbody>
                   </table>
                   {visibleVariants.length === 0 && (
-                    <p className={styles.emptyVariants}>No hay variantes que coincidan con la búsqueda.</p>
+                    <p className={styles.emptyVariants}>
+                      No hay variantes que coincidan con la búsqueda.
+                    </p>
                   )}
                 </div>
                 <button
@@ -1213,8 +1396,22 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
           <section className={styles.card}>
             <h3>Contabilidad</h3>
             <p>Define la cuenta contable predeterminada de ventas y compras para este producto.</p>
-            <TextInput label="Cuenta de Ventas" placeholder="Código o nombre de cuenta" name="salesAccount" value={formState.salesAccount} disabled={isCreatingProduct} onChange={updateField} />
-            <TextInput label="Cuenta de Compras" placeholder="Código o nombre de cuenta" name="purchaseAccount" value={formState.purchaseAccount} disabled={isCreatingProduct} onChange={updateField} />
+            <TextInput
+              label="Cuenta de Ventas"
+              placeholder="Código o nombre de cuenta"
+              name="salesAccount"
+              value={formState.salesAccount}
+              disabled={isCreatingProduct}
+              onChange={updateField}
+            />
+            <TextInput
+              label="Cuenta de Compras"
+              placeholder="Código o nombre de cuenta"
+              name="purchaseAccount"
+              value={formState.purchaseAccount}
+              disabled={isCreatingProduct}
+              onChange={updateField}
+            />
             <button
               type="button"
               className={styles.linkButton}
@@ -1250,9 +1447,12 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
                 <option value="">
                   {isLoadingCategories ? 'Cargando categorías...' : 'Selecciona una categoría'}
                 </option>
-                  {hierarchicalCategories.map(({ category, depth, path }) => (
-                    <option key={String(category.id ?? category.slug ?? category.name)} value={String(category.id)}>
-                      {`${'— '.repeat(depth)}${path}`}
+                {hierarchicalCategories.map(({ category, depth, path }) => (
+                  <option
+                    key={String(category.id ?? category.slug ?? category.name)}
+                    value={String(category.id)}
+                  >
+                    {`${'— '.repeat(depth)}${path}`}
                   </option>
                 ))}
               </select>
@@ -1302,7 +1502,8 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
           <section className={styles.card}>
             <h3>Imagen del producto</h3>
             <p>
-              Sube una imagen de tu producto. Podrás utilizarla en documentos y en el <strong>Catálogo</strong>.
+              Sube una imagen de tu producto. Podrás utilizarla en documentos y en el{' '}
+              <strong>Catálogo</strong>.
             </p>
             <ImageUploader
               folder="products/images"
@@ -1335,7 +1536,7 @@ export const ProductForm = ({ initialProduct, onCancel, onDirtyChange, onSuccess
           loading={isCreatingProduct || isUploadingImage}
           disabled={isUploadingImage}
         >
-          Guardar
+          {isDuplicating ? 'Crear copia' : 'Guardar'}
         </Button>
       </div>
     </form>

@@ -10,7 +10,7 @@ type ProductActionsProps = {
 
 export const ProductActions = ({ product }: ProductActionsProps) => {
   const navigate = useNavigate();
-  const { openEditProductModal } = useCreateProductModal();
+  const { openDuplicateProductModal, openEditProductModal } = useCreateProductModal();
   const { requestCloseModal } = useModal();
   const { deleteProduct, isDeletingProduct } = useDeleteProduct();
 
@@ -37,11 +37,20 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
             aria-label={`Acciones para ${product.name}`}
           />
           <Menus.List id={`product-actions-${product.id}`} placement="bottom-end">
-            <Menus.Item id={`view-${product.id}`} onClick={() => navigate(`/products/${product.id}`)}>
+            <Menus.Item
+              id={`view-${product.id}`}
+              onClick={() => navigate(`/products/${product.id}`)}
+            >
               Ver
             </Menus.Item>
             <Menus.Item id={`edit-${product.id}`} onClick={() => openEditProductModal(product.id)}>
               Editar
+            </Menus.Item>
+            <Menus.Item
+              id={`duplicate-${product.id}`}
+              onClick={() => openDuplicateProductModal(product.id)}
+            >
+              Duplicar
             </Menus.Item>
             <Menus.Item id={`delete-${product.id}`} danger onClick={confirmDelete}>
               Eliminar

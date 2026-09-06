@@ -26,7 +26,7 @@ export interface Membership extends PersistedEntity<MembershipId, UserId> {
   profile?: Profile;
   preferences?: Preferences;
   invitedBy?: UserId;
-  invitedAt?: ISODateTimeString;
+  invitedAt?: Date | ISODateTimeString;
   isDefault?: boolean;
   lastSelectedAt?: ISODateTimeString;
   status: 'active' | 'pending' | 'invited' | 'declined' | 'removed';

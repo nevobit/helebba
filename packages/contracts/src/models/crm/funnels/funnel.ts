@@ -149,7 +149,7 @@ export interface CrmLead extends PersistedSoftDeletableEntity<LeadId, UserId> {
   expectedCloseDate?: Date;
   dueDate?: Date;
   potential?: number;
-  notes?: CrmNote[];
+  notes?: string;
   assignedToName?: string;
   assignedTo?: UserId;
   tags?: string[];

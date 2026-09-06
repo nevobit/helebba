@@ -26,5 +26,14 @@ export type QueryParams<TFilters extends object = Record<string, never>> = Pagin
   TFilters;
 
 export interface OrganizationParams {
-  readonly organizationId: OrganizationId;
+  readonly organizationId?: OrganizationId;
 }
+
+/**
+ * Backwards-compatible query parameters used by the platform services.
+ *
+ * Keep this public alias while consumers migrate to the more explicit
+ * `QueryParams` and `OrganizationParams` types.
+ */
+export type Params<TFilters extends object = Record<string, never>> = QueryParams<TFilters> &
+  OrganizationParams;

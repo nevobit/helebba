@@ -16,6 +16,7 @@ type CreateProductModalProps = {
   }) => void;
   onSuccess?: () => void;
   productId?: string;
+  duplicateProductId?: string;
 };
 
 export const CreateProductModal = ({
@@ -23,10 +24,19 @@ export const CreateProductModal = ({
   requestCloseModal,
   onSuccess,
   productId,
+  duplicateProductId,
 }: CreateProductModalProps) => {
   const dirtyRef = useRef(false);
-  const { product, error, isLoading } = useProduct(productId);
+  const sourceProductId = productId ?? duplicateProductId;
+  const { product, error, isLoading } = useProduct(sourceProductId);
   const isEditing = Boolean(productId);
+  const isDuplicating = Boolean(duplicateProductId);
+  const requiresProduct = isEditing || isDuplicating;
+  const title = isEditing
+    ? 'Editar producto'
+    : isDuplicating
+      ? 'Duplicar producto'
+      : 'Nuevo producto';
 
   const resetState = () => {
     dirtyRef.current = false;
@@ -46,7 +56,7 @@ export const CreateProductModal = ({
   return (
     <Modal.Window
       isOpen
-      ariaLabel={isEditing ? 'Editar producto' : 'Nuevo producto'}
+      ariaLabel={title}
       className={styles.modal}
       overlayClassName={styles.overlay}
       closeStrategy="manual"
@@ -57,18 +67,19 @@ export const CreateProductModal = ({
       size={{ width: '128rem', maxWidth: 'calc(100vw - 4.8rem)' }}
     >
       <Modal.Header className={styles.header}>
-        <h2>{isEditing ? 'Editar producto' : 'Nuevo producto'}</h2>
+        <h2>{title}</h2>
         <Modal.CloseButton onClick={handleClose} />
       </Modal.Header>
 
       <Modal.Body className={styles.body}>
-        {isEditing && isLoading ? (
+        {requiresProduct && isLoading ? (
           <p>Cargando producto...</p>
-        ) : isEditing && (error || !product) ? (
+        ) : requiresProduct && (error || !product) ? (
           <p role="alert">No pudimos cargar el producto.</p>
         ) : (
           <ProductForm
             initialProduct={product}
+            mode={isEditing ? 'edit' : isDuplicating ? 'duplicate' : 'create'}
             onCancel={handleClose}
             onDirtyChange={(dirty) => {
               dirtyRef.current = dirty;

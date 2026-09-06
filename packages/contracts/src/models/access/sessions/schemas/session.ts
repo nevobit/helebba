@@ -15,7 +15,7 @@ export interface Session extends BaseEntity<SessionId> {
   status: 'active' | 'revoked';
   device?: SessionDevice;
   expiresAt: ISODateTimeString;
-  revokedAt?: ISODateTimeString | null;
+  revokedAt?: Date | ISODateTimeString | null;
   createdBy: UserId;
   updatedBy: UserId;
   deletedBy?: UserId;

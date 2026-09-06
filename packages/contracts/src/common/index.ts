@@ -9,3 +9,4 @@ export * from './brand';
 export * from './datetime';
 export * from './mongoose';
 export * from './status';
+export type { PaginationMeta, PaginationParams, Params, QueryParams } from './pagination';

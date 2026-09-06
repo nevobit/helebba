@@ -19,7 +19,7 @@ const money = (value: number | undefined) => `${moneyFormatter.format(Number(val
 const ProductDetails = () => {
   const { productId } = useParams();
   const { error, isLoading, product, refetch } = useProduct(productId);
-  const { openEditProductModal } = useCreateProductModal();
+  const { openDuplicateProductModal, openEditProductModal } = useCreateProductModal();
   const { deleteProduct, isDeletingProduct } = useDeleteProduct();
   const { openModal, closeModal, requestCloseModal } = useModal();
   const { updateProduct, isUpdatingProduct } = useUpdateProduct(productId);
@@ -143,6 +143,18 @@ const ProductDetails = () => {
                   }
                 >
                   Editar
+                </Menus.Item>
+                <Menus.Item
+                  id="duplicate-product"
+                  disabled={!productId}
+                  onClick={() =>
+                    productId &&
+                    openDuplicateProductModal(productId, {
+                      onSuccess: () => navigate(PrivateRoutes.PRODUCTS),
+                    })
+                  }
+                >
+                  Duplicar
                 </Menus.Item>
                 <Menus.Item id="delete-product" danger onClick={confirmDelete}>
                   Eliminar
@@ -366,7 +378,8 @@ const ProductDetails = () => {
                 {productPriceLists.map(({ priceList, price: tariffPrice }) => {
                   const tariffTax = (tariffPrice * taxRate) / 100;
                   const tariffTotal = tariffPrice + tariffTax;
-                  const tariffMargin = tariffPrice > 0 ? ((tariffPrice - cost) / tariffPrice) * 100 : 0;
+                  const tariffMargin =
+                    tariffPrice > 0 ? ((tariffPrice - cost) / tariffPrice) * 100 : 0;
                   return (
                     <tr key={String(priceList.id)}>
                       <td>

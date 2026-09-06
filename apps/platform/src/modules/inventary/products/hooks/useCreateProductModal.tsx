@@ -27,5 +27,17 @@ export const useCreateProductModal = () => {
     );
   };
 
-  return { openCreateProductModal, openEditProductModal };
+  const openDuplicateProductModal = (productId: string, options?: { onSuccess?: () => void }) => {
+    openModal(
+      <CreateProductModal
+        duplicateProductId={productId}
+        closeModal={closeModal}
+        requestCloseModal={requestCloseModal}
+        onSuccess={options?.onSuccess}
+      />,
+      { id: `duplicate-product-${productId}` },
+    );
+  };
+
+  return { openCreateProductModal, openDuplicateProductModal, openEditProductModal };
 };
