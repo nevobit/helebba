@@ -3,7 +3,7 @@ import { makeFastifyRoute, RouteMethod } from '@hlb/constant-definitions';
 import { type MembershipId, type OrganizationId, type UserId } from '@hlb/contracts';
 import { verifyJwt } from '@hlb/security';
 import { problem } from '../../access/auth/responses';
-import { authorizeRolePermission } from '../../roles/authorize';
+import { authorizeRolePermission } from '../../access/roles/authorize';
 
 export const resendMyOrganizationInvitationRoute = makeFastifyRoute(
   RouteMethod.POST,
