@@ -10,20 +10,26 @@ import {
   List,
   LockKeyhole,
   Pencil,
+  Phone,
   Plus,
   Search,
   Settings,
   SquareKanban,
+  StickyNote,
   Trash2,
   Upload,
+  UserRoundCheck,
 } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { CrmOpportunity } from '@hlb/contracts';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { FunnelEditModal } from '../../components/FunnelEditModal';
 import { FunnelMembersModal } from '../../components/FunnelMembersModal';
+import { ActivityModal } from '../../components/ActivityModal';
+import { NoteModal } from '../../components/NoteModal';
 import { OpportunityDrawer } from '../../components/OpportunityDrawer';
 import { OpportunityModal } from '../../components/OpportunityModal';
+import { ReassignOpportunityModal } from '../../components/ReassignOpportunityModal';
 import { useCrmFunnel, useCrmFunnels, useCrmMutations, useCrmOpportunities } from '../../hooks';
 import { avatarColorFor, initialsFor } from '../../utils';
 import { useOrganizationUsers } from '@/modules/settings/users/hooks';
@@ -151,6 +157,40 @@ const FunnelBoard = () => {
     openModal(
       <OpportunityModal funnel={funnel} initialStageId={stageId} closeModal={closeModal} />,
       { id: 'new-crm-opportunity' },
+    );
+
+  const editOpportunity = (opportunity: CrmOpportunity) =>
+    openModal(
+      <OpportunityModal
+        funnel={funnel}
+        initialStageId={String(opportunity.stageId)}
+        opportunity={opportunity}
+        closeModal={closeModal}
+      />,
+      { id: `edit-crm-opportunity-${opportunity.id}` },
+    );
+
+  const reassignOpportunity = (opportunity: CrmOpportunity) =>
+    openModal(
+      <ReassignOpportunityModal opportunity={opportunity} closeModal={closeModal} />,
+      { id: `reassign-crm-opportunity-${opportunity.id}` },
+    );
+
+  const addNote = (opportunity: CrmOpportunity) =>
+    openModal(
+      <NoteModal dealId={String(opportunity.id)} closeModal={closeModal} />,
+      { id: `add-crm-note-${opportunity.id}` },
+    );
+
+  const addCall = (opportunity: CrmOpportunity) =>
+    openModal(
+      <ActivityModal
+        dealId={String(opportunity.id)}
+        initialType="call"
+        initialTitle={`Llamada - ${opportunity.name}`}
+        closeModal={closeModal}
+      />,
+      { id: `add-crm-call-${opportunity.id}` },
     );
 
   const totalValue = filtered.reduce((sum, item) => sum + item.value, 0);
@@ -531,24 +571,74 @@ const FunnelBoard = () => {
                           }}
                           onPointerUp={(event) => openOpportunity(card, event)}
                         >
-                          <div className={styles.cardInfo}>
-                            <strong>{card.name}</strong>
-                            <span>{card.companyName || card.contactName || 'Sin contacto'}</span>
-                            <div className={styles.cardFooter}>
-                              {stagnantDays != null && (
-                                <span
-                                  className={styles.cardStagnant}
-                                  title={`Estancada ${stagnantDays} días (límite: ${limit})`}
-                                >
-                                  {stagnantDays}d
-                                </span>
-                              )}
-                              <b>{money(card.value, card.currency)}</b>
+                          <div className={styles.cardMain}>
+                            <div className={styles.cardInfo}>
+                              <strong>{card.name}</strong>
+                              <span>{card.companyName || card.contactName || 'Sin contacto'}</span>
+                              <div className={styles.cardFooter}>
+                                {stagnantDays != null && (
+                                  <span
+                                    className={styles.cardStagnant}
+                                    title={`Estancada ${stagnantDays} días (límite: ${limit})`}
+                                  >
+                                    {stagnantDays}d
+                                  </span>
+                                )}
+                                <b>{money(card.value, card.currency)}</b>
+                              </div>
                             </div>
+                            <span className={styles.cardAvatar}>
+                              {initials(card.assignedToName || card.contactName)}
+                            </span>
                           </div>
-                          <span className={styles.cardAvatar}>
-                            {initials(card.assignedToName || card.contactName)}
-                          </span>
+                          <div
+                            className={styles.cardActions}
+                            draggable={false}
+                            onPointerDown={(event) => {
+                              event.stopPropagation();
+                              pressRef.current = null;
+                            }}
+                            onPointerUp={(event) => event.stopPropagation()}
+                            onClick={(event) => event.stopPropagation()}
+                            onDragStart={(event) => event.preventDefault()}
+                          >
+                            <button
+                              type="button"
+                              aria-label={`Reasignar ${card.name}`}
+                              title="Reasignar"
+                              onClick={() => reassignOpportunity(card)}
+                            >
+                              <UserRoundCheck size={14} />
+                              <span>Reasignar</span>
+                            </button>
+                            <button
+                              type="button"
+                              aria-label={`Editar ${card.name}`}
+                              title="Editar"
+                              onClick={() => editOpportunity(card)}
+                            >
+                              <Pencil size={14} />
+                              <span>Editar</span>
+                            </button>
+                            <button
+                              type="button"
+                              aria-label={`Agregar nota a ${card.name}`}
+                              title="Agregar nota"
+                              onClick={() => addNote(card)}
+                            >
+                              <StickyNote size={14} />
+                              <span>Nota</span>
+                            </button>
+                            <button
+                              type="button"
+                              aria-label={`Registrar llamada para ${card.name}`}
+                              title="Llamar"
+                              onClick={() => addCall(card)}
+                            >
+                              <Phone size={14} />
+                              <span>Llamar</span>
+                            </button>
+                          </div>
                         </div>
                       );
                     })}

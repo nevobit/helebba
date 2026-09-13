@@ -24,7 +24,12 @@ import { useCrmPreferences } from '@/modules/settings/crm/hooks';
 import { useCrmActivityOpportunities, useCrmMutations } from '../../hooks';
 import styles from './ActivityModal.module.css';
 
-type Props = { dealId?: string; closeModal: () => void };
+type Props = {
+  dealId?: string;
+  initialType?: CrmOpportunityActivityType;
+  initialTitle?: string;
+  closeModal: () => void;
+};
 const activityIcons = {
   phone: Phone,
   calendar: CalendarDays,
@@ -37,7 +42,12 @@ const inputDate = (date: Date) =>
   `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 const inputTime = (date: Date) => `${pad(date.getHours())}:${pad(date.getMinutes())}`;
 
-export const ActivityModal = ({ dealId, closeModal }: Props) => {
+export const ActivityModal = ({
+  dealId,
+  initialType = 'call',
+  initialTitle = '',
+  closeModal,
+}: Props) => {
   const now = useMemo(() => {
     const date = new Date();
     date.setMinutes(Math.ceil(date.getMinutes() / 15) * 15, 0, 0);
@@ -49,8 +59,8 @@ export const ActivityModal = ({ dealId, closeModal }: Props) => {
   const types = preferences?.activityTypes ?? [];
   const { data: opportunities = [] } = useCrmActivityOpportunities();
   const { addOpportunityActivity, isAddingOpportunityActivity } = useCrmMutations();
-  const [title, setTitle] = useState('');
-  const [type, setType] = useState<CrmOpportunityActivityType>('call');
+  const [title, setTitle] = useState(initialTitle);
+  const [type, setType] = useState<CrmOpportunityActivityType>(initialType);
   const [date, setDate] = useState(inputDate(now));
   const [startTime, setStartTime] = useState(inputTime(now));
   const [endTime, setEndTime] = useState(inputTime(end));
@@ -62,7 +72,11 @@ export const ActivityModal = ({ dealId, closeModal }: Props) => {
   const [showNotes, setShowNotes] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [error, setError] = useState('');
-  const activeType = types.some((item) => item.id === type) ? type : (types[0]?.id ?? type);
+  const activeType = types.some((item) => item.id === type)
+    ? type
+    : initialType === 'call'
+      ? (types.find((item) => item.icon === 'phone')?.id ?? types[0]?.id ?? type)
+      : (types[0]?.id ?? type);
   const selectedUser = users.find((user) => String(user.userId) === assignedTo);
   const assigneeInitials = (selectedUser?.name || 'Sin asignar')
     .split(' ')
