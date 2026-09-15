@@ -23,6 +23,32 @@ export const listTaxes = async (params: Params<{ active?: boolean; kind?: string
   return { kind: 'offset', count: total, items, pageInfo: { page, pages, pageSize: limit, totalItems: total, hasPreviousPage: page > 1, hasNextPage: page < pages, previousPage: page > 1 ? page - 1 : null, nextPage: page < pages ? page + 1 : null } };
 };
 
+export const getSortedTaxKeys = async ({
+  organizationId,
+  countryCode,
+  section,
+}: {
+  organizationId: OrganizationId;
+  countryCode?: string;
+  section?: string;
+}) => {
+  const filter = {
+    ...scope(organizationId),
+    active: true,
+    ...(countryCode ? { countryCode: countryCode.toUpperCase() } : {}),
+    ...(section ? { kind: section } : {}),
+  };
+  const taxes = await model().find(filter).sort({ countryCode: 1, kind: 1, code: 1 });
+  return taxes.map((tax) => ({
+    key: tax.code,
+    code: tax.code,
+    name: tax.name,
+    rate: tax.rate,
+    section: tax.kind,
+    countryCode: tax.countryCode,
+  }));
+};
+
 export const getTax = async (id: TaxId, organizationId: OrganizationId) => {
   const tax = await model().findOne({ _id: id, ...scope(organizationId) });
   if (!tax) throw new Error('El impuesto no existe.');

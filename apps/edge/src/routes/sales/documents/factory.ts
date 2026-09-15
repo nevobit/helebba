@@ -1,12 +1,19 @@
 import {
   attachDocumentFile,
+  bulkCancelDocuments,
+  bulkDeleteDocuments,
+  bulkSetDocumentApprovalStatus,
+  cancelDocument,
   convertDocument,
   createDocument,
   deleteDocumentAttachment,
   downloadDocumentPdf,
+  findDocumentByNumber,
+  fulfillDocumentLines,
   getAllDocuments,
   getDocumentAttachment,
   getDocumentById,
+  getDocumentFulfilledItems,
   listDocumentAttachments,
   sendDocumentEmail,
   registerDocumentPayment,
@@ -14,6 +21,7 @@ import {
   setDocumentPipeline,
   softDeleteDocument,
   updateDocument,
+  updateDocumentTracking,
 } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod, withPrefix } from '@hlb/constant-definitions';
 import {
@@ -21,6 +29,7 @@ import {
   DocumentType,
   type Document as SalesDocument,
   type DocumentId,
+  type DocumentTracking,
   type OrganizationId,
   type Payment,
   type UserId,
@@ -63,6 +72,12 @@ type DocumentAttachmentBody = {
 type DocumentPipelineBody = {
   pipelineId: string;
   pipelineStageId?: string;
+};
+
+type BulkDocumentsBody = { documentIds?: DocumentId[]; ids?: DocumentId[] };
+type FulfillLinesBody = {
+  lines?: Array<{ lineIndex?: number; line?: number; units?: number }>;
+  warehouseId?: string;
 };
 
 const DEFAULT_CONVERSION_TARGETS: Partial<Record<DocumentType, DocumentType>> = {
@@ -119,6 +134,73 @@ export const createDocumentRoutes = (prefix: string, docType: DocumentType): Rou
         );
 
         reply.status(201).send(document);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.POST,
+      '/bulk/cancel',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const body = (req.body ?? {}) as BulkDocumentsBody;
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const result = await bulkCancelDocuments({
+          documentIds: body.documentIds ?? body.ids ?? [],
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          userId,
+        });
+        reply.status(200).send(result);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.POST,
+      '/bulk/approve',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const body = (req.body ?? {}) as BulkDocumentsBody;
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const result = await bulkSetDocumentApprovalStatus({
+          documentIds: body.documentIds ?? body.ids ?? [],
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          status: DocumentApprovalStatus.APPROVED,
+          userId,
+        });
+        reply.status(200).send(result);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.DELETE,
+      '/bulk',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const body = (req.body ?? {}) as BulkDocumentsBody;
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const result = await bulkDeleteDocuments({
+          documentIds: body.documentIds ?? body.ids ?? [],
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          userId,
+        });
+        reply.status(200).send(result);
+      },
+    ),
+    makeFastifyRoute(
+      RouteMethod.GET,
+      '/number/:docNumber',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { docNumber } = req.params as { docNumber: string };
+        const document = await findDocumentByNumber({
+          docNumber,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+        });
+        reply.status(200).send(document);
       },
     ),
     makeFastifyRoute(
@@ -292,6 +374,148 @@ export const createDocumentRoutes = (prefix: string, docType: DocumentType): Rou
         reply.status(document ? 200 : 404).send(document ?? { message: 'Document not found' });
       },
     ),
+    makeFastifyRoute(
+      RouteMethod.POST,
+      '/:documentId/cancel',
+      verifyJwt,
+      { organization: 'required', auth: 'required' },
+      async (req, reply) => {
+        const { documentId } = req.params as { documentId: DocumentId };
+        const { userId } = req.auth as unknown as { userId: UserId };
+        const document = await cancelDocument({
+          documentId,
+          docType,
+          organizationId: req.organization?.organizationId as OrganizationId,
+          userId,
+        });
+        reply.status(200).send(document);
+      },
+    ),
+    ...([DocumentType.SALES_ORDER, DocumentType.PURCHASE_ORDER].includes(docType)
+      ? [
+          makeFastifyRoute(
+            RouteMethod.POST,
+            '/:documentId/shipall',
+            verifyJwt,
+            { organization: 'required', auth: 'required' },
+            async (req, reply) => {
+              const { documentId } = req.params as { documentId: DocumentId };
+              const { userId } = req.auth as unknown as { userId: UserId };
+              const body = (req.body ?? {}) as FulfillLinesBody;
+              const document = await fulfillDocumentLines({
+                documentId,
+                docType,
+                organizationId: req.organization?.organizationId as OrganizationId,
+                warehouseId: body.warehouseId,
+                userId,
+              });
+              reply.status(200).send(document);
+            },
+          ),
+          makeFastifyRoute(
+            RouteMethod.POST,
+            '/:documentId/shipbylines',
+            verifyJwt,
+            { organization: 'required', auth: 'required' },
+            async (req, reply) => {
+              const { documentId } = req.params as { documentId: DocumentId };
+              const { userId } = req.auth as unknown as { userId: UserId };
+              const body = (req.body ?? {}) as FulfillLinesBody;
+              const document = await fulfillDocumentLines({
+                documentId,
+                docType,
+                organizationId: req.organization?.organizationId as OrganizationId,
+                lines: (body.lines ?? []).map((line) => ({
+                  lineIndex: line.lineIndex ?? line.line ?? -1,
+                  units: line.units,
+                })),
+                warehouseId: body.warehouseId,
+                userId,
+              });
+              reply.status(200).send(document);
+            },
+          ),
+          makeFastifyRoute(
+            RouteMethod.GET,
+            '/:documentId/shippeditems',
+            verifyJwt,
+            { organization: 'required', auth: 'required' },
+            async (req, reply) => {
+              const { documentId } = req.params as { documentId: DocumentId };
+              const items = await getDocumentFulfilledItems({
+                documentId,
+                docType,
+                organizationId: req.organization?.organizationId as OrganizationId,
+              });
+              reply.status(200).send(items);
+            },
+          ),
+        ]
+      : []),
+    ...([DocumentType.SALES_ORDER, DocumentType.WAYBILL].includes(docType)
+      ? [
+          makeFastifyRoute(
+            RouteMethod.POST,
+            '/:documentId/updatetracking',
+            verifyJwt,
+            { organization: 'required', auth: 'required' },
+            async (req, reply) => {
+              const { documentId } = req.params as { documentId: DocumentId };
+              const { userId } = req.auth as unknown as { userId: UserId };
+              const document = await updateDocumentTracking({
+                documentId,
+                docType,
+                organizationId: req.organization?.organizationId as OrganizationId,
+                tracking: (req.body ?? {}) as DocumentTracking,
+                userId,
+              });
+              reply.status(200).send(document);
+            },
+          ),
+        ]
+      : []),
+    ...(docType === DocumentType.PURCHASE_ORDER
+      ? [
+          makeFastifyRoute(
+            RouteMethod.POST,
+            '/:documentId/receiveunits',
+            verifyJwt,
+            { organization: 'required', auth: 'required' },
+            async (req, reply) => {
+              const { documentId } = req.params as { documentId: DocumentId };
+              const { userId } = req.auth as unknown as { userId: UserId };
+              const body = (req.body ?? {}) as FulfillLinesBody;
+              const document = await fulfillDocumentLines({
+                documentId,
+                docType,
+                organizationId: req.organization?.organizationId as OrganizationId,
+                lines: body.lines?.map((line) => ({
+                  lineIndex: line.lineIndex ?? line.line ?? -1,
+                  units: line.units,
+                })),
+                warehouseId: body.warehouseId,
+                userId,
+              });
+              reply.status(200).send(document);
+            },
+          ),
+          makeFastifyRoute(
+            RouteMethod.GET,
+            '/:documentId/receiveditems',
+            verifyJwt,
+            { organization: 'required', auth: 'required' },
+            async (req, reply) => {
+              const { documentId } = req.params as { documentId: DocumentId };
+              const items = await getDocumentFulfilledItems({
+                documentId,
+                docType,
+                organizationId: req.organization?.organizationId as OrganizationId,
+              });
+              reply.status(200).send(items);
+            },
+          ),
+        ]
+      : []),
     makeFastifyRoute(
       RouteMethod.POST,
       '/:documentId/accept',

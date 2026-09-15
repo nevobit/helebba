@@ -7,3 +7,4 @@ export * from './get-by-id';
 export * from './attachments';
 export * from './contact-groups';
 export * from './contact-tags';
+export * from './bulk';

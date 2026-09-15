@@ -17,6 +17,8 @@ export const ApiKeySchemaMongo = new Schema<ExternalApiKey>(
     expiresAt: { type: Date },
     revokedAt: { type: Date },
     revokedBy: { type: String, ref: 'users' },
+    usageCount: { type: Number, min: 0, default: 0 },
+    usageByType: { type: Schema.Types.Mixed, default: {} },
     createdBy: { type: String, required: true, ref: 'users' },
     updatedBy: { type: String, required: true, ref: 'users' },
     deletedBy: { type: String, ref: 'users' },

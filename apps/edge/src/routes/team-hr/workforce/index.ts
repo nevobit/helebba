@@ -1,14 +1,26 @@
 import type { RouteOptions } from 'fastify';
 import {
+  approvePayrollRecord,
   approveTimeClockEntry,
+  bulkCreatePayrollRecords,
   clockInEmployee,
   clockOutEmployee,
+  createPayrollPayment,
+  createPayrollPdf,
+  createSalaryPdf,
   createTimeClockEntry,
   createEmploymentContract,
   createLeaveRequest,
   createPayrollRecord,
+  deleteEmployeeSalary,
+  deletePayrollPayment,
+  deletePayrollRecord,
   deleteTimeClockEntry,
+  getActiveEmploymentContract,
+  getEmployeeSalary,
+  getEmployeeSalaryFormData,
   getEmploymentContract,
+  getPayrollRecord,
   getTimeClockEntry,
   listEmploymentContracts,
   listLeaveRequests,
@@ -18,6 +30,8 @@ import {
   resumeTimeClockEntry,
   resolveLeaveRequest,
   updateEmploymentContract,
+  updateActiveEmploymentContract,
+  updateEmployeeSalary,
   updatePayrollStatus,
   updateTimeClockEntry,
 } from '@hlb/business-logic';
@@ -48,6 +62,36 @@ const routes: RouteOptions[] = [
   makeFastifyRoute(RouteMethod.POST, '/contracts', verifyJwt, secured, async (req, reply) => {
     const { organizationId, userId } = context(req);
     reply.status(201).send(await createEmploymentContract({ ...(req.body as Partial<EmploymentContract>), organizationId, createdBy: userId, updatedBy: userId }));
+  }),
+  makeFastifyRoute(RouteMethod.GET, '/employees/:employeeId/contracts/active', verifyJwt, secured, async (req, reply) => {
+    reply.send(await getActiveEmploymentContract((req.params as any).employeeId as EmployeeId, context(req).organizationId));
+  }),
+  makeFastifyRoute(RouteMethod.PUT, '/employees/:employeeId/contracts/active', verifyJwt, secured, async (req, reply) => {
+    const { organizationId, userId } = context(req);
+    reply.send(await updateActiveEmploymentContract((req.params as any).employeeId as EmployeeId, organizationId, {
+      ...(req.body as Partial<EmploymentContract>),
+      updatedBy: userId,
+    }));
+  }),
+  makeFastifyRoute(RouteMethod.GET, '/employees/:employeeId/salary/form-data', verifyJwt, secured, async (req, reply) => {
+    reply.send(await getEmployeeSalaryFormData((req.params as any).employeeId as EmployeeId, context(req).organizationId));
+  }),
+  makeFastifyRoute(RouteMethod.GET, '/employees/:employeeId/salary/pdf', verifyJwt, secured, async (req, reply) => {
+    const contract = await getActiveEmploymentContract((req.params as any).employeeId as EmployeeId, context(req).organizationId);
+    reply.header('Content-Type', 'application/pdf');
+    reply.header('Content-Disposition', `attachment; filename="salario-${contract.employeeId}.pdf"`);
+    reply.send(createSalaryPdf(contract));
+  }),
+  makeFastifyRoute(RouteMethod.GET, '/employees/:employeeId/salary', verifyJwt, secured, async (req, reply) => {
+    reply.send(await getEmployeeSalary((req.params as any).employeeId as EmployeeId, context(req).organizationId));
+  }),
+  makeFastifyRoute(RouteMethod.PUT, '/employees/:employeeId/salary', verifyJwt, secured, async (req, reply) => {
+    const { organizationId, userId } = context(req);
+    reply.send(await updateEmployeeSalary((req.params as any).employeeId as EmployeeId, organizationId, userId, req.body as any));
+  }),
+  makeFastifyRoute(RouteMethod.DELETE, '/employees/:employeeId/salary', verifyJwt, secured, async (req, reply) => {
+    const { organizationId, userId } = context(req);
+    reply.send(await deleteEmployeeSalary((req.params as any).employeeId as EmployeeId, organizationId, userId));
   }),
   makeFastifyRoute(RouteMethod.GET, '/contracts/:contractId', verifyJwt, secured, async (req, reply) => {
     const { organizationId } = context(req);
@@ -130,6 +174,45 @@ const routes: RouteOptions[] = [
   makeFastifyRoute(RouteMethod.PATCH, '/payroll/:recordId/status', verifyJwt, secured, async (req, reply) => {
     const { organizationId, userId } = context(req);
     reply.send(await updatePayrollStatus((req.params as any).recordId as PayrollRecordId, organizationId, userId, (req.body as any).status));
+  }),
+  makeFastifyRoute(RouteMethod.GET, '/payslips', verifyJwt, secured, async (req, reply) => {
+    reply.send(await listPayrollRecords({ ...(req.query as any), organizationId: context(req).organizationId }));
+  }),
+  makeFastifyRoute(RouteMethod.POST, '/payslips/bulk', verifyJwt, secured, async (req, reply) => {
+    const { organizationId, userId } = context(req);
+    const body = req.body as any;
+    const records = (body?.records ?? body?.items ?? []).map((record: Partial<PayrollRecord>) => ({
+      ...record,
+      organizationId,
+      createdBy: userId,
+      updatedBy: userId,
+    }));
+    reply.status(201).send(await bulkCreatePayrollRecords(records));
+  }),
+  makeFastifyRoute(RouteMethod.POST, '/payslips/:recordId/approve', verifyJwt, secured, async (req, reply) => {
+    const { organizationId, userId } = context(req);
+    reply.send(await approvePayrollRecord((req.params as any).recordId as PayrollRecordId, organizationId, userId));
+  }),
+  makeFastifyRoute(RouteMethod.POST, '/payslips/:recordId/payment', verifyJwt, secured, async (req, reply) => {
+    const { organizationId, userId } = context(req);
+    reply.status(201).send(await createPayrollPayment((req.params as any).recordId as PayrollRecordId, organizationId, userId, req.body as any));
+  }),
+  makeFastifyRoute(RouteMethod.DELETE, '/payslips/:recordId/payment', verifyJwt, secured, async (req, reply) => {
+    const { organizationId, userId } = context(req);
+    reply.send(await deletePayrollPayment((req.params as any).recordId as PayrollRecordId, organizationId, userId));
+  }),
+  makeFastifyRoute(RouteMethod.GET, '/payslips/:recordId/pdf', verifyJwt, secured, async (req, reply) => {
+    const record = await getPayrollRecord((req.params as any).recordId as PayrollRecordId, context(req).organizationId);
+    reply.header('Content-Type', 'application/pdf');
+    reply.header('Content-Disposition', `attachment; filename="nomina-${record.id}.pdf"`);
+    reply.send(createPayrollPdf(record));
+  }),
+  makeFastifyRoute(RouteMethod.GET, '/payslips/:recordId', verifyJwt, secured, async (req, reply) => {
+    reply.send(await getPayrollRecord((req.params as any).recordId as PayrollRecordId, context(req).organizationId));
+  }),
+  makeFastifyRoute(RouteMethod.DELETE, '/payslips/:recordId', verifyJwt, secured, async (req, reply) => {
+    const { organizationId, userId } = context(req);
+    reply.send(await deletePayrollRecord((req.params as any).recordId as PayrollRecordId, organizationId, userId));
   }),
   makeFastifyRoute(RouteMethod.GET, '/leave-requests', verifyJwt, secured, async (req, reply) => {
     const { organizationId } = context(req);

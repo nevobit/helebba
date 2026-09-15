@@ -21,4 +21,6 @@ export interface ExternalApiKey extends PersistedSoftDeletableEntity<ApiKeyId, U
   expiresAt?: Date | ISODateTimeString | null;
   revokedAt?: Date | ISODateTimeString | null;
   revokedBy?: UserId | null;
+  usageCount?: number;
+  usageByType?: Record<string, number>;
 }

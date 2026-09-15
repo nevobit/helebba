@@ -1,6 +1,30 @@
 import { api } from '@/shared/api';
 import type { MembershipId, Organization, OrganizationId, RoleId } from '@hlb/contracts';
 
+export type UpdateOrganizationInput = Partial<
+  Pick<
+    Organization,
+    | 'legalName'
+    | 'taxId'
+    | 'email'
+    | 'phone'
+    | 'website'
+    | 'billingAddress'
+    | 'billingCity'
+    | 'billingPostalCode'
+    | 'billingProvince'
+    | 'billingCountry'
+    | 'country'
+    | 'currency'
+    | 'numericFormat'
+    | 'decimals'
+    | 'timezone'
+    | 'language'
+    | 'dateFormat'
+    | 'brandColor'
+  >
+>;
+
 export type AccountListItem = {
   id: OrganizationId;
   name: string;
@@ -32,5 +56,10 @@ export const loginOrganization = async (organizationId: OrganizationId) => {
   const { data } = await api.post<LoginOrganizationResponse>('/auth/session/organization', {
     organizationId,
   });
+  return data;
+};
+
+export const updateOrganization = async (details: UpdateOrganizationInput) => {
+  const { data } = await api.patch<{ organization: Organization }>('/me/organizations', details);
   return data;
 };

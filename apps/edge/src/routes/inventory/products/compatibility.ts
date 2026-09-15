@@ -35,6 +35,12 @@ export const productCompatibilityRoutes = [
     await updateProduct(productId, organizationId, { images, updatedBy: userId });
     reply.status(201).send(imageList(images).find((image) => image.url === nextUrl));
   }),
+  makeFastifyRoute(RouteMethod.GET, '/:productId/images/main', verifyJwt, policies, async (req, reply) => {
+    const product = await getProduct(req);
+    const image = imageList(product.images)[0];
+    if (!image) return reply.status(404).send({ message: 'El producto no tiene imagen principal.' });
+    reply.send(image);
+  }),
   makeFastifyRoute(RouteMethod.GET, '/:productId/images/:imageId', verifyJwt, policies, async (req, reply) => {
     const product = await getProduct(req);
     const image = imageList(product.images).find(({ id }) => id === (req.params as any).imageId);

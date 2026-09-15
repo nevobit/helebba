@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { RouteOptions } from 'fastify';
 import { makeFastifyRoute, RouteMethod, withPrefix } from '@hlb/constant-definitions';
 import { issueJwt } from '@hlb/security';
+import { recordExternalApiKeyUsage } from '@hlb/business-logic';
 import { validateSdkApiKey } from './auth';
 
 const ACCESS_TOKEN_EXPIRES_IN_SECONDS = 15 * 60;
@@ -14,6 +15,8 @@ const createTokenRoute = makeFastifyRoute(
   async (req, reply) => {
     const sdk = await validateSdkApiKey(req, reply);
     if (!sdk) return;
+
+    await recordExternalApiKeyUsage(sdk.apiKeyId, sdk.organizationId, 'token');
 
     const subject = `api-key:${sdk.apiKeyId}`;
     const accessToken = await issueJwt({

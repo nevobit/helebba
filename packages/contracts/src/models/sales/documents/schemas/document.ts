@@ -52,6 +52,25 @@ export interface ProductDocument {
   unitType: string;
 }
 
+export interface DocumentTracking {
+  key?: string;
+  name?: string;
+  num?: string;
+  pickUpDate?: ISODateTimeString;
+  deliveryDate?: ISODateTimeString;
+  notes?: string;
+}
+
+export interface DocumentFulfilledLine {
+  lineIndex: number;
+  productId?: ProductId;
+  variantId?: string;
+  sku?: string;
+  units: number;
+  fulfilledAt: ISODateTimeString;
+  warehouseId?: string;
+}
+
 export const DocumentType = {
   INVOICE: 'invoice',
   SALES_RECEIPT: 'sales-receipt',
@@ -110,6 +129,8 @@ export interface Document extends PersistedSoftDeletableEntity<DocumentId, UserI
   attachments: DocumentAttachment[];
   pipelineId?: string;
   pipelineStageId?: string;
+  tracking?: DocumentTracking;
+  fulfilledLines?: DocumentFulfilledLine[];
 }
 
 export interface DocumentCustomField {

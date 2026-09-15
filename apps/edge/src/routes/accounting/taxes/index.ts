@@ -1,5 +1,5 @@
 import type { RouteOptions } from 'fastify';
-import { createTax, deleteTax, getTax, listTaxes, updateTax } from '@hlb/business-logic';
+import { createTax, deleteTax, getSortedTaxKeys, getTax, listTaxes, updateTax } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod, withPrefix } from '@hlb/constant-definitions';
 import type { OrganizationId, Tax, TaxId, UserId } from '@hlb/contracts';
 import { verifyJwt } from '@hlb/security';
@@ -13,6 +13,10 @@ const routes: RouteOptions[] = [
   makeFastifyRoute(RouteMethod.POST, '/', verifyJwt, { organization: 'required', auth: 'required' }, async (req, reply) => {
     const { organizationId, userId } = context(req);
     reply.status(201).send(await createTax({ ...(req.body as Partial<Tax>), organizationId, createdBy: userId, updatedBy: userId }));
+  }),
+  makeFastifyRoute(RouteMethod.GET, '/keys', verifyJwt, { organization: 'required', auth: 'required' }, async (req, reply) => {
+    const { countryCode, section } = req.query as { countryCode?: string; section?: string };
+    reply.send(await getSortedTaxKeys({ organizationId: context(req).organizationId, countryCode, section }));
   }),
   makeFastifyRoute(RouteMethod.GET, '/:taxId', verifyJwt, { organization: 'required', auth: 'required' }, async (req, reply) => {
     reply.send(await getTax((req.params as any).taxId as TaxId, context(req).organizationId));

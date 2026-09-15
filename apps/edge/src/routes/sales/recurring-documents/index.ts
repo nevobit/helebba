@@ -4,7 +4,9 @@ import {
   deleteRecurringDocument,
   generateDueRecurringDocuments,
   getRecurringDocument,
+  getRecurringDocumentSchedule,
   listRecurringDocuments,
+  skipRecurringDocumentOccurrence,
   updateRecurringDocument,
 } from '@hlb/business-logic';
 import { makeFastifyRoute, RouteMethod, withPrefix } from '@hlb/constant-definitions';
@@ -33,6 +35,13 @@ const routes: RouteOptions[] = [
     const { organizationId, userId } = context(req);
     const limit = Number((req.body as any)?.limit ?? 100);
     reply.status(201).send(await generateDueRecurringDocuments({ organizationId, userId, limit }));
+  }),
+  makeFastifyRoute(RouteMethod.GET, '/:recurringId/schedule', verifyJwt, { organization: 'required', auth: 'required' }, async (req, reply) => {
+    reply.send(await getRecurringDocumentSchedule((req.params as any).recurringId as RecurringDocumentId, context(req).organizationId));
+  }),
+  makeFastifyRoute(RouteMethod.POST, '/:recurringId/skip', verifyJwt, { organization: 'required', auth: 'required' }, async (req, reply) => {
+    const { organizationId, userId } = context(req);
+    reply.send(await skipRecurringDocumentOccurrence((req.params as any).recurringId as RecurringDocumentId, organizationId, userId));
   }),
   makeFastifyRoute(RouteMethod.GET, '/:recurringId', verifyJwt, { organization: 'required', auth: 'required' }, async (req, reply) => {
     reply.send(await getRecurringDocument((req.params as any).recurringId as RecurringDocumentId, context(req).organizationId));

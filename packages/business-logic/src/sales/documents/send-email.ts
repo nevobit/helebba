@@ -221,7 +221,7 @@ export const sendDocumentEmail = async ({
       organizationName,
     });
   const mailer = getMailer();
-  const pdf = createDocumentPdf(document, organizationName);
+  const pdf = createDocumentPdf(document, organization ?? organizationName);
   const response = await mailer.send({
     to: recipients,
     ...(ccRecipients.length > 0 ? { cc: ccRecipients } : {}),

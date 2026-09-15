@@ -167,6 +167,43 @@ export const deleteRecurringDocument = async (
   return recurring;
 };
 
+export const getRecurringDocumentSchedule = async (
+  recurringId: RecurringDocumentId,
+  organizationId: OrganizationId,
+) => {
+  const recurring = await getRecurringDocument(recurringId, organizationId);
+  return {
+    recurringId: String(recurring.id ?? recurring._id),
+    frequency: recurring.frequency,
+    interval: recurring.interval,
+    startAt: recurring.startAt,
+    nextRunAt: recurring.nextRunAt,
+    endAt: recurring.endAt,
+    lastRunAt: recurring.lastRunAt,
+    active: recurring.active,
+    generatedCount: recurring.generatedCount,
+  };
+};
+
+export const skipRecurringDocumentOccurrence = async (
+  recurringId: RecurringDocumentId,
+  organizationId: OrganizationId,
+  userId: UserId,
+): Promise<RecurringDocument> => {
+  const recurring = await getRecurringDocument(recurringId, organizationId);
+  if (!recurring.active) throw new Error('El documento recurrente no está activo.');
+
+  recurring.nextRunAt = advanceDate(
+    recurring.nextRunAt,
+    recurring.frequency,
+    recurring.interval,
+  );
+  recurring.updatedBy = userId;
+  if (recurring.endAt && recurring.nextRunAt > recurring.endAt) recurring.active = false;
+  await recurring.save();
+  return recurring;
+};
+
 export const generateDueRecurringDocuments = async ({
   organizationId,
   userId,

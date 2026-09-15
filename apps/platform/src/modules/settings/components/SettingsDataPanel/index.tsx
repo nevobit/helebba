@@ -2,6 +2,7 @@ import { useState, type ChangeEvent, type FormEvent, type ReactNode } from 'reac
 import { Button, TextInput } from '@hlb/design-system';
 import { ChevronRight, ExternalLink, Info, LockKeyhole, Menu, Upload, X } from 'lucide-react';
 import { useSession } from '@/shared';
+import { updateOrganization } from '@/modules/accounts/services';
 import { SETTINGS_NAVIGATION_HASH } from '@/modules/settings/hooks';
 import styles from './SettingsDataPanel.module.css';
 
@@ -46,6 +47,12 @@ const SelectField = ({ children, label, name, onChange, value }: SelectFieldProp
   </label>
 );
 
+const decimalOption = (value?: number) => {
+  if (value === 0) return '0 (1500)';
+  if (value === 4) return '4 (1500.1532)';
+  return '2 (1500.15)';
+};
+
 export const SettingsDataPanel = ({ onClose }: SettingsDataPanelProps) => {
   const organization = useSession((state) => state.organization);
   const user = useSession((state) => state.user);
@@ -56,28 +63,59 @@ export const SettingsDataPanel = ({ onClose }: SettingsDataPanelProps) => {
     email: organization?.email ?? user?.email ?? '',
     phone: organization?.phone ?? '',
     website: organization?.website ?? '',
-    billingAddress: '',
-    billingCity: '',
-    billingPostalCode: '',
-    billingProvince: '',
-    billingCountry: organization?.country ?? 'Colombia',
+    billingAddress: organization?.billingAddress ?? '',
+    billingCity: organization?.billingCity ?? '',
+    billingPostalCode: organization?.billingPostalCode ?? '',
+    billingProvince: organization?.billingProvince ?? '',
+    billingCountry: organization?.billingCountry ?? organization?.country ?? 'Colombia',
     currency: organization?.currency ?? 'COP',
-    numericFormat: '1.593,50',
-    decimals: '2 (1500.15)',
+    numericFormat: organization?.numericFormat ?? '1.593,50',
+    decimals: decimalOption(organization?.decimals),
     timezone: organization?.timezone ?? 'America/Bogota',
-    language: 'Español',
-    dateFormat: 'dd/mm/yyyy',
-    brandColor: '#4181f2',
+    language: organization?.language ?? 'Español',
+    dateFormat: organization?.dateFormat ?? 'dd/mm/yyyy',
+    brandColor: organization?.brandColor ?? '#4181f2',
   }));
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const updateField = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
     setFormState((current) => ({ ...current, [name]: value }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onClose();
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      const { organization: updatedOrganization } = await updateOrganization({
+        legalName: formState.legalName,
+        taxId: formState.taxId,
+        email: formState.email,
+        phone: formState.phone,
+        website: formState.website,
+        billingAddress: formState.billingAddress,
+        billingCity: formState.billingCity,
+        billingPostalCode: formState.billingPostalCode,
+        billingProvince: formState.billingProvince,
+        billingCountry: formState.billingCountry,
+        country: formState.billingCountry,
+        currency: formState.currency,
+        numericFormat: formState.numericFormat,
+        decimals: Number.parseInt(formState.decimals, 10),
+        timezone: formState.timezone,
+        language: formState.language,
+        dateFormat: formState.dateFormat,
+        brandColor: formState.brandColor,
+      });
+      useSession.setState({ organization: updatedOrganization });
+      onClose();
+    } catch {
+      setSaveError('No pudimos guardar los datos de la empresa. Inténtalo de nuevo.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -87,10 +125,17 @@ export const SettingsDataPanel = ({ onClose }: SettingsDataPanelProps) => {
           <header className={styles.header}>
             <h2>{formState.legalName || 'Configuración'}</h2>
             <div className={styles.headerActions}>
-              <Button theme="optional" size="slim" variant="outline" onClick={onClose}>
+              <Button
+                type="button"
+                theme="optional"
+                size="slim"
+                variant="outline"
+                onClick={onClose}
+                disabled={isSaving}
+              >
                 Cancelar
               </Button>
-              <Button size="slim" type="submit">
+              <Button size="slim" type="submit" loading={isSaving} disabled={isSaving}>
                 Guardar
               </Button>
               <button
@@ -105,6 +150,7 @@ export const SettingsDataPanel = ({ onClose }: SettingsDataPanelProps) => {
           </header>
 
           <div className={styles.content}>
+            {saveError && <p className={styles.saveError}>{saveError}</p>}
             <nav className={styles.breadcrumb} aria-label="Ruta de configuración">
               <span>Configuración</span>
               <ChevronRight size={16} />

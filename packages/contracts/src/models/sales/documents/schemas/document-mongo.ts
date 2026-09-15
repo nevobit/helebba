@@ -101,6 +101,33 @@ export const DocumentSchemaMongo = new Schema<Document>(
     },
     pipelineId: { type: String, index: true },
     pipelineStageId: { type: String, index: true },
+    tracking: {
+      type: {
+        _id: false,
+        key: { type: String },
+        name: { type: String },
+        num: { type: String },
+        pickUpDate: { type: String },
+        deliveryDate: { type: String },
+        notes: { type: String },
+      },
+      default: undefined,
+    },
+    fulfilledLines: {
+      type: [
+        {
+          _id: false,
+          lineIndex: { type: Number, required: true },
+          productId: { type: String },
+          variantId: { type: String },
+          sku: { type: String },
+          units: { type: Number, required: true, min: 0 },
+          fulfilledAt: { type: String, required: true },
+          warehouseId: { type: String },
+        },
+      ],
+      default: [],
+    },
   },
   { ...opts },
 );

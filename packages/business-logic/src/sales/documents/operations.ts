@@ -4,16 +4,22 @@ import {
   DocumentApprovalStatus,
   DocumentSchemaMongo,
   LifecycleStatus,
+  OrganizationSchemaMongo,
+  StatusDocument,
   type Document as SalesDocument,
   type DocumentAttachment,
+  type DocumentFulfilledLine,
   type DocumentId,
+  type DocumentTracking,
   type DocumentType,
   type OrganizationId,
+  type Organization,
   type Payment,
   type UserId,
 } from '@hlb/contracts';
 import { createPayment } from '../../accounting/payments';
 import { createDocumentPdf, getDocumentPdfFilename } from './pdf';
+import { softDeleteDocument } from './soft-delete';
 
 type DocumentScope = {
   documentId: DocumentId;
@@ -35,6 +41,166 @@ const findDocument = async ({ documentId, docType, organizationId }: DocumentSco
   if (!document) throw new Error('Document not found');
   return document;
 };
+
+const activeDocumentsFilter = (
+  organizationId: OrganizationId,
+  docType: DocumentType,
+  documentIds?: DocumentId[],
+) => ({
+  organizationId,
+  docType,
+  lifecycleStatus: LifecycleStatus.ACTIVE,
+  ...(documentIds ? { _id: { $in: documentIds } } : {}),
+});
+
+export const findDocumentByNumber = async ({
+  docNumber,
+  docType,
+  organizationId,
+}: Omit<DocumentScope, 'documentId'> & { docNumber: string }) => {
+  const document = await getDocumentModel().findOne({
+    ...activeDocumentsFilter(organizationId, docType),
+    docNumber: docNumber.trim(),
+  });
+  if (!document) throw new Error('Document not found');
+  return document;
+};
+
+export const bulkSetDocumentApprovalStatus = async ({
+  documentIds,
+  status,
+  userId,
+  docType,
+  organizationId,
+}: Omit<DocumentScope, 'documentId'> & {
+  documentIds: DocumentId[];
+  status: DocumentApprovalStatus;
+  userId: UserId;
+}) => {
+  if (!documentIds.length) throw new Error('At least one documentId is required');
+  const now = new Date().toISOString();
+  const statusFields =
+    status === DocumentApprovalStatus.APPROVED
+      ? { approvedAt: now, approvedBy: userId }
+      : status === DocumentApprovalStatus.ACCEPTED
+        ? { acceptedAt: now, acceptedBy: userId }
+        : status === DocumentApprovalStatus.REJECTED
+          ? { rejectedAt: now, rejectedBy: userId }
+          : {};
+  const result = await getDocumentModel().updateMany(
+    activeDocumentsFilter(organizationId, docType, documentIds),
+    { $set: { approvalStatus: status, ...statusFields, updatedBy: userId } },
+  );
+  return { matched: result.matchedCount, updated: result.modifiedCount };
+};
+
+export const cancelDocument = async ({ userId, ...scope }: DocumentScope & { userId: UserId }) => {
+  const document = await getDocumentModel().findOneAndUpdate(
+    activeDocumentsFilter(scope.organizationId, scope.docType, [scope.documentId]),
+    { $set: { status: StatusDocument.Cancelled, updatedBy: userId } },
+    { new: true },
+  );
+  if (!document) throw new Error('Document not found');
+  return document;
+};
+
+export const bulkCancelDocuments = async ({
+  documentIds,
+  userId,
+  docType,
+  organizationId,
+}: Omit<DocumentScope, 'documentId'> & { documentIds: DocumentId[]; userId: UserId }) => {
+  if (!documentIds.length) throw new Error('At least one documentId is required');
+  const result = await getDocumentModel().updateMany(
+    activeDocumentsFilter(organizationId, docType, documentIds),
+    { $set: { status: StatusDocument.Cancelled, updatedBy: userId } },
+  );
+  return { matched: result.matchedCount, cancelled: result.modifiedCount };
+};
+
+export const bulkDeleteDocuments = async ({
+  documentIds,
+  userId,
+  docType,
+  organizationId,
+}: Omit<DocumentScope, 'documentId'> & { documentIds: DocumentId[]; userId: UserId }) => {
+  if (!documentIds.length) throw new Error('At least one documentId is required');
+  const results = await Promise.allSettled(
+    documentIds.map((documentId) =>
+      softDeleteDocument({ documentId, docType, organizationId, userId }),
+    ),
+  );
+  return {
+    deleted: results.filter((result) => result.status === 'fulfilled').length,
+    failed: results.filter((result) => result.status === 'rejected').length,
+  };
+};
+
+export const updateDocumentTracking = async ({
+  tracking,
+  userId,
+  ...scope
+}: DocumentScope & { tracking: DocumentTracking; userId: UserId }) => {
+  const document = await getDocumentModel().findOneAndUpdate(
+    activeDocumentsFilter(scope.organizationId, scope.docType, [scope.documentId]),
+    { $set: { tracking, updatedBy: userId } },
+    { new: true },
+  );
+  if (!document) throw new Error('Document not found');
+  return document;
+};
+
+export const fulfillDocumentLines = async ({
+  lines,
+  warehouseId,
+  userId,
+  ...scope
+}: DocumentScope & {
+  lines?: Array<{ lineIndex: number; units?: number }>;
+  warehouseId?: string;
+  userId: UserId;
+}) => {
+  const document = await findDocument(scope);
+  const requested = lines ?? document.lines.map((_line, lineIndex) => ({ lineIndex }));
+  if (!requested.length) throw new Error('At least one line is required');
+  const fulfilled = [...(document.fulfilledLines ?? [])];
+  const fulfilledAt = new Date().toISOString() as DocumentFulfilledLine['fulfilledAt'];
+
+  for (const requestedLine of requested) {
+    const source = document.lines[requestedLine.lineIndex];
+    if (!source) throw new Error(`Document line ${requestedLine.lineIndex} not found`);
+    const totalUnits = Number(source.units ?? 0);
+    const previousIndex = fulfilled.findIndex((line) => line.lineIndex === requestedLine.lineIndex);
+    const alreadyFulfilled = previousIndex >= 0 ? fulfilled[previousIndex].units : 0;
+    const units = requestedLine.units === undefined ? totalUnits : Number(requestedLine.units);
+    if (!Number.isFinite(units) || units < 0 || units > totalUnits) {
+      throw new Error(`Invalid units for document line ${requestedLine.lineIndex}`);
+    }
+    const nextUnits = lines ? Math.min(totalUnits, alreadyFulfilled + units) : totalUnits;
+    const entry: DocumentFulfilledLine = {
+      lineIndex: requestedLine.lineIndex,
+      ...(source.productId ? { productId: source.productId } : {}),
+      ...(source.variantId ? { variantId: source.variantId } : {}),
+      ...(source.sku ? { sku: source.sku } : {}),
+      units: nextUnits,
+      fulfilledAt,
+      ...(warehouseId ? { warehouseId } : {}),
+    };
+    if (previousIndex >= 0) fulfilled[previousIndex] = entry;
+    else fulfilled.push(entry);
+  }
+
+  const updated = await getDocumentModel().findOneAndUpdate(
+    activeDocumentsFilter(scope.organizationId, scope.docType, [scope.documentId]),
+    { $set: { fulfilledLines: fulfilled, updatedBy: userId } },
+    { new: true },
+  );
+  if (!updated) throw new Error('Document not found');
+  return updated;
+};
+
+export const getDocumentFulfilledItems = async (scope: DocumentScope) =>
+  (await findDocument(scope)).fulfilledLines ?? [];
 
 export const attachDocumentFile = async ({
   attachment,
@@ -203,8 +369,15 @@ export const registerDocumentPayment = async ({
 
 export const downloadDocumentPdf = async (scope: DocumentScope) => {
   const document = await findDocument(scope);
+  const organization = await getModel<Organization>(
+    Collection.ORGANIZATIONS,
+    OrganizationSchemaMongo,
+  ).findOne({
+    _id: scope.organizationId,
+    lifecycleStatus: LifecycleStatus.ACTIVE,
+  });
   return {
-    buffer: createDocumentPdf(document, 'Helebba'),
+    buffer: createDocumentPdf(document, organization ?? 'Helebba'),
     filename: getDocumentPdfFilename(document),
   };
 };

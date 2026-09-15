@@ -112,6 +112,12 @@ export interface PayrollRecord extends PersistedEntity<PayrollRecordId, UserId> 
   concepts: PayrollConcept[];
   status: PayrollStatus;
   paidAt?: Date;
+  approvedAt?: Date;
+  approvedBy?: UserId;
+  paymentId?: string;
+  paymentMethodId?: string;
+  paymentReference?: string;
+  paymentMetadata?: Record<string, unknown>;
 }
 
 const PayrollConceptSchema = new Schema<PayrollConcept>(
@@ -139,6 +145,12 @@ export const PayrollRecordSchemaMongo = new Schema<PayrollRecord>(
     concepts: { type: [PayrollConceptSchema], default: [] },
     status: { type: String, enum: ['draft', 'approved', 'paid', 'cancelled'], default: 'draft' },
     paidAt: { type: Date },
+    approvedAt: { type: Date },
+    approvedBy: { type: String },
+    paymentId: { type: String },
+    paymentMethodId: { type: String },
+    paymentReference: { type: String },
+    paymentMetadata: { type: Schema.Types.Mixed, default: undefined },
   },
   { ...opts },
 );

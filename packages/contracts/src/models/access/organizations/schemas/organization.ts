@@ -22,6 +22,16 @@ export interface Organization extends PersistedSoftDeletableEntity<OrganizationI
   size: string;
   structure: string;
   website: string;
+  billingAddress?: string;
+  billingCity?: string;
+  billingPostalCode?: string;
+  billingProvince?: string;
+  billingCountry?: string;
+  numericFormat?: string;
+  decimals?: number;
+  language?: string;
+  dateFormat?: string;
+  brandColor?: string;
   isPrincipal: boolean;
   slug: string;
   ownerId: UserId;

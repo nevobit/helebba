@@ -56,7 +56,7 @@ import { contactTagRoutes } from './contacts/contact-tags';
 import { calendarRoutes } from './calendar';
 import { bookingRoutes } from './crm/bookings';
 import { crmEventRoutes } from './crm/events';
-import { developerWebhookRoutes } from './developers';
+import { developerUsageRoutes, developerWebhookRoutes } from './developers';
 import { inboxRoutes } from './inbox';
 import { numberingSeriesRoutes } from './sales/numbering-series';
 import { recurringDocumentRoutes } from './sales/recurring-documents';
@@ -121,6 +121,7 @@ const routes: RouteOptions[] = [
   ...bookingRoutes,
   ...crmEventRoutes,
   ...developerWebhookRoutes,
+  ...developerUsageRoutes,
   ...inboxRoutes,
   ...numberingSeriesRoutes,
   ...recurringDocumentRoutes,

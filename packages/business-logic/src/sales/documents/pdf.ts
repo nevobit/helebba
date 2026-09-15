@@ -1,5 +1,9 @@
 import { Buffer } from 'node:buffer';
-import { DocumentType, type Document as SalesDocument } from '@hlb/contracts';
+import {
+  DocumentType,
+  type Document as SalesDocument,
+  type Organization,
+} from '@hlb/contracts';
 
 const PAGE_WIDTH = 595;
 const PAGE_HEIGHT = 842;
@@ -47,11 +51,11 @@ const line = (x1: number, y1: number, x2: number, y2: number) =>
 const rect = (x: number, y: number, width: number, height: number) =>
   `${x} ${y} ${width} ${height} re S\n`;
 
-const amountText = (value: unknown) => {
+const amountText = (value: unknown, currency: string) => {
   const numeric = Number(value ?? 0);
-  if (!Number.isFinite(numeric)) return formatMoney(0);
+  if (!Number.isFinite(numeric)) return formatMoney(0, currency);
 
-  return formatMoney(numeric);
+  return formatMoney(numeric, currency);
 };
 
 const truncate = (value: unknown, max = 48) => {
@@ -61,9 +65,46 @@ const truncate = (value: unknown, max = 48) => {
   return `${normalized.slice(0, max - 1)}...`;
 };
 
-const buildContent = (document: SalesDocument, organizationName: string) => {
+type DocumentIssuer =
+  | string
+  | Partial<
+      Pick<
+        Organization,
+        | 'name'
+        | 'legalName'
+        | 'taxId'
+        | 'email'
+        | 'phone'
+        | 'website'
+        | 'country'
+        | 'billingAddress'
+        | 'billingCity'
+        | 'billingPostalCode'
+        | 'billingProvince'
+        | 'billingCountry'
+      >
+    >;
+
+const buildContent = (document: SalesDocument, issuer: DocumentIssuer) => {
   const docLabel = getDocumentLabel(document.docType);
   const currency = document.currency || 'COP';
+  const issuerDetails = typeof issuer === 'string' ? { legalName: issuer } : issuer;
+  const organizationName = issuerDetails.legalName || issuerDetails.name || 'Helebba';
+  const address = [
+    issuerDetails.billingAddress,
+    issuerDetails.billingCity,
+    issuerDetails.billingProvince,
+    issuerDetails.billingPostalCode,
+    issuerDetails.billingCountry || issuerDetails.country,
+  ]
+    .filter(Boolean)
+    .join(', ');
+  const issuerLines = [
+    issuerDetails.taxId ? `NIT/ID: ${issuerDetails.taxId}` : '',
+    address,
+    [issuerDetails.email, issuerDetails.phone].filter(Boolean).join(' | '),
+    issuerDetails.website,
+  ].filter(Boolean);
   const rows = document.lines?.slice(0, 14) ?? [];
   let y = 786;
   let content = '0.1 w\n';
@@ -79,10 +120,13 @@ const buildContent = (document: SalesDocument, organizationName: string) => {
   y -= 86;
   content += text(LEFT, y, 13, organizationName);
   content += text(LEFT, y - 18, 10, 'Emisor');
+  issuerLines.forEach((issuerLine, index) => {
+    content += text(LEFT, y - 36 - index * 14, 9, truncate(issuerLine, 46));
+  });
   content += text(330, y, 13, document.contactName || 'Cliente');
   content += text(330, y - 18, 10, 'Cliente');
 
-  y -= 72;
+  y -= issuerLines.length > 0 ? 104 : 72;
   content += line(LEFT, y, PAGE_WIDTH - LEFT, y);
   content += text(LEFT, y - 18, 9, 'CONCEPTO');
   content += text(300, y - 18, 9, 'PRECIO');
@@ -120,9 +164,9 @@ const buildContent = (document: SalesDocument, organizationName: string) => {
   y = Math.max(y - 18, 186);
   content += line(330, y + 20, PAGE_WIDTH - LEFT, y + 20);
   content += text(330, y, 11, 'Base imponible');
-  content += text(450, y, 11, amountText(document.subtotal));
+  content += text(450, y, 11, amountText(document.subtotal, currency));
   content += text(330, y - 22, 11, 'IVA');
-  content += text(450, y - 22, 11, amountText(document.tax));
+  content += text(450, y - 22, 11, amountText(document.tax, currency));
   content += text(330, y - 48, 13, 'TOTAL');
   content += text(450, y - 48, 13, formatMoney(document.total, currency));
 
@@ -164,8 +208,8 @@ const buildPdf = (content: string) => {
   return Buffer.concat([body, Buffer.from(xref, 'ascii')]);
 };
 
-export const createDocumentPdf = (document: SalesDocument, organizationName: string) =>
-  buildPdf(buildContent(document, organizationName));
+export const createDocumentPdf = (document: SalesDocument, issuer: DocumentIssuer) =>
+  buildPdf(buildContent(document, issuer));
 
 export const getDocumentPdfFilename = (document: SalesDocument) =>
   `${getDocumentLabel(document.docType).replace(/\s+/g, '-')}-${ascii(document.docNumber || document.id || 'documento')}.pdf`;

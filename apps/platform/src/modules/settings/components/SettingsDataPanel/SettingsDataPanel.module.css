@@ -267,6 +267,15 @@
   box-shadow: 0 0.1rem 0.3rem rgb(15 23 42 / 5%);
 }
 
+.saveError {
+  margin: 0;
+  padding: 1rem 1.2rem;
+  border-radius: 0.6rem;
+  background: #fff1f2;
+  color: #b42318;
+  font-size: 1.3rem;
+}
+
 .legalRow {
   display: flex;
   align-items: center;

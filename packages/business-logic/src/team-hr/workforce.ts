@@ -74,6 +74,19 @@ export const getEmploymentContract = async (contractId: EmploymentContractId, or
   return contract;
 };
 
+export const getActiveEmploymentContract = async (employeeId: EmployeeId, organizationId: OrganizationId) => {
+  await assertEmployee(employeeId, organizationId);
+  const contract = await contracts().findOne({
+    ...activeScope(organizationId),
+    employeeId,
+    status: 'active',
+    startDate: { $lte: new Date() },
+    $or: [{ endDate: { $exists: false } }, { endDate: null }, { endDate: { $gte: new Date() } }],
+  }).sort({ startDate: -1 });
+  if (!contract) throw new Error('El empleado no tiene un contrato activo.');
+  return contract;
+};
+
 export const createEmploymentContract = async (data: Partial<EmploymentContract>) => {
   if (!data.organizationId || !data.startDate || !data.position?.trim() || !data.type)
     throw new Error('Empleado, tipo, fecha de inicio y cargo son obligatorios.');
@@ -111,6 +124,65 @@ export const updateEmploymentContract = async (
   );
   if (!result) throw new Error('El contrato laboral no existe.');
   return result;
+};
+
+export const updateActiveEmploymentContract = async (
+  employeeId: EmployeeId,
+  organizationId: OrganizationId,
+  data: Partial<EmploymentContract>,
+) => {
+  const contract = await getActiveEmploymentContract(employeeId, organizationId);
+  return updateEmploymentContract(contract.id, organizationId, { ...data, employeeId });
+};
+
+export const getEmployeeSalary = async (employeeId: EmployeeId, organizationId: OrganizationId) => {
+  const contract = await getActiveEmploymentContract(employeeId, organizationId);
+  return {
+    contractId: contract.id,
+    employeeId: contract.employeeId,
+    salary: contract.salary,
+    currency: contract.currency,
+    workdayHours: contract.workdayHours,
+    effectiveFrom: contract.startDate,
+    effectiveTo: contract.endDate,
+    metadata: contract.metadata ?? {},
+  };
+};
+
+export const getEmployeeSalaryFormData = async (employeeId: EmployeeId, organizationId: OrganizationId) => {
+  const salary = await getEmployeeSalary(employeeId, organizationId);
+  return {
+    salary,
+    editableFields: ['salary', 'currency', 'workdayHours', 'effectiveFrom', 'metadata'],
+    supportedCurrencies: ['COP', 'USD', 'EUR', 'MXN', 'ARS', 'CLP', 'PEN', 'BRL'],
+  };
+};
+
+export const updateEmployeeSalary = async (
+  employeeId: EmployeeId,
+  organizationId: OrganizationId,
+  userId: UserId,
+  data: { salary?: number; currency?: string; workdayHours?: number; metadata?: Record<string, unknown> },
+) => {
+  if (data.salary !== undefined && (!Number.isFinite(data.salary) || data.salary < 0))
+    throw new Error('El salario no es válido.');
+  if (data.workdayHours !== undefined && (!Number.isFinite(data.workdayHours) || data.workdayHours < 0 || data.workdayHours > 24))
+    throw new Error('Las horas de jornada no son válidas.');
+  return updateActiveEmploymentContract(employeeId, organizationId, {
+    ...data,
+    currency: data.currency?.trim().toUpperCase(),
+    updatedBy: userId,
+  });
+};
+
+export const deleteEmployeeSalary = async (employeeId: EmployeeId, organizationId: OrganizationId, userId: UserId) => {
+  const contract = await getActiveEmploymentContract(employeeId, organizationId);
+  const result = await contracts().findOneAndUpdate(
+    { _id: contract.id, ...activeScope(organizationId) },
+    { $set: { salary: 0, updatedBy: userId }, $unset: { 'metadata.salary': 1 } },
+    { new: true, runValidators: true },
+  );
+  return { employeeId, contractId: contract.id, deleted: true, salary: result?.salary ?? 0 };
 };
 
 export const listTimeClockEntries = async (input: WorkforceQuery) => {
@@ -288,6 +360,73 @@ export const createPayrollRecord = async (data: Partial<PayrollRecord>) => {
     employerContributions: data.employerContributions ?? 0,
   };
   return payroll().create({ ...data, ...calculated, netSalary: Math.max(0, calculated.grossSalary - calculated.deductions), periodStart, periodEnd, concepts, status: 'draft' });
+};
+
+export const getPayrollRecord = async (recordId: PayrollRecordId, organizationId: OrganizationId) => {
+  const record = await payroll().findOne({ _id: recordId, ...activeScope(organizationId) });
+  if (!record) throw new Error('El registro de nómina no existe.');
+  return record;
+};
+
+export const bulkCreatePayrollRecords = async (records: Partial<PayrollRecord>[]) => {
+  if (!Array.isArray(records) || records.length === 0) throw new Error('Debes incluir al menos una nómina.');
+  if (records.length > 200) throw new Error('Solo se pueden crear hasta 200 nóminas por operación.');
+  const created: PayrollRecord[] = [];
+  for (const record of records) created.push(await createPayrollRecord(record));
+  return { items: created, total: created.length };
+};
+
+export const approvePayrollRecord = async (recordId: PayrollRecordId, organizationId: OrganizationId, userId: UserId) => {
+  const record = await getPayrollRecord(recordId, organizationId);
+  if (record.status !== 'draft') throw new Error('Solo se puede aprobar una nómina en borrador.');
+  record.status = 'approved';
+  record.approvedAt = new Date();
+  record.approvedBy = userId;
+  record.updatedBy = userId;
+  await record.save();
+  return record;
+};
+
+export const createPayrollPayment = async (
+  recordId: PayrollRecordId,
+  organizationId: OrganizationId,
+  userId: UserId,
+  data: { paymentId?: string; methodId?: string; reference?: string; paidAt?: Date | string; metadata?: Record<string, unknown> },
+) => {
+  const record = await getPayrollRecord(recordId, organizationId);
+  if (record.status !== 'approved') throw new Error('La nómina debe estar aprobada antes de registrar el pago.');
+  record.status = 'paid';
+  record.paidAt = data.paidAt ? parseDate(data.paidAt, 'La fecha de pago') : new Date();
+  record.paymentId = data.paymentId?.trim() || `pay_${record.id}`;
+  record.paymentMethodId = data.methodId?.trim();
+  record.paymentReference = data.reference?.trim();
+  record.paymentMetadata = data.metadata;
+  record.updatedBy = userId;
+  await record.save();
+  return record;
+};
+
+export const deletePayrollPayment = async (recordId: PayrollRecordId, organizationId: OrganizationId, userId: UserId) => {
+  const record = await getPayrollRecord(recordId, organizationId);
+  if (!record.paymentId && record.status !== 'paid') throw new Error('La nómina no tiene un pago registrado.');
+  record.status = 'approved';
+  record.paidAt = undefined;
+  record.paymentId = undefined;
+  record.paymentMethodId = undefined;
+  record.paymentReference = undefined;
+  record.paymentMetadata = undefined;
+  record.updatedBy = userId;
+  await record.save();
+  return record;
+};
+
+export const deletePayrollRecord = async (recordId: PayrollRecordId, organizationId: OrganizationId, userId: UserId) => {
+  const record = await getPayrollRecord(recordId, organizationId);
+  if (record.status === 'paid') throw new Error('Elimina primero el pago asociado a la nómina.');
+  record.lifecycleStatus = LifecycleStatus.DELETED;
+  record.updatedBy = userId;
+  await record.save();
+  return { id: recordId, deleted: true };
 };
 
 export const updatePayrollStatus = async (recordId: PayrollRecordId, organizationId: OrganizationId, userId: UserId, status: PayrollStatus) => {
